@@ -1,19 +1,12 @@
 import { IncomingMessage, ServerResponse } from "http";
 import { RouterStrategy } from "./routerStrategy";
 import { UserController } from "../../adapters/controllers/UserController";
-import { RequestError } from "../../core/enum/RequestError";
-import { InputError } from "../../core/errors/inputError";
 import { IRouter } from "./IRouter";
 import { ResponseStatusCode } from "../../core/enum/ResponseStatusCode";
-import { InputToController } from "../../core/types/inputToController";
+import { routeType } from "../../core/types/router";
 
 export class UserRouter extends RouterStrategy implements IRouter {
-  private routes: {
-    pattern: string;
-    method: string;
-    middleWare?: (input: InputToController) => Promise<void>[];
-    handler: (input: InputToController) => Promise<void>;
-  }[];
+  private routes: routeType[];
 
   constructor(private userController: UserController) {
     super();
@@ -22,11 +15,6 @@ export class UserRouter extends RouterStrategy implements IRouter {
         pattern: "/users",
         method: "GET",
         handler: this.userController.findAll,
-      },
-      {
-        pattern: "/users",
-        method: "POST",
-        handler: this.userController.create,
       },
     ];
   }
@@ -40,7 +28,6 @@ export class UserRouter extends RouterStrategy implements IRouter {
     let matchedMethod = false;
 
     for (const route of this.routes) {
-      console.log({ route, url: req.url });
       const params = this.matchRoutePatterns(req.url ?? "", route.pattern);
 
       if (params) {

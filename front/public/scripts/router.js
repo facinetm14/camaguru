@@ -7,6 +7,7 @@ const routes = new Map([
   ["/profile", `${BASE_PATH_TO_PAGES}/profile/profile.html`],
   ["not_found", `${BASE_PATH_TO_PAGES}/404/404.html`],
   ["/confirm", `${BASE_PATH_TO_PAGES}/confirm/confirm.html`],
+  ["/reset-password", `${BASE_PATH_TO_PAGES}/reset-password/reset-password.html`],
 ]);
 
 export const routeUrl = async () => {

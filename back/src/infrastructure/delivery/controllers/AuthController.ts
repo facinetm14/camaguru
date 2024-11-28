@@ -131,4 +131,39 @@ export class AuthController {
     }
     resp.end();
   }
+
+  async resetPassword({ req, resp }: ControllerInputType): Promise<void> {
+    let body = "";
+    req?.on("data", (chunk) => {
+      body += chunk.toString();
+    });
+
+    req?.on("end", () => {
+      (async () => {
+        const loginUserDto = parseRequestBodyAndBuildLoginUserDto(
+          JSON.parse(body)
+        );
+
+        if (!loginUserDto) {
+          resp.statusCode = ResponseStatusCode.BAD_REQUEST;
+          resp.end();
+          return;
+        }
+
+        const userId = await this.authService.signin(loginUserDto);
+        if (!userId) {
+          resp.statusCode = ResponseStatusCode.INVALID_CREDENTIALS;
+          resp.end("invalid credentials");
+          return;
+        }
+
+        const authToken = uuid("session");
+
+        await this.sessionService.register({ id: authToken, userId });
+
+        resp.statusCode = ResponseStatusCode.GET_OK;
+        resp.end(JSON.stringify({ sessionId: authToken }));
+      })();
+    });
+  }
 }

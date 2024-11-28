@@ -50,6 +50,16 @@ const logout = async (sessionId) => {
   });
 };
 
+const sendResetPasswordRequest = async (email) => {
+  return fetch(`${API_BASE_ROUTE}/auth/reset-password`, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    method: "POST",
+    body: JSON.stringify({ email }),
+  });
+};
+
 export const userService = {
   register,
   verify,
@@ -57,4 +67,5 @@ export const userService = {
   getMe,
   isAuth,
   logout,
+  sendResetPasswordRequest,
 };

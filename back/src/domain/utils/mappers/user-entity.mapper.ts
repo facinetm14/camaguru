@@ -8,6 +8,7 @@ import { uuid } from "../uuid";
 import { isValidEmail } from "../validation/email";
 import { isString } from "../validation/string";
 import { LoginUserDto } from "../../dtos/loginUserDto";
+import { RegistrationError } from "../errors/registration.error";
 
 export function buildUserListFromRawModel(userRawList: UserModel[]): User[] {
   return userRawList.map((userRaw) => buildUserEntityFromModel(userRaw));
@@ -52,29 +53,33 @@ export const buildUserModelFromCreateUserDto = async (
 
 export const parseRequestBodyAndBuildCreateUserDto = (
   body: any
-): CreateUserDto | null => {
+): CreateUserDto | RegistrationError => {
   if (!isString(body.username) || !body.username) {
-    return null;
+    return RegistrationError.INVALID_USER_NAME;
   }
 
   if (!isString(body.email) || !isValidEmail(body.email)) {
-    return null;
+    return RegistrationError.INVALID_USER_EMAIL;
   }
 
   if (!isString(body.adress) || !body.adress) {
-    return null;
+    return RegistrationError.INVALID_ADRESS;
   }
 
   if (!isString(body.firstName) || !body.firstName) {
-    return null;
+    return RegistrationError.INVALID_USER_FIRST;
   }
 
   if (!isString(body.lastName) || !body.lastName) {
-    return null;
+    return RegistrationError.INVALID_USER_LAST;
   }
 
-  if (!isString(body.passwd) || !isPasswordStrong(body.passwd)) {
-    return null;
+  if (!isString(body.passwd)) {
+    return RegistrationError.INVALID_USER_PASSWD;
+  }
+
+  if (!isPasswordStrong(body.passwd)) {
+    return RegistrationError.USER_PASSWD_WEAK;
   }
 
   return {

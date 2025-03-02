@@ -24,6 +24,12 @@ services:
       - ./.env
     networks:
       - camagru-network
+    develop:
+      watch:
+      - action: rebuild
+        path: ./back
+        ignore:
+          - node_modules/
 
   front:
     build:
@@ -35,6 +41,10 @@ services:
       - camagru-network
     environment:
       -API_AUTHORIZATION_TOKEN: ${API_AUTHORIZATION_TOKEN}
+    develop:
+      watch:
+      - action: rebuild
+        path: ./front
 
 volumes:
   pgdata:

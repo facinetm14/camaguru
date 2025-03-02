@@ -8,7 +8,7 @@ import {
 import { User } from "../entity/User";
 import { UserRepository } from "../ports/userRepository";
 import { CreateUserDto } from "../dtos/createUserDto";
-import { UserService } from "../../domain/usecases/userService";
+import { UserService } from "../usecases/userService";
 
 export class UserConCreteService implements UserService {
   constructor(private userRepository: UserRepository) {}

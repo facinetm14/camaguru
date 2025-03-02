@@ -1,6 +1,6 @@
 import { SessionRepository } from "../ports/sessionRepository";
 import { CreateSessionDto } from "../dtos/createSessionDto";
-import { SessionService } from "../../domain/usecases/sessionService";
+import { SessionService } from "../usecases/sessionService";
 import { buildSessionModelFromCreateSessionDto } from "../utils/mappers/session-entity.mapper";
 
 export class SessionConcreteService implements SessionService {

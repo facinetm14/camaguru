@@ -4,9 +4,12 @@ import { uuid } from "../utils/uuid";
 import { User } from "../entity/User";
 import { CreateUserDto } from "../dtos/createUserDto";
 import { LoginUserDto } from "../dtos/loginUserDto";
-import { AuthService } from "../../domain/usecases/authService";
-import { EmailService } from "../../domain/usecases/emailService";
-import { UserService } from "../../domain/usecases/userService";
+import { AuthService } from "../usecases/authService";
+import { Email, EmailSendStatus, EmailService } from "../usecases/emailService";
+import { UserService } from "../usecases/userService";
+import { confirmationTemplate } from "../../template/email";
+import { EmailSubject } from "../../infrastructure/enums/EmailSubject";
+import { CLIENT_HOST } from "../../infrastructure/enums/AllowedRoutes";
 
 export class AuthConcreteService implements AuthService {
   constructor(
@@ -14,7 +17,7 @@ export class AuthConcreteService implements AuthService {
     private readonly emailService: EmailService
   ) {}
 
-  async register(createUserDto: CreateUserDto): Promise<User> {
+  async register(createUserDto: CreateUserDto): Promise<User | undefined> {
     const validationToken = uuid();
     try {
       const newUser = await this.userService.create(
@@ -22,14 +25,22 @@ export class AuthConcreteService implements AuthService {
         validationToken
       );
 
-      if (newUser) {
-        await this.emailService.sendConfirmationEmail(
-          createUserDto,
-          validationToken
-        );
-      }
+      const verifyLink = `${CLIENT_HOST}/activate/${validationToken}`;
 
-      return newUser;
+      const confirmation = confirmationTemplate(verifyLink);
+      const email: Email = {
+        to: newUser.email,
+        msg: confirmation,
+        subject: EmailSubject.USER_REGISTRATION,
+      };
+
+      if (newUser) {
+        const sendStatus = await this.emailService.send(email);
+
+        if (sendStatus === EmailSendStatus.OK) {
+          return newUser;
+        }
+      }
     } catch (error) {
       console.log(error);
       throw new Error("Error: user registration process failled");
@@ -71,4 +82,16 @@ export class AuthConcreteService implements AuthService {
     return user.id;
   }
 
+  async resetPassword(email: string): Promise<string | null> {
+    const user = await this.userService.findUserByUniqKey(
+      UserUniqKeys.EMAIL,
+      email
+    );
+
+    if (!user) {
+      return null;
+    }
+
+    return user.email;
+  }
 }

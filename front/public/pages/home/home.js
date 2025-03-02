@@ -1,4 +1,4 @@
-import { loadComponent, loadPage } from "../../scripts/utils.js";
+import { loadComponent } from "../../scripts/utils.js";
 import { Components } from "../../scripts/enums.js";
 import { userService } from "../../usecases/userService.js";
 

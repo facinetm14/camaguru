@@ -15,12 +15,27 @@ content-type: application/json
 }
 
 ### verify user
-POST http://localhost:5000/api/v1/auth/verify/-mantjaq0-s3bns9
+POST http://localhost:5000/api/v1/auth/verify/-maqlbqtu-f7cren
 content-type: application/json
 
 {}
 
 
+### login user
+POST http://localhost:5000/api/v1/auth/login
+content-type: application/json
+
+{
+ "username": "testd2ddd",
+ "passwd": "Alt.vo-6ogaim1b@yopmail.com"
+}
+
+### logout user
+PATCH  http://localhost:5000/api/v1/auth/logout/session-maqmplae-cq7vl3
+
+
 ### get all users
-GET http://localhost:5000/api/v1/users/session-m3zyg1kv-nz8d2z
+GET http://localhost:5000/api/v1/users/session-maqmplae-cq7vl3
 Content-Type: application/json
+
+

@@ -1,8 +1,4 @@
-import {
-  isValidEmail,
-  isPasswordStrong,
-  loadPage,
-} from "../../scripts/utils.js";
+
 import { userService } from "../../usecases/userService.js";
 
 const firstNameInput = document.querySelector("#first-name");

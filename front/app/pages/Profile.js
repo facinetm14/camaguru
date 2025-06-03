@@ -1,4 +1,10 @@
-<div>
+import { handleProfile } from "../scripts/handleProfile.js";
+
+export const Profile = () => {
+  const root = document.querySelector("#app");
+
+  const template = `
+  <div>
   <nav class="navbar navbar-light profile-topBar">
     <a class="navbar-brand" href="/">
       <img src="../../images/logo.png" width="60" height="60" alt="">
@@ -228,3 +234,9 @@
     display: flex;
   }
 </style>
+`;
+
+  root.innerHTML = template;
+
+  handleProfile();
+};

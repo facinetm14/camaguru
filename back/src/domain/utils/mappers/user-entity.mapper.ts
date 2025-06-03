@@ -6,9 +6,11 @@ import { UserStatus } from "../../enums/user.enums";
 import { hashPassword, isPasswordStrong } from "../password";
 import { uuid } from "../uuid";
 import { isValidEmail } from "../validation/email";
-import { isString } from "../validation/string";
+import { isNotEmptyString } from "../validation/string";
 import { LoginUserDto } from "../../dtos/loginUserDto";
-import { RegistrationError } from "../errors/registration.error";
+import { RegistrationError } from "../errors/user-registration.error";
+import { UserLoginError } from "../errors/user-login.error";
+import { Err, Ok, Result } from "../validation/result";
 
 export function buildUserListFromRawModel(userRawList: UserModel[]): User[] {
   return userRawList.map((userRaw) => buildUserEntityFromModel(userRaw));
@@ -53,54 +55,58 @@ export const buildUserModelFromCreateUserDto = async (
 
 export const parseRequestBodyAndBuildCreateUserDto = (
   body: any
-): CreateUserDto | RegistrationError => {
-  if (!isString(body.username) || !body.username) {
-    return RegistrationError.INVALID_USER_NAME;
+): Result<CreateUserDto, RegistrationError> => {
+  if (!isNotEmptyString(body.username)) {
+    return Err(RegistrationError.INVALID_USER_NAME);
   }
 
-  if (!isString(body.email) || !isValidEmail(body.email)) {
-    return RegistrationError.INVALID_USER_EMAIL;
+  if (!isNotEmptyString(body.email) || !isValidEmail(body.email)) {
+    return Err(RegistrationError.INVALID_USER_EMAIL);
   }
 
-  if (!isString(body.adress) || !body.adress) {
-    return RegistrationError.INVALID_ADRESS;
+  if (!isNotEmptyString(body.adress)) {
+    return Err(RegistrationError.INVALID_ADRESS);
   }
 
-  if (!isString(body.firstName) || !body.firstName) {
-    return RegistrationError.INVALID_USER_FIRST;
+  if (!isNotEmptyString(body.firstName)) {
+    return Err(RegistrationError.INVALID_USER_FIRST);
   }
 
-  if (!isString(body.lastName) || !body.lastName) {
-    return RegistrationError.INVALID_USER_LAST;
+  if (!isNotEmptyString(body.lastName)) {
+    return Err(RegistrationError.INVALID_USER_LAST);
   }
 
-  if (!isString(body.passwd)) {
-    return RegistrationError.INVALID_USER_PASSWD;
+  if (!isNotEmptyString(body.passwd)) {
+    return Err(RegistrationError.INVALID_USER_PASSWD);
   }
 
   if (!isPasswordStrong(body.passwd)) {
-    return RegistrationError.USER_PASSWD_WEAK;
+    return Err(RegistrationError.USER_PASSWD_WEAK);
   }
 
-  return {
+  return Ok({
     username: body.username,
     email: body.email,
     firstName: body.firstName,
     lastName: body.lastName,
-    passwd: body.passwd,
     adress: body.adress,
-  };
+    passwd: body.passwd,
+  });
 };
 
 export const parseRequestBodyAndBuildLoginUserDto = (
   body: any
-): LoginUserDto | null => {
-  if (!isString(body.username) || !isString(body.passwd)) {
-    return null;
+): Result<LoginUserDto, UserLoginError> => {
+  if (!isNotEmptyString(body.username)) {
+    return Err(UserLoginError.INVALID_USER_NAME);
   }
 
-  return {
+  if (!isNotEmptyString(body.passwd)) {
+    return Err(UserLoginError.INVALID_USER_PASSWD);
+  }
+
+  return Ok({
     username: body.username,
     passwd: body.passwd,
-  };
+  });
 };

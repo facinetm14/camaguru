@@ -24,7 +24,7 @@ export class UserConCreteService implements UserService {
   async create(
     createUserDto: CreateUserDto,
     validationToken: string
-  ): Promise<User> {
+  ): Promise<User | null> {
     const newUser = await buildUserModelFromCreateUserDto(
       createUserDto,
       validationToken
@@ -34,7 +34,7 @@ export class UserConCreteService implements UserService {
       return buildUserEntityFromModel(createdUser);
     } catch (error) {
       console.log(error);
-      throw new Error("Error: failled to create a user");
+      return null;
     }
   }
 

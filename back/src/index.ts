@@ -19,7 +19,6 @@ const hostname = process.env.HOST || "0.0.0.0";
 const port = process.env.PORT || 5000;
 
 initDb();
-
 const server = createServer((req: IncomingMessage, resp: ServerResponse) => {
   DIContainer.registerClass(ModuleRegister.BASE_ROUTE, new BaseRouter());
   DIContainer.registerClass(

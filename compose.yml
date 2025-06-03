@@ -1,6 +1,6 @@
 services:
   db:
-    image: postgres:14
+    image: postgres:13-alpine
     networks:
       - camagru-network
     ports:
@@ -26,10 +26,10 @@ services:
       - camagru-network
     develop:
       watch:
-      - action: rebuild
-        path: ./back
-        ignore:
-          - node_modules/
+        - action: rebuild
+          path: ./back
+          ignore:
+            - node_modules/
 
   front:
     build:
@@ -43,8 +43,8 @@ services:
       -API_AUTHORIZATION_TOKEN: ${API_AUTHORIZATION_TOKEN}
     develop:
       watch:
-      - action: rebuild
-        path: ./front
+        - action: rebuild
+          path: ./front
 
 volumes:
   pgdata:

@@ -1,15 +1,21 @@
+import { ServerResponse } from "http";
 import { CreateUserDto } from "../../../domain/dtos/createUserDto";
 import { UserLoginDto } from "../../../domain/dtos/userLoginDto";
-import { AuthService } from "../../../domain/usecases/authService";
+import {
+  AuthService,
+  UserVeryficationStatus,
+} from "../../../domain/usecases/authService";
 import { SessionService } from "../../../domain/usecases/sessionService";
-import { RegistrationError } from "../../../domain/utils/errors/registration.error";
+import { UserLoginError } from "../../../domain/utils/errors/user-login.error";
+import { RegistrationError } from "../../../domain/utils/errors/user-registration.error";
+import { UserVerificationError } from "../../../domain/utils/errors/user-verificatio.error";
 import {
   parseRequestBodyAndBuildCreateUserDto,
   parseRequestBodyAndBuildLoginUserDto,
 } from "../../../domain/utils/mappers/user-entity.mapper";
 import { uuid } from "../../../domain/utils/uuid";
 import { isValidEmail } from "../../../domain/utils/validation/email";
-import { isString } from "../../../domain/utils/validation/string";
+import { isNotEmptyString } from "../../../domain/utils/validation/string";
 import { ResponseStatusCode } from "../../enums/ResponseStatusCode";
 import { ControllerInputType } from "../types/controllerInputType";
 
@@ -27,93 +33,110 @@ export class AuthController {
     });
 
     req?.on("end", async () => {
-      try {
-        const result = parseRequestBodyAndBuildCreateUserDto(JSON.parse(body));
+      const createUserDtoResult = parseRequestBodyAndBuildCreateUserDto(
+        JSON.parse(body)
+      );
 
-        if (
-          Object.values(RegistrationError).includes(result as RegistrationError)
-        ) {
-          resp.statusCode = ResponseStatusCode.BAD_REQUEST;
-          resp.end(`Invalid Request Body : ${result}`);
-          return;
-        }
-
-        const createUserDto = result as CreateUserDto;
-        const newUser = await this.authService.register(createUserDto);
-
-        if (!newUser) {
-          resp.statusCode = ResponseStatusCode.SERVER_INTERNAL_ERROR;
-          resp.end();
-          return;
-        }
-
-        resp.statusCode = ResponseStatusCode.CREATED_OK;
-        resp.end();
-      } catch (error) {
+      if (createUserDtoResult.isErr) {
         resp.statusCode = ResponseStatusCode.BAD_REQUEST;
-        resp.end();
-        console.log(error);
+        resp.end(`Invalid Request Body : ${createUserDtoResult.error}`);
+        return;
       }
+
+      const newUserResult = await this.authService.register(
+        createUserDtoResult.data
+      );
+
+      if (newUserResult.isErr) {
+        resp.statusCode = ResponseStatusCode.SERVER_INTERNAL_ERROR;
+        resp.end(newUserResult.error);
+        return;
+      }
+
+      resp.statusCode = ResponseStatusCode.CREATED_OK;
+      resp.end();
     });
   }
 
   async verify({ resp, params }: ControllerInputType) {
     if (!params?.has("token")) {
       resp.statusCode = ResponseStatusCode.BAD_REQUEST;
-      resp.end();
+      resp.end(UserVerificationError.TOKEN_UNDEFINED);
       return;
     }
     const token = params.get("token");
 
-    if (!token || typeof token !== "string") {
+    if (!isNotEmptyString(token)) {
       resp.statusCode = ResponseStatusCode.BAD_REQUEST;
-      resp.end();
+      resp.end(UserVerificationError.INVALID_TOKEN);
       return;
     }
 
-    try {
-      await this.authService.verify(token);
-      resp.statusCode = ResponseStatusCode.CREATED_OK;
-    } catch (error) {
-      console.log(`${error},  ${token}`);
-      resp.statusCode = ResponseStatusCode.BAD_REQUEST;
+    const userVerifcationResult = await this.authService.verify(token!);
+    if (userVerifcationResult.isErr) {
+      resp.statusCode = ResponseStatusCode.INVALID_CREDENTIALS;
+      resp.end(UserVerificationError.INVALID_TOKEN);
+      return;
     }
+
+    resp.statusCode = ResponseStatusCode.CREATED_OK;
     resp.end();
   }
 
   async login({ req, resp }: ControllerInputType): Promise<void> {
     let body = "";
+
     req?.on("data", (chunk) => {
       body += chunk.toString();
     });
 
-    req?.on("end", () => {
-      (async () => {
-        const loginUserDto = parseRequestBodyAndBuildLoginUserDto(
-          JSON.parse(body)
-        );
+    req?.on("end", async () => {
+      const loginUserDtoResult = parseRequestBodyAndBuildLoginUserDto(
+        JSON.parse(body)
+      );
 
-        if (!loginUserDto) {
-          resp.statusCode = ResponseStatusCode.BAD_REQUEST;
-          resp.end();
-          return;
-        }
+      if (loginUserDtoResult.isErr) {
+        resp.statusCode = ResponseStatusCode.BAD_REQUEST;
+        resp.end(loginUserDtoResult.error);
+        return;
+      }
 
-        const userId = await this.authService.signin(loginUserDto);
-        if (!userId) {
-          resp.statusCode = ResponseStatusCode.INVALID_CREDENTIALS;
-          resp.end("invalid credentials");
-          return;
-        }
-
+      const userSignResult = await this.authService.signin(
+        loginUserDtoResult.data
+      );
+      if (!userSignResult.isErr) {
+        const userId = userSignResult.data;
         const authToken = uuid("session");
 
         await this.sessionService.register({ id: authToken, userId });
 
         resp.statusCode = ResponseStatusCode.GET_OK;
         resp.end(JSON.stringify({ sessionId: authToken }));
-      })();
+
+        return;
+      }
+
+      const error = userSignResult.error;
+      console.log({ error });
+      this.handleLoginError(resp, error);
     });
+  }
+
+  private handleLoginError(resp: ServerResponse, error: UserLoginError) {
+    switch (error) {
+      case UserLoginError.INVALID_CREDENTIALS:
+        resp.statusCode = ResponseStatusCode.INVALID_CREDENTIALS;
+        break;
+      case UserLoginError.USER_NOT_FOUND:
+        resp.statusCode = ResponseStatusCode.NOT_FOUND;
+        break;
+      case UserLoginError.USER_EMAIL_NOT_VERIFIED:
+        resp.statusCode = ResponseStatusCode.FORBIDDEN;
+        break;
+      default:
+        resp.statusCode = ResponseStatusCode.SERVER_INTERNAL_ERROR;
+    }
+    resp.end(error);
   }
 
   async logout({ resp, params }: ControllerInputType) {
@@ -143,7 +166,7 @@ export class AuthController {
     req?.on("end", () => {
       (async () => {
         const email = JSON.parse(body);
-        if (!isString(email) || isValidEmail(email)) {
+        if (!isNotEmptyString(email) || isValidEmail(email)) {
           resp.statusCode = ResponseStatusCode.BAD_REQUEST;
           resp.end();
           return;

@@ -7,7 +7,6 @@ import {
 } from "../../../domain/usecases/authService";
 import { SessionService } from "../../../domain/usecases/sessionService";
 import { UserLoginError } from "../../../domain/utils/errors/user-login.error";
-import { RegistrationError } from "../../../domain/utils/errors/user-registration.error";
 import { UserVerificationError } from "../../../domain/utils/errors/user-verificatio.error";
 import {
   parseRequestBodyAndBuildCreateUserDto,

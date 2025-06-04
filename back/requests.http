@@ -6,16 +6,16 @@ POST http://localhost:5000/api/v1/auth/register
 content-type: application/json
 
 {
- "username": "testd2ddd",
- "email": "alt.vo-6ogaim1b@yopmail.com",
+ "username": "test-42",
+ "email": "alt.xp-c0hrhhn@yopmail.com",
  "adress": "test",
- "passwd": "Alt.vo-6ogaim1b@yopmail.com",
+ "passwd": "Alt.xp-c0hrhhn@yopmail.com",
  "firstName": "Benois",
  "lastName": "DUPOND"
 }
 
 ### verify user
-POST http://localhost:5000/api/v1/auth/verify/-maqlbqtu-f7cren
+POST http://localhost:5000/api/v1/auth/verify/-mbhrsnog-r7xuuo
 content-type: application/json
 
 {}
@@ -35,7 +35,18 @@ PATCH  http://localhost:5000/api/v1/auth/logout/session-maqmplae-cq7vl3
 
 
 ### get all users
-GET http://localhost:5000/api/v1/users/session-maqmplae-cq7vl3
+GET http://localhost:5000/api/v1/
 Content-Type: application/json
 
+### Upload images
+POST http://localhost:5000/api/v1/users/images
+Content-Type: application/json
 
+{
+  "filename": "blablahh.jpg",
+  "image": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8Xw8AApMBgYj6aHsAAAAASUVORK5CYII="
+}
+
+
+### get image
+GET http://localhost:5000/api/v1/users/images/cat.png

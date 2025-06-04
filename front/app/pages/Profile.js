@@ -7,7 +7,7 @@ export const Profile = () => {
   <div>
   <nav class="navbar navbar-light profile-topBar">
     <a class="navbar-brand" href="/">
-      <img src="../../images/logo.png" width="60" height="60" alt="">
+      <img src="http://localhost:5000/api/v1/users/images/logo.png" width="60" height="60" alt="">
     </a>
     <div class="navbar-text">
       <div class="username-label" id="username-label"></div>
@@ -60,7 +60,7 @@ export const Profile = () => {
       </div>
       <div class="card-deck" id="my-galery">
         <div class="card" style="width: 15rem;">
-          <img class="card-img-top" src="../../images/cat.png" alt="Card image cap">
+          <img class="card-img-top" src="http://localhost:5000/api/v1/users/images/cat.png" alt="Card image cap">
           <div class="card-body">
             <h5 class="card-title">Card title</h5>
           </div>
@@ -74,7 +74,7 @@ export const Profile = () => {
       <h2>Others</h2>
       <div class="card-deck" id="my-galery">
         <div class="card" style="width: 15rem;">
-          <img class="card-img-top" src="../../images/test.jpeg" alt="Card image cap">
+          <img class="card-img-top" src="http://localhost:5000/api/v1/users/images/test.jpeg" alt="Card image cap">
           <div class="card-body">
             <h5 class="card-title">Card title</h5>
           </div>

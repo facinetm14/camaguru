@@ -21,6 +21,16 @@ export class UserRouter extends RouterStrategy implements IRouter {
         method: "GET",
         handler: this.userController.findById,
       },
+      {
+        pattern: "/users/images",
+        method: "POST",
+        handler: this.userController.uploadImage,
+      },
+      {
+        pattern: "/users/images/:filename",
+        method: "GET",
+        handler: this.userController.getImageByName,
+      },
     ];
   }
 

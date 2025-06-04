@@ -14,7 +14,7 @@ export function Home() {
   const template = `
   <div class="container" id="home-container">
   <div class="mb-3 col-md-6 m-auto logo-wrapper">
-    <img src="../../images/logo.png" alt="Camagru-logo" width="250" class="logo-img">
+    <img src="/images/logo.png" alt="Camagru-logo" width="250" class="logo-img">
   </div>
   </div>
 

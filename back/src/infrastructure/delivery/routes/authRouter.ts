@@ -1,5 +1,4 @@
 import { IncomingMessage, ServerResponse } from "http";
-import { BaseRouter } from "./baseRouter";
 import { IRouter } from "./IRouter";
 import { RouterStrategy } from "./routerStrategy";
 import { routeType } from "./router";

@@ -11,6 +11,8 @@ import { LoginUserDto } from "../../dtos/loginUserDto";
 import { RegistrationError } from "../errors/user-registration.error";
 import { UserLoginError } from "../errors/user-login.error";
 import { Err, Ok, Result } from "../validation/result";
+import { uploadImageError } from "../errors/upload-image.error";
+import { UploadImageDto } from "../../dtos/uploadImageDto";
 
 export function buildUserListFromRawModel(userRawList: UserModel[]): User[] {
   return userRawList.map((userRaw) => buildUserEntityFromModel(userRaw));
@@ -109,4 +111,19 @@ export const parseRequestBodyAndBuildLoginUserDto = (
     username: body.username,
     passwd: body.passwd,
   });
+};
+
+
+export const parseRequestBodyAndBuildUploadImageDto = (
+  body: any
+): Result<UploadImageDto, uploadImageError> => {
+  if (!isNotEmptyString(body.filename)) {
+    return Err(uploadImageError.INVALID_FILE_NAME);
+  }
+
+  if (!isNotEmptyString(body.image)) {
+    return Err(uploadImageError.INVALID_IMAGE);
+  }
+
+  return Ok({ filename: body.filename, image: body.image   });
 };

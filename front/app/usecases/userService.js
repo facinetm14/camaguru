@@ -60,6 +60,19 @@ const sendResetPasswordRequest = async (email) => {
   });
 };
 
+const uploadImage = async (filename, image) => {
+  return fetch("/api/v1/users/images", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      filename,
+      image,
+    }),
+  });
+};
+
 export const userService = {
   register,
   verify,
@@ -68,4 +81,5 @@ export const userService = {
   isAuth,
   logout,
   sendResetPasswordRequest,
+  uploadImage,
 };

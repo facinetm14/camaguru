@@ -11,13 +11,21 @@ import { createReadStream, existsSync, statSync } from "node:fs";
 import { UPLOAD_DEST } from "../../../domain/utils/consts";
 import { getFileExtension } from "../../../domain/utils/files-utils";
 import { MimeType } from "../../enums/mimeType";
+import { IncomingMessage } from "node:http";
 export class UserController {
   constructor(
     private userService: UserService,
     private sessionService: SessionService
   ) {}
 
-  async findAll({ resp }: ControllerInputType): Promise<void> {
+  async findAll({ req, resp }: ControllerInputType): Promise<void> {
+    const userId = await this.getUserIdFromRequest(req);
+    if (!userId) {
+      resp.statusCode = ResponseStatusCode.FORBIDDEN;
+      resp.end();
+      return;
+    }
+
     resp.statusCode = ResponseStatusCode.GET_OK;
     resp.setHeader("Content-Type", "application/json");
 
@@ -37,9 +45,6 @@ export class UserController {
 
     try {
       const userId = await this.sessionService.findUserIdFromSession(sessionId);
-
-      console.log({ userId, sessionId });
-
       if (!userId) {
         (resp.statusCode = ResponseStatusCode.FORBIDDEN), resp.end();
         return;
@@ -66,7 +71,34 @@ export class UserController {
     }
   }
 
+  private async getUserIdFromRequest(
+    req?: IncomingMessage
+  ): Promise<string | null> {
+    const authHeader = req?.headers["authorization"];
+    const sessionToken = authHeader?.split(" ")[1];
+    if (!sessionToken) {
+      return null;
+    }
+
+    const userId = await this.sessionService.findUserIdFromSession(
+      sessionToken
+    );
+
+    if (!userId) {
+      return null;
+    }
+
+    return userId;
+  }
+
   async uploadImage({ req, resp }: ControllerInputType): Promise<void> {
+    const userId = await this.getUserIdFromRequest(req);
+    if (!userId) {
+      resp.statusCode = ResponseStatusCode.FORBIDDEN;
+      resp.end();
+      return;
+    }
+
     let body = "";
 
     req?.on("data", (chunk) => {
@@ -91,6 +123,7 @@ export class UserController {
       try {
         const path = join(process.cwd(), UPLOAD_DEST, imageDto.filename);
         await writeFile(path, Buffer.from(imageDto.image, "base64"));
+        await this.userService.saveImage(userId, imageDto.filename);
         resp.statusCode = ResponseStatusCode.CREATED_OK;
         resp.end("file uploaded successfully.");
       } catch (_error) {
@@ -100,7 +133,23 @@ export class UserController {
     });
   }
 
-  async getUserImages({ req, resp }: ControllerInputType): Promise<void> {}
+  async findAllImages({
+    req,
+    params,
+    resp,
+  }: ControllerInputType): Promise<void> {
+    const connectedUser = await this.getUserIdFromRequest(req);
+
+    if (!connectedUser) {
+      resp.statusCode = ResponseStatusCode.FORBIDDEN;
+      resp.end();
+      return;
+    }
+
+    const images = await this.userService.findAllImages();
+    resp.statusCode = ResponseStatusCode.GET_OK;
+    resp.end(JSON.stringify(images));
+  }
 
   async getImageByName({
     req,
@@ -115,7 +164,6 @@ export class UserController {
     }
 
     const path = join(process.cwd(), UPLOAD_DEST, filename);
-    console.log({ path });
     if (!existsSync(path)) {
       resp.statusCode = ResponseStatusCode.NOT_FOUND;
       resp.end("image not found");

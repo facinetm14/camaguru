@@ -1,13 +1,21 @@
+import { PLAIN_API_BASE_ROUTE } from "../env.js";
 import { handleProfile } from "../scripts/handleProfile.js";
+import { Galery } from "../components/Galery.js";
+import userStore from "../scripts/userStore.js";
 
 export const Profile = () => {
   const root = document.querySelector("#app");
+  const { myImageList, otherImageList } = userStore.getState();
+  const GaleryOwner = {
+    ME: "me",
+    OTHER: "other",
+  };
 
   const template = `
   <div>
   <nav class="navbar navbar-light profile-topBar">
     <a class="navbar-brand" href="/">
-      <img src="http://localhost:5000/api/v1/users/images/logo.png" width="60" height="60" alt="">
+      <img src="${PLAIN_API_BASE_ROUTE}/users/images/logo.png" width="60" height="60" alt="">
     </a>
     <div class="navbar-text">
       <div class="username-label" id="username-label"></div>
@@ -58,31 +66,11 @@ export const Profile = () => {
           <span>add image</span>
         </button>
       </div>
-      <div class="card-deck" id="my-galery">
-        <div class="card" style="width: 15rem;">
-          <img class="card-img-top" src="http://localhost:5000/api/v1/users/images/cat.png" alt="Card image cap">
-          <div class="card-body">
-            <h5 class="card-title">Card title</h5>
-          </div>
-          <div class="card-footer">
-            <small class="text-muted">Last updated 3 mins ago</small>
-          </div>
-        </div>
-      </div>
+      ${Galery(GaleryOwner.ME, myImageList)}
     </div>
     <div class="galery">
       <h2>Others</h2>
-      <div class="card-deck" id="my-galery">
-        <div class="card" style="width: 15rem;">
-          <img class="card-img-top" src="http://localhost:5000/api/v1/users/images/test.jpeg" alt="Card image cap">
-          <div class="card-body">
-            <h5 class="card-title">Card title</h5>
-          </div>
-          <div class="card-footer">
-            <small class="text-muted">Last updated 3 mins ago</small>
-          </div>
-        </div>
-      </div>
+      ${Galery(GaleryOwner.OTHER, myImageList)}
     </div>
   </div>
   <div class="block-selfie hidden" id="block-selfie">
@@ -180,10 +168,12 @@ export const Profile = () => {
   .galery-wrapper {
     display: flex;
     flex-direction: row;
-    overflow: auto;
+    justify-content: space-between;
+    flex-wrap: wrap;
   }
 
   .galery {
+    max-width: 45%;
     background-color: var(--bg-primary);
     color: white;
     margin: 16px;
@@ -194,6 +184,12 @@ export const Profile = () => {
 
     h2 {
       text-align: center;
+    }
+
+    .card-deck {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
     }
   }
 
@@ -230,9 +226,31 @@ export const Profile = () => {
     margin-top: 16px;
   }
 
+  .pressed {
+    background-color: green;
+  }
+
+  #close-photo:hover {
+    background-color: red;
+  }
+
   .selfie-action-wrapper {
     display: flex;
   }
+
+  .view-image-item {
+    position: absolute;
+    border: 1px solid gray;
+    border-radius: 5px; 
+    top: 10%;
+    right: 0;
+    left: 0;
+    margin: auto;
+    max-width: 652px;
+    background-color: gray;
+    z-index: 3;
+  }
+  
 </style>
 `;
 

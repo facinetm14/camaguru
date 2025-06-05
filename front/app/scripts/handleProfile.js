@@ -2,22 +2,26 @@ import { userService } from "../../usecases/userService.js";
 import userStore from "../../scripts/userStore.js";
 import { navigate } from "./events.js";
 import { uuid } from "./utils.js";
+import { SESSION_ID_KEY } from "./consts.js";
+import { PLAIN_API_BASE_ROUTE } from "../env.js";
+let stream = null;
+let isActiveImageItemView = false;
 
 export const handleProfile = () => {
-  // layouts binding
   const logoutBtn = document.querySelector("#logout");
   const profileDropdownMenu = document.querySelector("#profile-dropdownMenu");
   const usernameLabel = document.querySelector("#username-label");
-  const sessionId = sessionStorage.getItem("sessionId");
+  const sessionId = sessionStorage.getItem(SESSION_ID_KEY);
   const addImageBtn = document.querySelector("#btn-add-image");
   const selfieBlock = document.querySelector("#block-selfie");
   const takePhotoBtn = document.querySelector("#take-photo");
   const closePhotoBtn = document.querySelector("#close-photo");
   const canvas = document.querySelector("#canvas");
   const video = document.querySelector("#video");
+  const imageItemList = document.querySelectorAll(".image-item");
+
   const context = canvas ? canvas.getContext("2d") : null;
-  const secondImageSrc = "/images/nice-cat.png";
-  let stream;
+  const secondImageSrc = `${PLAIN_API_BASE_ROUTE}/users/images/logo.png`;
 
   if (!sessionId) {
     navigate("/");
@@ -25,12 +29,6 @@ export const handleProfile = () => {
   }
 
   const displayUserInfos = async () => {
-    const userInfosResp = await userService.getMe(sessionId);
-    if (userInfosResp.ok) {
-      const userInfosRespData = await userInfosResp.json();
-      userStore.setState({ user: userInfosRespData });
-    }
-
     const user = userStore.getState().user;
 
     usernameLabel.textContent = user.username;
@@ -52,11 +50,12 @@ export const handleProfile = () => {
 
   const logout = (_event) => {
     userService.logout(sessionId);
-    sessionStorage.removeItem("sessionId");
+    sessionStorage.removeItem(SESSION_ID_KEY);
   };
 
   const showSelfieBlock = async (_event) => {
     selfieBlock.classList.remove("hidden");
+    video.classList.remove("hidden");
 
     try {
       stream = await navigator.mediaDevices.getUserMedia({ video: true });
@@ -66,7 +65,8 @@ export const handleProfile = () => {
     }
   };
 
-  const takePhoto = (event) => {
+  const takePhoto = (_event) => {
+    takePhotoBtn.classList.add("pressed");
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
     context.globalAlpha = 0.5;
 
@@ -86,7 +86,7 @@ export const handleProfile = () => {
     userService.uploadImage(filename, base64Data);
 
     video.classList.add("hidden");
-    event.target.disabled = true;
+    takePhotoBtn.disabled = true;
     canvas.classList.remove("hidden");
   };
 
@@ -95,9 +95,51 @@ export const handleProfile = () => {
       stream.getTracks().forEach((track) => track.stop());
     }
     selfieBlock.classList.add("hidden");
+    canvas.classList.add("hidden");
+    takePhotoBtn.disabled = false;
+    takePhotoBtn.classList.remove("pressed");
+    navigate("/profile");
+  };
+
+  const handleGalery = (prefix) => {
+    for (const imageItem of imageItemList) {
+      const id = imageItem.dataset.imageid;
+      const imageItemView = document.querySelector(`#${id}`);
+      const closeView = document.querySelector(`#close-view-${id}`);
+      const viewFullBtn = document.querySelector(`#view-full-btn-${id}`);
+      const commentsBtn = document.querySelector(`#comments-btn-${id}`);
+      const inputComment = document.querySelector(`#input-comment-${id}`);
+
+      viewFullBtn.addEventListener("click", (event) => {
+        event.preventDefault();
+
+        if (isActiveImageItemView) {
+          return;
+        }
+
+        imageItemView.classList.remove("hidden");
+        isActiveImageItemView = true;
+      });
+
+      commentsBtn.addEventListener("click", (event) => {
+        event.preventDefault();
+        if (inputComment.classList.contains("hidden")) {
+          inputComment.classList.remove("hidden");
+        } else {
+          inputComment.classList.add("hidden");
+        }
+      });
+
+      closeView.addEventListener("click", (event) => {
+        event.preventDefault();
+        imageItemView.classList.add("hidden");
+        isActiveImageItemView = false;
+      });
+    }
   };
 
   displayUserInfos();
+  handleGalery();
 
   logoutBtn.addEventListener("click", logout);
   addImageBtn.addEventListener("click", showSelfieBlock);

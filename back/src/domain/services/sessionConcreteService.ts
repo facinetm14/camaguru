@@ -9,10 +9,10 @@ export class SessionConcreteService implements SessionService {
   async register(session: CreateSessionDto): Promise<void> {
     const newSession = buildSessionModelFromCreateSessionDto(session);
     try {
-      return this.sessionRepository.register(newSession);
+      await this.sessionRepository.register(newSession);
+      return;
     } catch (error) {
       console.log(error);
-      throw new Error("Error: failed to create user session");
     }
   }
 

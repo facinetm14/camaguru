@@ -138,7 +138,7 @@ export class AuthController {
     resp.end(error);
   }
 
-  async logout({ resp, params }: ControllerInputType) {
+  async logout({ req, resp, params }: ControllerInputType) {
     if (!params?.has("sessionId")) {
       resp.statusCode = ResponseStatusCode.BAD_REQUEST;
       resp.end();

@@ -1,5 +1,5 @@
 ### get user by id
-GET http://localhost:5000/api/v1/users
+POST http://localhost:5000/api/v1/users
 
 ### register a user
 POST http://localhost:5000/api/v1/auth/register
@@ -26,8 +26,8 @@ POST http://localhost:5000/api/v1/auth/login
 content-type: application/json
 
 {
- "username": "testd2ddd",
- "passwd": "Alt.vo-6ogaim1b@yopmail.com"
+ "username": "test-42",
+ "passwd": "Alt.xp-c0hrhhn@yopmail.com"
 }
 
 ### logout user
@@ -41,12 +41,18 @@ Content-Type: application/json
 ### Upload images
 POST http://localhost:5000/api/v1/users/images
 Content-Type: application/json
+Authorization: Bearer session-mbjcny9y-7ooxzf
 
 {
-  "filename": "blablahh.jpg",
+  "filename": "new-imagedd.jpg",
   "image": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8Xw8AApMBgYj6aHsAAAAASUVORK5CYII="
 }
 
 
+### get all images
+GET http://localhost:5000/api/v1/users/images-all
+Content-Type: application/json
+Authorization: Bearer session-mbj6tc48-6fqgvt
+
 ### get image
-GET http://localhost:5000/api/v1/users/images/cat.png
+GET http://localhost:5000/api/v1/users/images/img-test-42--mbjdokuw-y60uzf.jpg

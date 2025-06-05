@@ -9,16 +9,18 @@ import { User } from "../entity/User";
 import { UserRepository } from "../ports/userRepository";
 import { CreateUserDto } from "../dtos/createUserDto";
 import { UserService } from "../usecases/userService";
-import { UploadImageDto } from "../dtos/uploadImageDto";
-import { Err, Ok, Result } from "../utils/validation/result";
-import { join, resolve } from "node:path";
-import { UPLOAD_DEST } from "../utils/consts";
-import { uploadImageError } from "../utils/errors/upload-image.error";
-import { readFile, writeFile } from "node:fs/promises";
-import { GetImageError } from "../utils/errors/get-image.error";
+import { UserImagesRepository } from "../ports/userImagesRepository";
+import {
+  buildUserImageEntityFromModel,
+  buildUserImagesModel,
+} from "../utils/mappers/images.mapper";
+import { UserImage } from "../entity/userImage";
 
 export class UserConCreteService implements UserService {
-  constructor(private userRepository: UserRepository) {}
+  constructor(
+    private userRepository: UserRepository,
+    private userImagesRepository: UserImagesRepository
+  ) {}
 
   async findAll(): Promise<User[]> {
     const userRawList = await this.userRepository.findAll();
@@ -60,19 +62,15 @@ export class UserConCreteService implements UserService {
     return this.userRepository.updateStatusAndRemoveValidationToken(idUser);
   }
 
-  // async uploadImage(
-  //   imageDto: UploadImageDto
-  // ): Promise<Result<null, uploadImageError>> {
-  //   try {
-  //     const path = join(process.cwd(), UPLOAD_DEST, imageDto.filename);
-  //     await writeFile(path, Buffer.from(imageDto.image, "base64"));
-  //     return Ok(null);
-  //   } catch (_error) {
-  //     return Err(uploadImageError.UNKNOWN_ERROR);
-  //   }
-  // }
-  //   async getImage(filename: string): Result<string, GetImageError> {
-  //     const
-  //   }
-  // }
+  async saveImage(userId: string, filename: string): Promise<void> {
+    const userImage = buildUserImagesModel(userId, filename);
+    return this.userImagesRepository.saveImage(userImage);
+  }
+
+  async findAllImages(): Promise<UserImage[]> {
+    const userImages = await this.userImagesRepository.findAll();
+    return userImages.map((userImage) =>
+      buildUserImageEntityFromModel(userImage)
+    );
+  }
 }

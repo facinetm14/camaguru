@@ -1,6 +1,6 @@
 import { pgClient } from "../dataSource";
 const query = `
-        CREATE TABLE IF NOT EXISTS users_images (
+        CREATE TABLE IF NOT EXISTS user_images (
             id VARCHAR(255) UNIQUE NOT NULL,
             user_id VARCHAR(255) NOT NULL,
             name VARCHAR(50) UNIQUE NOT NULL,
@@ -9,6 +9,6 @@ const query = `
         );
     `;
 
-export const createUserTable = async () => {
+export const createUserImagesTable = async () => {
   return pgClient.query(query);
 };

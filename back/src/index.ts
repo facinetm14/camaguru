@@ -14,6 +14,7 @@ import { UserController } from "./infrastructure/delivery/controllers/UserContro
 import { BaseRouter } from "./infrastructure/delivery/routes/baseRouter";
 import { UserRouter } from "./infrastructure/delivery/routes/userRouter";
 import { AuthRouter } from "./infrastructure/delivery/routes/authRouter";
+import { UserImagesConcreteRepository } from "./infrastructure/adapters/userImagesConcreteRepository";
 
 const hostname = process.env.HOST || "0.0.0.0";
 const port = process.env.PORT || 5000;
@@ -21,6 +22,12 @@ const port = process.env.PORT || 5000;
 initDb();
 const server = createServer((req: IncomingMessage, resp: ServerResponse) => {
   DIContainer.registerClass(ModuleRegister.BASE_ROUTE, new BaseRouter());
+
+  DIContainer.registerClass(
+    ModuleRegister.USER_IMAGES_REPOSITORY,
+    new UserImagesConcreteRepository()
+  );
+
   DIContainer.registerClass(
     ModuleRegister.USER_REPOSITORY,
     new UserConcreteRepository()
@@ -44,7 +51,10 @@ const server = createServer((req: IncomingMessage, resp: ServerResponse) => {
 
   DIContainer.registerClass(
     ModuleRegister.USER_SERVICE,
-    new UserConCreteService(DIContainer.resolve(ModuleRegister.USER_REPOSITORY))
+    new UserConCreteService(
+      DIContainer.resolve(ModuleRegister.USER_REPOSITORY),
+      DIContainer.resolve(ModuleRegister.USER_IMAGES_REPOSITORY)
+    )
   );
   DIContainer.registerClass(
     ModuleRegister.USER_CONTROLLER,

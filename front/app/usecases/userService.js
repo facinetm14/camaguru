@@ -1,4 +1,5 @@
 import { API_BASE_ROUTE } from "../env.js";
+import { SESSION_ID_KEY } from "../scripts/consts.js";
 
 const register = async (user) => {
   return fetch(`${API_BASE_ROUTE}/auth/register`, {
@@ -61,15 +62,28 @@ const sendResetPasswordRequest = async (email) => {
 };
 
 const uploadImage = async (filename, image) => {
-  return fetch("/api/v1/users/images", {
+  const sessionId = sessionStorage.getItem(SESSION_ID_KEY);
+  return fetch(`${API_BASE_ROUTE}/users/images`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${sessionId}`,
     },
     body: JSON.stringify({
       filename,
       image,
     }),
+  });
+};
+
+const getAllImages = async () => {
+  const sessionId = sessionStorage.getItem(SESSION_ID_KEY);
+  return fetch(`${API_BASE_ROUTE}/users/images-all`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${sessionId}`,
+    },
   });
 };
 
@@ -82,4 +96,5 @@ export const userService = {
   logout,
   sendResetPasswordRequest,
   uploadImage,
+  getAllImages,
 };

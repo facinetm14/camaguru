@@ -12,6 +12,11 @@ export class UserRouter extends RouterStrategy implements IRouter {
     super();
     this.routes = [
       {
+        pattern: "/users/images-all",
+        method: "GET",
+        handler: this.userController.findAllImages,
+      },
+      {
         pattern: "/users",
         method: "GET",
         handler: this.userController.findAll,
@@ -52,6 +57,7 @@ export class UserRouter extends RouterStrategy implements IRouter {
       if (params && route.method === req.method) {
         matchedMethod = true;
         route.handler.call(this.userController, { req, resp, params });
+        return;
       }
     }
 

@@ -1,18 +1,19 @@
 import { Events } from "./scripts/enums.js";
 import { routes } from "./scripts/router.js";
 import { navigate } from "./scripts/events.js";
+import { setGlobalState } from "./scripts/userStore.js";
 
 [Events.NAVIGATE_TO_PAGE, Events.POP_STATE].forEach((event) => {
-  window.addEventListener(event, () => {
+  window.addEventListener(event, async () => {
     renderApp();
   });
 });
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   renderApp();
 });
 
-export function renderApp() {
+export async function renderApp() {
   const [_, path] = window.location.pathname.split("/");
   const target = path.length ? path : "/";
 
@@ -23,5 +24,6 @@ export function renderApp() {
     return;
   }
 
+  await setGlobalState();
   page();
 }

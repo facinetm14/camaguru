@@ -41,9 +41,9 @@ export class UserConcreteRepository implements UserRepository {
     };
 
     const connexion = await pgClient.connect();
-    const result = await pgClient.query(insertQuery);
+    await pgClient.query(insertQuery);
     connexion.release();
-    return result["rows"];
+    return this.findUserByUniqKey(UserUniqKeys.ID, id);
   }
 
   async findAll(): Promise<UserModel[]> {
@@ -53,7 +53,7 @@ export class UserConcreteRepository implements UserRepository {
     const result = await pgClient.query(queryUsers);
     connexion.release();
 
-    const users = result["rows"];
+    const users = result.rows;
 
     return users;
   }
@@ -70,7 +70,7 @@ export class UserConcreteRepository implements UserRepository {
     const connexion = await pgClient.connect();
     const result = await pgClient.query(queryUser);
     connexion.release();
-    const user = result["rows"][0];
+    const user = result.rows[0];
 
     return user;
   }

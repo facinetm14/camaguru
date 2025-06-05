@@ -1,0 +1,76 @@
+import { UserUniqKeys } from "../enums/user.enums";
+import {
+  buildUserEntityFromModel,
+  buildUserListFromRawModel,
+  buildUserModelFromCreateUserDto,
+} from "../utils/mappers/user-entity.mapper";
+
+import { User } from "../entity/User";
+import { UserRepository } from "../ports/userRepository";
+import { CreateUserDto } from "../dtos/createUserDto";
+import { UserService } from "../usecases/userService";
+import { UserImagesRepository } from "../ports/userImagesRepository";
+import {
+  buildUserImageEntityFromModel,
+  buildUserImagesModel,
+} from "../utils/mappers/images.mapper";
+import { UserImage } from "../entity/userImage";
+
+export class UserConCreteService implements UserService {
+  constructor(
+    private userRepository: UserRepository,
+    private userImagesRepository: UserImagesRepository
+  ) {}
+
+  async findAll(): Promise<User[]> {
+    const userRawList = await this.userRepository.findAll();
+    if (!userRawList) {
+      return [];
+    }
+    return buildUserListFromRawModel(userRawList);
+  }
+
+  async create(
+    createUserDto: CreateUserDto,
+    validationToken: string
+  ): Promise<User | null> {
+    const newUser = await buildUserModelFromCreateUserDto(
+      createUserDto,
+      validationToken
+    );
+    try {
+      const createdUser = await this.userRepository.create(newUser);
+      return buildUserEntityFromModel(createdUser);
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }
+
+  async findUserByUniqKey(
+    key: UserUniqKeys,
+    value: string
+  ): Promise<User | null> {
+    const user = await this.userRepository.findUserByUniqKey(key, value);
+    if (!user) {
+      return null;
+    }
+    return buildUserEntityFromModel(user);
+  }
+
+  async activateAccount(idUser: string): Promise<void> {
+    return this.userRepository.updateStatusAndRemoveValidationToken(idUser);
+  }
+
+  async saveImage(userId: string, filename: string): Promise<void> {
+    const userImage = buildUserImagesModel(userId, filename);
+    return this.userImagesRepository.saveImage(userImage);
+  }
+
+  async findAllImages(): Promise<UserImage[]> {
+    const userImages = await this.userImagesRepository.findAll();
+    return userImages.map((userImage) =>
+      buildUserImageEntityFromModel(userImage)
+    );
+  }
+}

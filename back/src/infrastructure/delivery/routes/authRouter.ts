@@ -1,5 +1,4 @@
 import { IncomingMessage, ServerResponse } from "http";
-import { BaseRouter } from "./baseRouter";
 import { IRouter } from "./IRouter";
 import { RouterStrategy } from "./routerStrategy";
 import { routeType } from "./router";
@@ -32,6 +31,11 @@ export class AuthRouter extends RouterStrategy implements IRouter {
         method: "PATCH",
         handler: this.authController.logout,
       },
+      {
+        pattern: "/auth/reset-password",
+        method: "POST",
+        handler: this.authController.resetPassword,
+      }
     ];
   }
 

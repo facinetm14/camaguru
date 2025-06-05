@@ -1,26 +1,58 @@
 ### get user by id
-GET http://localhost:5000/api/v1/users
+POST http://localhost:5000/api/v1/users
 
 ### register a user
 POST http://localhost:5000/api/v1/auth/register
 content-type: application/json
 
 {
- "username": "test2",
- "email": "alt.bm-06xlvwr@yopmail.com",
+ "username": "test-42",
+ "email": "alt.xp-c0hrhhn@yopmail.com",
  "adress": "test",
- "passwd": "Alt.bm-06xlvwr@yopmail.com",
+ "passwd": "Alt.xp-c0hrhhn@yopmail.com",
  "firstName": "Benois",
  "lastName": "DUPOND"
 }
 
 ### verify user
-POST http://localhost:5000/api/v1/auth/verify/-m38hzdhh-n6oowi
+POST http://localhost:5000/api/v1/auth/verify/-mbhrsnog-r7xuuo
 content-type: application/json
 
 {}
 
 
+### login user
+POST http://localhost:5000/api/v1/auth/login
+content-type: application/json
+
+{
+ "username": "test-42",
+ "passwd": "Alt.xp-c0hrhhn@yopmail.com"
+}
+
+### logout user
+PATCH  http://localhost:5000/api/v1/auth/logout/session-maqmplae-cq7vl3
+
+
 ### get all users
-GET http://localhost:5000/api/v1/users/session-m3zyg1kv-nz8d2z
+GET http://localhost:5000/api/v1/
 Content-Type: application/json
+
+### Upload images
+POST http://localhost:5000/api/v1/users/images
+Content-Type: application/json
+Authorization: Bearer session-mbjcny9y-7ooxzf
+
+{
+  "filename": "new-imagedd.jpg",
+  "image": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8Xw8AApMBgYj6aHsAAAAASUVORK5CYII="
+}
+
+
+### get all images
+GET http://localhost:5000/api/v1/users/images-all
+Content-Type: application/json
+Authorization: Bearer session-mbj6tc48-6fqgvt
+
+### get image
+GET http://localhost:5000/api/v1/users/images/img-test-42--mbjdokuw-y60uzf.jpg

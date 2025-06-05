@@ -7,7 +7,6 @@ import { ResponseStatusCode } from "../../enums/ResponseStatusCode";
 import { InputError } from "../../errors/inputError";
 import { Router } from "./router";
 
-
 export class Gateway {
   private registry: Map<AllowedRoutes, Router> = new Map();
 
@@ -33,30 +32,20 @@ export class Gateway {
     }
 
     const baseRoute = req.url?.slice(API_BASE.length)?.split("/")[1] ?? "";
-    try {
-      this.sanitizeUrl(baseRoute);
+    if (this.isKnownRoute(baseRoute)) {
       return this.resolveRoute(
         req,
         resp,
         this.registry.get(baseRoute as AllowedRoutes)!
       );
-    } catch (error) {
-      if (error instanceof InputError && error.name == RequestError.NOT_FOUND) {
-        if (error.name == RequestError.NOT_FOUND) {
-          resp.statusCode = ResponseStatusCode.NOT_FOUND;
-        }
-      }
-      resp.end();
-      console.log(error);
     }
+
+    resp.statusCode = ResponseStatusCode.NOT_FOUND;
+    resp.end();
   }
 
-  private sanitizeUrl(route: string): void {
-    if (!Object.values(AllowedRoutes).includes(route as AllowedRoutes)) {
-      throw new InputError({
-        name: RequestError.NOT_FOUND,
-      });
-    }
+  private isKnownRoute(route: string): boolean {
+    return Object.values(AllowedRoutes).includes(route as AllowedRoutes);
   }
 
   private async resolveRoute(

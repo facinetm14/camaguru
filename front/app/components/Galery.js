@@ -1,0 +1,94 @@
+import { PLAIN_API_BASE_ROUTE } from "../env.js";
+
+export const Galery = (owner, imageList) => {
+  let template = `<div class="card-deck">`;
+
+  for (const image of imageList) {
+    const imageItem = `
+    <div class="card image-item" data-imageid="${image.id}-${owner}">
+      <img class="card-img-top" src="${PLAIN_API_BASE_ROUTE}/users/images/${image.name}" alt="Card image cap">
+      <div class="card-body image-score-block">
+        <div class="likes-block">
+          <button type="button" class="view-item-action" id="likes-btn-${image.id}-${owner}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-hand-thumbs-up-fill" viewBox="0 0 16 16">
+              <path d="M6.956 1.745C7.021.81 7.908.087 8.864.325l.261.066c.463.116.874.456 1.012.965.22.816.533 2.511.062 4.51a10 10 0 0 1 .443-.051c.713-.065 1.669-.072 2.516.21.518.173.994.681 1.2 1.273.184.532.16 1.162-.234 1.733q.086.18.138.363c.077.27.113.567.113.856s-.036.586-.113.856c-.039.135-.09.273-.16.404.169.387.107.819-.003 1.148a3.2 3.2 0 0 1-.488.901c.054.152.076.312.076.465 0 .305-.089.625-.253.912C13.1 15.522 12.437 16 11.5 16H8c-.605 0-1.07-.081-1.466-.218a4.8 4.8 0 0 1-.97-.484l-.048-.03c-.504-.307-.999-.609-2.068-.722C2.682 14.464 2 13.846 2 13V9c0-.85.685-1.432 1.357-1.615.849-.232 1.574-.787 2.132-1.41.56-.627.914-1.28 1.039-1.639.199-.575.356-1.539.428-2.59z"/>
+            </svg>
+          </button>
+        </div>
+        <div class="comments-block">
+          <button type="button" class="view-item-action" id="comments-btn-${image.id}-${owner}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-chat-right-text-fill" viewBox="0 0 16 16">
+              <path d="M16 2a2 2 0 0 0-2-2H2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h9.586a1 1 0 0 1 .707.293l2.853 2.853a.5.5 0 0 0 .854-.353zM3.5 3h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1 0-1m0 2.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1 0-1m0 2.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1 0-1"/>
+            </svg>
+          </button>
+        </div>
+        <div class="view-full-block">
+          <button type="button" class="view-item-action" id="view-full-btn-${image.id}-${owner}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
+              <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0"/>
+              <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="card-footer">
+        <textarea id="input-comment-${image.id}-${owner}" class="input-comment hidden" placeholder="Type your comment here" maxlength="255">
+        </textarea>
+      </div>
+    </div>
+    
+    
+    <div class="view-image-item hidden" id="${image.id}-${owner}">
+      <button type="button" class="view-item-action" id="close-view-${image.id}-${owner}">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#01081c" class="bi bi-x-circle"
+          viewBox="0 0 16 16">
+          <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
+          <path
+            d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708" />
+        </svg>
+      </button>
+      <img class="card-img-top" src="${PLAIN_API_BASE_ROUTE}/users/images/${image.name}" alt="Card image cap">
+    </div>
+    `;
+    template += imageItem;
+  }
+
+  template += `</div>`;
+
+  template += `
+  <style>
+    .image-item {
+      width: calc(33.333% - 10px);
+      min-widht: 200px;
+      margin-bottom: 20px;
+      cursor: pointer;
+    }
+    .view-item-action {
+      margin-left: auto; 
+      margin-right: 0;
+      display: block; 
+      background-color: grey;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+    }
+
+    .input-comment {
+      width: 100%;
+    }
+
+    .image-score-block {
+      display: flex;
+      flex-orientation: rows;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+  </style>
+  `;
+
+  return template;
+};

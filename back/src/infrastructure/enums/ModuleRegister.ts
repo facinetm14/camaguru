@@ -14,4 +14,6 @@ export enum ModuleRegister {
 
   SESSION_REPOSITORY = "sessionRepository",
   SESSION_SERVICE = "sessionService",
+
+  USER_IMAGES_REPOSITORY = "userImgesRepository"
 }

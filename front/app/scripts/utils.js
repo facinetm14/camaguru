@@ -1,0 +1,23 @@
+export const isValidEmail = (email) => {
+  const patterns = /^[^\s@]+@[^\s@]+\.[^\s@]/;
+  const emailRegex = new RegExp(patterns);
+  return !!email.match(emailRegex);
+};
+
+export const isPasswordStrong = (passwd) => {
+  const rulePattern =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9_]).+$/;
+  if (passwd.length < 12) {
+    return false;
+  }
+  const passwdRegex = new RegExp(rulePattern);
+
+  return !!passwd.match(passwdRegex);
+};
+
+export const uuid = (prefix = "") => {
+  const timestamp = Date.now().toString(36);
+  const random = Math.random().toString(36).substring(2, 8);
+
+  return `${prefix}-${timestamp}-${random}`;
+};

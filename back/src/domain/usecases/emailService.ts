@@ -1,5 +1,16 @@
 import { CreateUserDto } from "../dtos/createUserDto";
 
+export type Email = {
+  to: string;
+  msg: string;
+  subject: string;
+};
+
+export enum EmailSendStatus {
+  OK = "Ok",
+  ERROR = "Error",
+}
+
 export interface EmailService {
-  sendConfirmationEmail(user: CreateUserDto, token?: string): Promise<void>;
+  send(email: Email): Promise<EmailSendStatus>;
 }

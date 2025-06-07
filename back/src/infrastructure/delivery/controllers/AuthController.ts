@@ -9,6 +9,8 @@ import { SessionService } from "../../../domain/usecases/sessionService";
 import { UserLoginError } from "../../../domain/utils/errors/user-login.error";
 import { UserVerificationError } from "../../../domain/utils/errors/user-verificatio.error";
 import {
+  parseAndValidateEmail,
+  parseAndValidateResetPasswordDto,
   parseRequestBodyAndBuildCreateUserDto,
   parseRequestBodyAndBuildLoginUserDto,
 } from "../../../domain/utils/mappers/user-entity.mapper";
@@ -79,7 +81,7 @@ export class AuthController {
     }
 
     resp.statusCode = ResponseStatusCode.CREATED_OK;
-    resp.end();
+    resp.end(JSON.stringify(userVerifcationResult.data));
   }
 
   async login({ req, resp }: ControllerInputType): Promise<void> {
@@ -164,24 +166,60 @@ export class AuthController {
 
     req?.on("end", () => {
       (async () => {
-        const email = JSON.parse(body);
-        if (!isNotEmptyString(email) || isValidEmail(email)) {
+        const emailResult = parseAndValidateEmail(JSON.parse(body));
+
+        if (emailResult.isErr) {
           resp.statusCode = ResponseStatusCode.BAD_REQUEST;
           resp.end();
           return;
         }
 
+        const email = emailResult.data;
         const userId = await this.authService.resetPassword(email);
 
         if (!userId) {
-          resp.statusCode = ResponseStatusCode.INVALID_CREDENTIALS;
-          resp.end("invalid credentials");
+          resp.statusCode = ResponseStatusCode.NOT_FOUND;
+          resp.end("user not found");
           return;
         }
 
         resp.statusCode = ResponseStatusCode.CREATED_OK;
         resp.end();
       })();
+    });
+  }
+
+  async createNewPassword({ req, resp }: ControllerInputType): Promise<void> {
+    let body = "";
+
+    req?.on("data", (chunk) => {
+      body += chunk.toString();
+    });
+
+    req?.on("end", async () => {
+      const createNewPasswordDtoResult = await parseAndValidateResetPasswordDto(
+        JSON.parse(body)
+      );
+
+      if (createNewPasswordDtoResult.isErr) {
+        resp.statusCode = ResponseStatusCode.BAD_REQUEST;
+        resp.end(createNewPasswordDtoResult.error);
+        return;
+      }
+
+      console.log(createNewPasswordDtoResult.data);
+      const resetPasswordResult = await this.authService.createNewPassword(
+        createNewPasswordDtoResult.data
+      );
+
+      if (resetPasswordResult.isErr) {
+        resp.statusCode = ResponseStatusCode.SERVER_INTERNAL_ERROR;
+        resp.end();
+        return;
+      }
+
+      resp.statusCode = ResponseStatusCode.CREATED_OK;
+      resp.end();
     });
   }
 }

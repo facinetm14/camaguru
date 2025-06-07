@@ -20,6 +20,16 @@ const verify = async (token) => {
   });
 };
 
+const updatePassword = async (id, passwd) => {
+  return fetch(`${API_BASE_ROUTE}/auth/new-password`, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    method: "PATCH",
+    body: JSON.stringify({ passwd, id }),
+  });
+};
+
 const signIn = async (username, passwd) => {
   return fetch(`${API_BASE_ROUTE}/auth/login`, {
     headers: {
@@ -97,4 +107,5 @@ export const userService = {
   sendResetPasswordRequest,
   uploadImage,
   getAllImages,
+  updatePassword,
 };

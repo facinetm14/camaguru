@@ -15,6 +15,7 @@ import {
   buildUserImagesModel,
 } from "../utils/mappers/images.mapper";
 import { UserImage } from "../entity/userImage";
+import { UpdateUserDto } from "../dtos/updateUserDto";
 
 export class UserConCreteService implements UserService {
   constructor(
@@ -72,5 +73,9 @@ export class UserConCreteService implements UserService {
     return userImages.map((userImage) =>
       buildUserImageEntityFromModel(userImage)
     );
+  }
+
+  update(idUser: string, updateUserDto: UpdateUserDto): Promise<string | null> {
+    return this.userRepository.update(idUser, updateUserDto);
   }
 }

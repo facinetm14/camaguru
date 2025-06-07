@@ -14,3 +14,5 @@ export type UserModel = {
   validation_token: string;
   status: UserStatus;
 };
+
+export type UpdateUserModel = Omit<Partial<UserModel>, "id" | "email" | "status" | "created_at">;

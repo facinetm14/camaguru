@@ -35,7 +35,12 @@ export class AuthRouter extends RouterStrategy implements IRouter {
         pattern: "/auth/reset-password",
         method: "POST",
         handler: this.authController.resetPassword,
-      }
+      },
+      {
+        pattern: "/auth/new-password",
+        method: "PATCH",
+        handler: this.authController.createNewPassword,
+      },
     ];
   }
 

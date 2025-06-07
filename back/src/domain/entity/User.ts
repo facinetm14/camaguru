@@ -10,6 +10,7 @@ export type User = {
   updatedAt: Date;
   salt: string;
   status: string;
+  validationToken?: string;
 };
 
 export type UserWithNoPassword = Omit<User, 'passwd'>;

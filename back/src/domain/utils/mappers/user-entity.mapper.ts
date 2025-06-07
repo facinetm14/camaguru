@@ -1,7 +1,10 @@
 import { CreateSessionDto } from "../../dtos/createSessionDto";
 import { CreateUserDto } from "../../dtos/createUserDto";
 import { User } from "../../entity/User";
-import { UserModel } from "../../../infrastructure/model/UserModel";
+import {
+  UpdateUserModel,
+  UserModel,
+} from "../../../infrastructure/model/UserModel";
 import { UserStatus } from "../../enums/user.enums";
 import { hashPassword, isPasswordStrong } from "../password";
 import { uuid } from "../uuid";
@@ -13,6 +16,8 @@ import { UserLoginError } from "../errors/user-login.error";
 import { Err, Ok, Result } from "../validation/result";
 import { uploadImageError } from "../errors/upload-image.error";
 import { UploadImageDto } from "../../dtos/uploadImageDto";
+import { UpdateUserDto } from "../../dtos/updateUserDto";
+import { ResetPasswordDto } from "../../dtos/resetPasswordDtot";
 
 export function buildUserListFromRawModel(userRawList: UserModel[]): User[] {
   return userRawList.map((userRaw) => buildUserEntityFromModel(userRaw));
@@ -113,7 +118,6 @@ export const parseRequestBodyAndBuildLoginUserDto = (
   });
 };
 
-
 export const parseRequestBodyAndBuildUploadImageDto = (
   body: any
 ): Result<UploadImageDto, uploadImageError> => {
@@ -125,5 +129,54 @@ export const parseRequestBodyAndBuildUploadImageDto = (
     return Err(uploadImageError.INVALID_IMAGE);
   }
 
-  return Ok({ filename: body.filename, image: body.image   });
+  return Ok({ filename: body.filename, image: body.image });
+};
+
+export const parseAndValidateEmail = (
+  body: any
+): Result<string, RegistrationError.INVALID_USER_EMAIL> => {
+  if (!isNotEmptyString(body.email) || !isValidEmail(body.email)) {
+    return Err(RegistrationError.INVALID_USER_EMAIL);
+  }
+
+  return Ok(body.email);
+};
+
+export const buildUpdateUserModelFormDto = (
+  updateUser: UpdateUserDto
+): UpdateUserModel => {
+  return {
+    ...(updateUser.adress !== undefined && { adres: updateUser.adress }),
+    ...(updateUser.firstName !== undefined && {
+      first_name: updateUser.firstName,
+    }),
+    ...(updateUser.lastName !== undefined && {
+      last_name: updateUser.lastName,
+    }),
+    ...(updateUser.username !== undefined && { username: updateUser.username }),
+    ...(updateUser.passwd !== undefined && { passwd: updateUser.passwd }),
+    ...(updateUser.validationToken !== undefined && {
+      validation_token: updateUser.validationToken,
+    }),
+    updated_at: new Date(),
+  };
+};
+
+export const parseAndValidateResetPasswordDto = async (
+  body: any
+): Promise<Result<ResetPasswordDto, RegistrationError>> => {
+  if (!isNotEmptyString(body.id) || !isNotEmptyString(body.passwd)) {
+    return Err(RegistrationError.BAD_REQUEST);
+  }
+
+  if (!isPasswordStrong(body.passwd)) {
+    return Err(RegistrationError.USER_PASSWD_WEAK);
+  }
+
+  const { hash, salt } = await hashPassword(body.passwd);
+  return Ok({
+    id: body.id,
+    passwd: hash,
+    salt,
+  });
 };

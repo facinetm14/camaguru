@@ -8,4 +8,6 @@ export type CreateUserDto = {
   passwd: string;
   createdAt?: Date;
   updatedAt?: Date;
+  validationToken?: string;
+  salt?: string;
 };

@@ -3,12 +3,30 @@ import { Confirm } from "../pages/Confirm.js";
 import { Home } from "../pages/Home.js";
 import { NotFound } from "../pages/NotFound.js";
 import { Profile } from "../pages/Profile.js";
+import { ResetPassword } from "../pages/ResetPassword.js";
+import { ConfrimPasswordReset } from "../pages/ConfirmPasswordReset.js";
+import { CreateNewPassword } from "../pages/CreateNewPassword.js";
+
+export const RouteUrl = {
+  HOME: "",
+  REGISTER: "register",
+  CONFIRM: "confirm",
+  CONFIRM_PASSWORD_RESET: "confirm-password-reset",
+  NOT_FOUND: "404",
+  PROFILE: "profile",
+  RESET_PASSWORD: "reset-password",
+  ACTIVATE_USER: "activate",
+  CREATE_NEW_PASSWORD: "create-new-password",
+};
 
 export const routes = new Map([
-  ["/", Home],
-  ["register", Home],
-  ["confirm", Confirm],
-  ["activate", Activate],
-  ["404", NotFound],
-  ["profile", Profile]
+  [RouteUrl.HOME, Home],
+  [RouteUrl.REGISTER, Home],
+  [RouteUrl.CONFIRM, Confirm],
+  [RouteUrl.CONFIRM_PASSWORD_RESET, ConfrimPasswordReset],
+  [RouteUrl.ACTIVATE_USER, Activate],
+  [RouteUrl.NOT_FOUND, NotFound],
+  [RouteUrl.PROFILE, Profile],
+  [RouteUrl.RESET_PASSWORD, ResetPassword],
+  [RouteUrl.CREATE_NEW_PASSWORD, CreateNewPassword],
 ]);

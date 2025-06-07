@@ -7,13 +7,19 @@ import { LoginUserDto } from "../dtos/loginUserDto";
 import { AuthService, UserVeryficationStatus } from "../usecases/authService";
 import { Email, EmailSendStatus, EmailService } from "../usecases/emailService";
 import { UserService } from "../usecases/userService";
-import { confirmationTemplate } from "../../template/email";
+import {
+  confirmationTemplate,
+  resetPasswordLinkTemplate,
+} from "../../template/email";
 import { EmailSubject } from "../../infrastructure/enums/EmailSubject";
 import { CLIENT_HOST } from "../../infrastructure/enums/AllowedRoutes";
 import { RegistrationError } from "../utils/errors/user-registration.error";
 import { Err, Ok, Result, ResultWithOutData } from "../utils/validation/result";
 import { UserLoginError } from "../utils/errors/user-login.error";
 import { isUserVerified } from "../utils/user-status";
+import { buildUpdateUserModelFormDto } from "../utils/mappers/user-entity.mapper";
+import { UserVerificationError } from "../utils/errors/user-verificatio.error";
+import { ResetPasswordDto } from "../dtos/resetPasswordDtot";
 
 export class AuthConcreteService implements AuthService {
   constructor(
@@ -37,13 +43,13 @@ export class AuthConcreteService implements AuthService {
     const verifyLink = `${CLIENT_HOST}/activate/${validationToken}`;
 
     const confirmation = confirmationTemplate(verifyLink);
-    const email: Email = {
+    const emailToSend: Email = {
       to: newUser.email,
       msg: confirmation,
       subject: EmailSubject.USER_REGISTRATION,
     };
 
-    const sendStatus = await this.emailService.send(email);
+    const sendStatus = await this.emailService.send(emailToSend);
 
     if (sendStatus === EmailSendStatus.OK) {
       return Ok(newUser);
@@ -52,7 +58,7 @@ export class AuthConcreteService implements AuthService {
     return Err(RegistrationError.FAILLED_TO_SEND_CONFIRMATION_LINK);
   }
 
-  async verify(token: string): Promise<ResultWithOutData> {
+  async verify(token: string): Promise<Result<string, UserVerificationError>> {
     const userByToken = await this.userService.findUserByUniqKey(
       UserUniqKeys.VALIDATION_TOKEN,
       token
@@ -60,11 +66,11 @@ export class AuthConcreteService implements AuthService {
 
     if (!userByToken) {
       console.log(`Error: Invalid User token`);
-      return Err(null);
+      return Err(UserVerificationError.INVALID_TOKEN);
     }
 
     await this.userService.activateAccount(userByToken.id);
-    return Ok(null);
+    return Ok(userByToken.id);
   }
 
   async signin(
@@ -106,6 +112,42 @@ export class AuthConcreteService implements AuthService {
       return null;
     }
 
-    return user.email;
+    const validationToken = uuid();
+    const updateUserModel = buildUpdateUserModelFormDto({ validationToken });
+    const updatedUser = await this.userService.update(user.id, updateUserModel);
+    if (!updatedUser) {
+      return null;
+    }
+
+    const createNewPasswordLink = `${CLIENT_HOST}/create-new-password/${validationToken}`;
+    const confirmation = resetPasswordLinkTemplate(createNewPasswordLink);
+
+    const emailToSend: Email = {
+      to: email,
+      msg: confirmation,
+      subject: EmailSubject.RESET_PASSWORD,
+    };
+
+    const status = await this.emailService.send(emailToSend);
+    if (status === EmailSendStatus.OK) {
+      return user.id;
+    }
+
+    return null;
+  }
+
+  async createNewPassword(
+    newPasswordDto: ResetPasswordDto
+  ): Promise<ResultWithOutData> {
+    const updatedUser = await this.userService.update(newPasswordDto.id, {
+      passwd: newPasswordDto.passwd,
+      salt: newPasswordDto.salt,
+    });
+
+    if (updatedUser) {
+      return Ok(null);
+    }
+
+    return Err(null);
   }
 }

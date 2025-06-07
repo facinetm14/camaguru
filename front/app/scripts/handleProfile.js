@@ -4,6 +4,7 @@ import { navigate } from "./events.js";
 import { uuid } from "./utils.js";
 import { SESSION_ID_KEY } from "./consts.js";
 import { PLAIN_API_BASE_ROUTE } from "../env.js";
+import { RouteUrl } from "./router.js";
 let stream = null;
 let isActiveImageItemView = false;
 
@@ -24,7 +25,7 @@ export const handleProfile = () => {
   const secondImageSrc = `${PLAIN_API_BASE_ROUTE}/users/images/logo.png`;
 
   if (!sessionId) {
-    navigate("/");
+    navigate(RouteUrl.HOME);
     return;
   }
 
@@ -98,7 +99,7 @@ export const handleProfile = () => {
     canvas.classList.add("hidden");
     takePhotoBtn.disabled = false;
     takePhotoBtn.classList.remove("pressed");
-    navigate("/profile");
+    navigate(RouteUrl.PROFILE);
   };
 
   const handleGalery = (prefix) => {

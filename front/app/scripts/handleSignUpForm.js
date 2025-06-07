@@ -1,7 +1,8 @@
 import { isValidEmail, isPasswordStrong } from "../../scripts/utils.js";
 
 import { userService } from "../usecases/userService.js";
-import { navigate, NAVIGATE_TO_PAGE } from "./events.js";
+import { navigate } from "./events.js";
+import { RouteUrl } from "./router.js";
 
 export const handleSignUpForm = () => {
   const firstNameInput = document.querySelector("#first-name");
@@ -82,7 +83,7 @@ export const handleSignUpForm = () => {
 
     const registerUser = await userService.register(user);
     if (registerUser.ok) {
-      navigate("/confirm");
+      navigate(RouteUrl.CONFIRM);
     }
   }
 

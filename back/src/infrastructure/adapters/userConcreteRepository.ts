@@ -1,7 +1,7 @@
 import { pgClient } from "../../database/dataSource";
 import { UserUniqKeys, UserStatus } from "../../domain/enums/user.enums";
 import { UserRepository } from "../../domain/ports/userRepository";
-import { UserModel } from "../model/UserModel";
+import { UpdateUserModel, UserModel } from "../model/UserModel";
 
 export class UserConcreteRepository implements UserRepository {
   async create(user: UserModel): Promise<any> {
@@ -88,5 +88,37 @@ export class UserConcreteRepository implements UserRepository {
       console.log("Error: unable to update user", idUser);
     }
     connexion.release();
+  }
+
+  async update(
+    idUser: string,
+    updateUser: UpdateUserModel
+  ): Promise<string | null> {
+    let columns = "";
+    const columnsValues = [];
+
+    let index = 1;
+
+    for (const [colum, value] of Object.entries(updateUser)) {
+      columns += `${index > 1 ? "," : ""} ${colum}=$${index}`;
+      columnsValues.push(value);
+      index += 1;
+    }
+
+    const updateQuery = {
+      text: `UPDATE users SET ${columns} WHERE id=$${index}`,
+      values: [...columnsValues, idUser],
+    };
+
+    const connexion = await pgClient.connect();
+    try {
+      await pgClient.query(updateQuery);
+      connexion.release();
+      return idUser;
+    } catch (error) {
+      console.log("Error: unable to update user", idUser);
+      connexion.release();
+      return null;
+    }
   }
 }

@@ -1,5 +1,5 @@
 import { Events } from "./scripts/enums.js";
-import { routes } from "./scripts/router.js";
+import { routes, RouteUrl } from "./scripts/router.js";
 import { navigate } from "./scripts/events.js";
 import { setGlobalState } from "./scripts/userStore.js";
 
@@ -15,12 +15,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 export async function renderApp() {
   const [_, path] = window.location.pathname.split("/");
-  const target = path.length ? path : "/";
 
-  const page = routes.get(target);
+  const page = routes.get(path);
 
   if (!page) {
-    navigate("/404");
+    navigate(`/${RouteUrl.NOT_FOUND}`);
     return;
   }
 

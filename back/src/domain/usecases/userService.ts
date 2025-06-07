@@ -2,6 +2,7 @@ import { UserUniqKeys } from "../enums/user.enums";
 import { User } from "../entity/User";
 import { CreateUserDto } from "../dtos/createUserDto";
 import { UserImage } from "../entity/userImage";
+import { UpdateUserDto } from "../dtos/updateUserDto";
 
 export interface UserService {
   findAll(): Promise<User[]>;
@@ -13,4 +14,5 @@ export interface UserService {
   activateAccount(idUser: string): Promise<void>;
   saveImage(userId: string, filename: string): Promise<void>;
   findAllImages(): Promise<UserImage[]>;
+  update(idUser: string, updateUserDto: UpdateUserDto): Promise<string | null>;
 }

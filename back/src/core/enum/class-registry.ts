@@ -1,0 +1,17 @@
+export enum ClassRegistry {
+  BASE_ROUTE = "baseRoute",
+  USER_REPOSITORY = "userRepository",
+  USER_CONTROLLER = "userController",
+  RESGISTER_USER_USECASE = "RegisterUserUseCase",
+  VERYFY_USER_USECASE = "VerifyUserUseCase",
+  USER_ROUTE = "userRoute",
+  AUTH_ROUTE = "authRoute",
+  AUTH_CONTROLLER = "authController",
+  EMAIL_SERVICE = "emailService",
+  SESSION_REPOSITORY = "sessionRepository",
+  USER_IMAGES_REPOSITORY = "userImgesRepository",
+  LOGIN_USER_USECASE = "LoginUserUseCase",
+  LOGOUT_USER_USECASE = "LogoutUserUseCase",
+  RESET_USER_PASSWORD_USECASE = "ResetUserPasswordUseCase",
+  CREATE_NEW_USER_PASSWORD = "CreateNewUserPassword",
+}

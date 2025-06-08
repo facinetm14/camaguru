@@ -31,22 +31,7 @@ export class UserConCreteService implements UserService {
     return buildUserListFromRawModel(userRawList);
   }
 
-  async create(
-    createUserDto: CreateUserDto,
-    validationToken: string
-  ): Promise<User | null> {
-    const newUser = await buildUserModelFromCreateUserDto(
-      createUserDto,
-      validationToken
-    );
-    try {
-      const createdUser = await this.userRepository.create(newUser);
-      return buildUserEntityFromModel(createdUser);
-    } catch (error) {
-      console.log(error);
-      return null;
-    }
-  }
+
 
   async findUserByUniqKey(
     key: UserUniqKeys,

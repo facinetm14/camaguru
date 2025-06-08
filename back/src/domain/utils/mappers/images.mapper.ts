@@ -1,6 +1,6 @@
-import { UserImagesModel } from "../../../infrastructure/model/UserImagesModel";
+import { UserImagesModel } from "../../../infrastructure_old/model/UserImagesModel";
 import { UserImage } from "../../entity/userImage";
-import { uuid } from "../uuid";
+import { uuid } from "../../../shared/uuid";
 
 export const buildUserImagesModel = (
   userId: string,

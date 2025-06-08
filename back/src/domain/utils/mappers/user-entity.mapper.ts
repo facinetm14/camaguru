@@ -4,17 +4,17 @@ import { User } from "../../entity/User";
 import {
   UpdateUserModel,
   UserModel,
-} from "../../../infrastructure/model/UserModel";
+} from "../../../infrastructure_old/model/UserModel";
 import { UserStatus } from "../../enums/user.enums";
 import { hashPassword, isPasswordStrong } from "../password";
-import { uuid } from "../uuid";
+import { uuid } from "../../../shared/uuid";
 import { isValidEmail } from "../validation/email";
-import { isNotEmptyString } from "../validation/string";
+import { isNotEmptyString } from "../../../shared/string";
 import { LoginUserDto } from "../../dtos/loginUserDto";
-import { RegistrationError } from "../errors/user-registration.error";
-import { UserLoginError } from "../errors/user-login.error";
-import { Err, Ok, Result } from "../validation/result";
-import { uploadImageError } from "../errors/upload-image.error";
+import { RegistrationError } from "../../../core/error/user-registration.error";
+import { UserLoginError } from "../../../core/error/user-login.error";
+import { Err, Ok, Result } from "../../../shared/result";
+import { uploadImageError } from "../../../core/error/upload-image.error";
 import { UploadImageDto } from "../../dtos/uploadImageDto";
 import { UpdateUserDto } from "../../dtos/updateUserDto";
 import { ResetPasswordDto } from "../../dtos/resetPasswordDtot";
@@ -119,7 +119,7 @@ export const parseRequestBodyAndBuildLoginUserDto = (
 };
 
 export const parseRequestBodyAndBuildUploadImageDto = (
-  body: any
+  body: any,
 ): Result<UploadImageDto, uploadImageError> => {
   if (!isNotEmptyString(body.filename)) {
     return Err(uploadImageError.INVALID_FILE_NAME);

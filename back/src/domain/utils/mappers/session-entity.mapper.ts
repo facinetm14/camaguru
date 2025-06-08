@@ -1,4 +1,4 @@
-import { SessionModel } from "../../../infrastructure/model/SessionModel";
+import { SessionModel } from "../../../infrastructure_old/model/SessionModel";
 import { CreateSessionDto } from "../../dtos/createSessionDto";
 
 export const buildSessionModelFromCreateSessionDto = (

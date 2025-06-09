@@ -1,5 +1,5 @@
 import { IncomingMessage, ServerResponse } from "http";
-import { API_BASE } from "../../enums/AllowedRoutes";
+import { API_BASE } from "../consts/api-base";
 
 export abstract class RouterStrategy {
   abstract matchRoute(

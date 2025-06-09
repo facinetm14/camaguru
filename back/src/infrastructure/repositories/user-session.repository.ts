@@ -31,9 +31,13 @@ export class USerSessionRepository implements UserSessionRepositoryInterface {
     const connexion = await pgClient.connect();
     try {
       const result = await pgClient.query(insertQuery);
-      const sessionRaw = result.rows[0];
+      if (!result.rowCount) {
+        return Err(UserLoginError.UNABLE_TO_CREATE_USER_SESSION);
+      }
+      const session = await this.findById(createUserSessionDto.id);
       connexion.release();
-      return Ok(buildUserSessionEntityFromModel(sessionRaw));
+      console.log({ session });
+      return Ok(session);
     } catch (error) {
       console.log(error);
       return Err(UserLoginError.UNABLE_TO_CREATE_USER_SESSION);

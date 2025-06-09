@@ -3,30 +3,29 @@ import { RouterInterface } from "./router-interface";
 import { RouterStrategy } from "./routing-strategy";
 import { UserController } from "../controllers/user.controller";
 import { ResponseStatusCode } from "../enum/response-status-code";
-import { routeType } from "../types/route.type";
-
-
+import { TypeRoute } from "../types/route.type";
+import { RoutesParamsKey } from "../enum/route-paramsKey";
 
 export class UserRouter extends RouterStrategy implements RouterInterface {
-  private routes: routeType[];
+  private routes: TypeRoute[];
 
   constructor(private userController: UserController) {
     super();
     this.routes = [
-      {
-        pattern: "/users/images-all",
-        method: "GET",
-        handler: this.userController.findAllImages,
-      },
       {
         pattern: "/users",
         method: "GET",
         handler: this.userController.findAll,
       },
       {
-        pattern: "/users/:sessionId",
+        pattern: `/users/:${RoutesParamsKey.SESSION_ID}`,
         method: "GET",
-        handler: this.userController.findById,
+        handler: this.userController.findByIdSession,
+      },
+      {
+        pattern: "/users/images",
+        method: "GET",
+        handler: this.userController.findAllImages,
       },
       {
         pattern: "/users/images",
@@ -34,7 +33,7 @@ export class UserRouter extends RouterStrategy implements RouterInterface {
         handler: this.userController.uploadImage,
       },
       {
-        pattern: "/users/images/:filename",
+        pattern: `/users/images/:${RoutesParamsKey.FILE_NAME}`,
         method: "GET",
         handler: this.userController.getImageByName,
       },

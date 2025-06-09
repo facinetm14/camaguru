@@ -98,6 +98,37 @@ export class UserRepository implements UserRepositoryInteface {
     return buildUserEntityFromModel(user);
   }
 
+  // async findUserByOneOfUniqKeyList(
+  //   keys: UserUniqKeys[],
+  //   valueList: string[]
+  // ): Promise<User | null> {
+  //   let condition = ``;
+  //   let index = 1;
+
+  //   for (const key of keys) {
+  //     if (index > 1) {
+  //       condition += ` OR `;
+  //     }
+  //     condition += `${key}=$${index}`;
+  //     index++;
+  //   }
+
+  //   const queryUser = {
+  //     text: `SELECT * FROM users WHERE ${condition} LIMIT 1`,
+  //     values: [...valueList],
+  //   };
+
+  //   const connexion = await pgClient.connect();
+  //   const result = await pgClient.query(queryUser);
+  //   connexion.release();
+  //   const user = result.rows[0];
+  //   if (!user) {
+  //     return null;
+  //   }
+
+  //   return buildUserEntityFromModel(user);
+  // }
+
   async updateStatusAndRemoveValidationToken(
     idUser: string
   ): Promise<ActionStatus> {

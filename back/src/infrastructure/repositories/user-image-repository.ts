@@ -18,6 +18,7 @@ export class UserImageRepository implements UserImagesRepositoryInteface {
     await pgClient.query(insertQuery);
     connexion.release();
   }
+
   async findAll(): Promise<UserImage[]> {
     const queryUserImages = `SELECT * FROM user_images;`;
 

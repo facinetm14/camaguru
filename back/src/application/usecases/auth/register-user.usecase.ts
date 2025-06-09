@@ -10,6 +10,7 @@ import { CLIENT_HOST } from "../../../core/consts/client-host";
 import { Result, Err, Ok } from "../../../shared/result";
 import { confirmationTemplate } from "../../../template/email";
 import { ActionStatus } from "../../../core/enum/action-status";
+import { UserUniqKeys } from "../../../core/enum/user.enum";
 
 export class RegisterUserUseCase {
   constructor(
@@ -20,6 +21,22 @@ export class RegisterUserUseCase {
   async execute(
     createUserDto: CreateUserDto
   ): Promise<Result<string, RegistrationError>> {
+    const userByEmail = await this.userRepo.findUserByUniqKey(
+      UserUniqKeys.EMAIL,
+      createUserDto.email
+    );
+    if (userByEmail) {
+      return Err(RegistrationError.EMAIL_ALREADY_EXISTS);
+    }
+
+    const userByUsername = await this.userRepo.findUserByUniqKey(
+      UserUniqKeys.USER_NAME,
+      createUserDto.username
+    );
+    if (userByUsername) {
+      return Err(RegistrationError.USER_NAME_ALREADY_EXISTS)
+    }
+
     const createUserResult = await this.userRepo.create(createUserDto);
 
     if (createUserResult.isErr) {

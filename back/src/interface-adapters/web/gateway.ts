@@ -1,9 +1,10 @@
 import { IncomingMessage, ServerResponse } from "http";
 import { factoryModule } from "../../application/utils/factory-module";
-import { AllowedRoutes, API_BASE } from "../../enums/AllowedRoutes";
-import { ModuleRegister } from "../../enums/ModuleRegister";
-import { ResponseStatusCode } from "../../enums/ResponseStatusCode";
-import { Router } from "./router";
+import { API_BASE } from "./consts/api-base";
+import { AllowedRoutes } from "./enum/allowed-routes";
+import { ResponseStatusCode } from "./enum/response-status-code";
+import { ClassRegistry } from "../../core/enum/class-registry";
+import { Router } from "./types/router.type";
 
 export class Gateway {
   private registry: Map<AllowedRoutes, Router> = new Map();
@@ -11,18 +12,21 @@ export class Gateway {
   constructor() {
     this.registry.set(
       AllowedRoutes.USERS,
-      factoryModule(ModuleRegister.USER_ROUTE)
+      factoryModule(ClassRegistry.USER_ROUTE)
     );
+
     this.registry.set(
       AllowedRoutes.BASE,
-      factoryModule(ModuleRegister.BASE_ROUTE)
+      factoryModule(ClassRegistry.BASE_ROUTE)
     );
 
     this.registry.set(
       AllowedRoutes.AUTH,
-      factoryModule(ModuleRegister.AUTH_ROUTE)
+      factoryModule(ClassRegistry.AUTH_ROUTE)
     );
+    
   }
+
   async dispatch(req: IncomingMessage, resp: ServerResponse): Promise<void> {
     if (!req.url?.match(/^\/api\/v1\//)) {
       resp.statusCode = ResponseStatusCode.NOT_FOUND;

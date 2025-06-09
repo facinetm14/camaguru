@@ -1,5 +1,5 @@
 ### get user by id
-POST http://localhost:5000/api/v1/users
+GET http://localhost:5000/api/v1/users
 
 ### register a user
 POST http://localhost:5000/api/v1/auth/register

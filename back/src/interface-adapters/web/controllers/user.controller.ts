@@ -1,7 +1,6 @@
 import { writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { createReadStream, existsSync, statSync } from "node:fs";
-import { UPLOAD_DEST } from "../../../domain/utils/consts";
 import { IncomingMessage } from "node:http";
 import { UserUniqKeys } from "../../../core/enum/user.enum";
 import { uploadImageError } from "../../../core/error/upload-image.error";
@@ -14,6 +13,7 @@ import { RoutesParamsKey } from "../enum/route-paramsKey";
 import { buildSaveImageDtoFromRequestBody } from "../mappers/user-image.mapper";
 import { SaveUserImageUseCase } from "../../../application/usecases/users/save-user-image.usecase";
 import { FindUserInfosByIdSessionUsecase } from "../../../application/usecases/users/find-user-infos-by-session.usecase";
+import { UPLOAD_DEST } from "../../../core/consts/upload-destination";
 
 export class UserController {
   constructor(
@@ -123,8 +123,7 @@ export class UserController {
       try {
         const path = join(process.cwd(), UPLOAD_DEST, imageDto.name);
         await writeFile(path, Buffer.from(imageDto.image, "base64"));
-        const saveImageDto = buildSaveImageDto();
-        await this.saveUserImageUseCase.execute(saveImageDto);
+        await this.saveUserImageUseCase.execute(imageDto);
         resp.statusCode = ResponseStatusCode.CREATED_OK;
         resp.end("file uploaded successfully.");
       } catch (_error) {

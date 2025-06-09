@@ -1,4 +1,4 @@
-import { IRouter } from "./IRouter";
-import { RouterStrategy } from "./routerStrategy";
+import { RouterInterface } from "../routers/router-interface";
+import { RouterStrategy } from "../routers/routing-strategy";
 
-export type Router = (IRouter & RouterStrategy) | IRouter;
+export type Router = (RouterInterface & RouterStrategy) | RouterInterface;

@@ -1,10 +1,6 @@
-import { ControllerInputType } from "./controllerInputType";
-import { IRouter } from "./IRouter";
-import { RouterStrategy } from "./routerStrategy";
+import { ControllerInputType } from "./controller-input.type";
 
-export type Router = (IRouter & RouterStrategy) | IRouter;
-
-export type routeType = {
+export type TypeRoute = {
   pattern: string;
   method: string;
   middleWare?: (input: ControllerInputType) => Promise<void>[];

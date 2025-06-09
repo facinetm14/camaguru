@@ -52,7 +52,7 @@ export class AuthController {
       );
 
       if (newUserResult.isErr) {
-        resp.statusCode = ResponseStatusCode.SERVER_INTERNAL_ERROR;
+        resp.statusCode = ResponseStatusCode.BAD_REQUEST;
         resp.end(newUserResult.error);
         return;
       }

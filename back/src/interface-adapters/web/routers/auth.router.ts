@@ -1,13 +1,13 @@
 import { IncomingMessage, ServerResponse } from "http";
 import { RouterStrategy } from "./routing-strategy";
-import { routeType } from "../types/route.type";
+import { TypeRoute } from "../types/route.type";
 import { AuthController } from "../controllers/auth.controller";
 import { RouterInterface } from "./router-interface";
 import { ResponseStatusCode } from "../enum/response-status-code";
 import { RoutesParamsKey } from "../enum/route-paramsKey";
 
 export class AuthRouter extends RouterStrategy implements RouterInterface {
-  private routes: routeType[];
+  private routes: TypeRoute[];
 
   constructor(private authController: AuthController) {
     super();

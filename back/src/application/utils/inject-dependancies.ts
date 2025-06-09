@@ -55,7 +55,8 @@ export function injectDependancies() {
       DIContainer.resolve(ClassRegistry.VERYFY_USER_USECASE),
       DIContainer.resolve(ClassRegistry.LOGIN_USER_USECASE),
       DIContainer.resolve(ClassRegistry.LOGOUT_USER_USECASE),
-      DIContainer.resolve(ClassRegistry.RESET_USER_PASSWORD_USECASE)
+      DIContainer.resolve(ClassRegistry.RESET_USER_PASSWORD_USECASE),
+      DIContainer.resolve(ClassRegistry.CREATE_NEW_USER_PASSWORD_USECASE)
     )
   );
 

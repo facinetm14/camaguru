@@ -3,24 +3,23 @@ import { join, resolve } from "node:path";
 import { createReadStream, existsSync, statSync } from "node:fs";
 import { UPLOAD_DEST } from "../../../domain/utils/consts";
 import { IncomingMessage } from "node:http";
-import { UserImagesRepositoryInteface } from "../../../application/interfaces/repositories/user-image.repository.inteface";
 import { UserUniqKeys } from "../../../core/enum/user.enum";
 import { uploadImageError } from "../../../core/error/upload-image.error";
-import { parseRequestBodyAndBuildUploadImageDto } from "../../../domain/utils/mappers/user-entity.mapper";
 import { ResponseStatusCode } from "../enum/response-status-code";
 import { ControllerInputType } from "../types/controller-input.type";
-import { UserSessionRepositoryInterface } from "../../../application/interfaces/repositories/user-session.repository.interface";
 import { FindAllUsersImagesUseCase } from "../../../application/usecases/users/find-all-users-images.usecase";
 import { AcceptedMimeType } from "../../../core/consts/accepted-file-type";
 import { extractFileExtension } from "../../../shared/extract-file-extension";
 import { RoutesParamsKey } from "../enum/route-paramsKey";
-import { buildSaveImageDto, buildSaveImageDtoFromRequestBody } from "../mappers/user-image.mapper";
+import { buildSaveImageDtoFromRequestBody } from "../mappers/user-image.mapper";
 import { SaveUserImageUseCase } from "../../../application/usecases/users/save-user-image.usecase";
+import { FindUserInfosByIdSessionUsecase } from "../../../application/usecases/users/find-user-infos-by-session.usecase";
 
 export class UserController {
   constructor(
     private readonly findAllUsersImagesUseCase: FindAllUsersImagesUseCase,
-    private readonly saveUserImageUseCase: SaveUserImageUseCase
+    private readonly saveUserImageUseCase: SaveUserImageUseCase,
+    private readonly findUserInfosByIdSessionUseCase: FindUserInfosByIdSessionUsecase
   ) {}
 
   async findAll({ req, resp }: ControllerInputType): Promise<void> {
@@ -39,27 +38,22 @@ export class UserController {
     resp.end(JSON.stringify(users));
   }
 
-  async findById({ req, params, resp }: ControllerInputType): Promise<void> {
-    if (!params?.has("sessionId")) {
+  async findByIdSession({
+    req,
+    params,
+    resp,
+  }: ControllerInputType): Promise<void> {
+    if (!params?.has(RoutesParamsKey.SESSION_ID)) {
       resp.statusCode = ResponseStatusCode.BAD_REQUEST;
       resp.end();
       return;
     }
 
-    const sessionId = params.get("sessionId") as string;
+    const sessionId = params.get(RoutesParamsKey.SESSION_ID) as string;
+
+    const user = await this.findUserInfosByIdSessionUseCase.execute(sessionId);
 
     try {
-      const userId = await this.sessionService.findUserIdFromSession(sessionId);
-      if (!userId) {
-        (resp.statusCode = ResponseStatusCode.FORBIDDEN), resp.end();
-        return;
-      }
-
-      const user = await this.userService.findUserByUniqKey(
-        UserUniqKeys.ID,
-        userId
-      );
-
       if (!user) {
         resp.statusCode = ResponseStatusCode.NOT_FOUND;
         resp.end("user not found");
@@ -85,15 +79,15 @@ export class UserController {
       return null;
     }
 
-    const userId = await this.sessionService.findUserIdFromSession(
+    const user = await this.findUserInfosByIdSessionUseCase.execute(
       sessionToken
     );
 
-    if (!userId) {
+    if (!user) {
       return null;
     }
 
-    return userId;
+    return user.id;
   }
 
   async uploadImage({ req, resp }: ControllerInputType): Promise<void> {
@@ -130,7 +124,7 @@ export class UserController {
         const path = join(process.cwd(), UPLOAD_DEST, imageDto.name);
         await writeFile(path, Buffer.from(imageDto.image, "base64"));
         const saveImageDto = buildSaveImageDto();
-        await this.sa
+        await this.saveUserImageUseCase.execute(saveImageDto);
         resp.statusCode = ResponseStatusCode.CREATED_OK;
         resp.end("file uploaded successfully.");
       } catch (_error) {

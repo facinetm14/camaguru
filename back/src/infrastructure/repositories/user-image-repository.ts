@@ -6,15 +6,12 @@ import { buildUploadUserImageEntityFromModel } from "../../interface-adapters/we
 
 export class UserImageRepository implements UserImagesRepositoryInteface {
   async saveImage(userImageDto: SaveImageDto): Promise<void> {
-
-    const userImageModel = 
-    
-    const { id, user_id, name, created_at, updated_at } = userImage;
+    const { id, userId, name, createdAt, updatedAt } = userImageDto;
 
     const insertQuery = {
       text: `
             INSERT INTO user_images(id, user_id, name, created_at, updated_at) VALUES($1, $2, $3, $4, $5);`,
-      values: [id, user_id, name, created_at, updated_at],
+      values: [id, userId, name, createdAt, updatedAt],
     };
 
     const connexion = await pgClient.connect();

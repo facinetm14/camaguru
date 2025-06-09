@@ -13,5 +13,5 @@ export enum ClassRegistry {
   LOGIN_USER_USECASE = "LoginUserUseCase",
   LOGOUT_USER_USECASE = "LogoutUserUseCase",
   RESET_USER_PASSWORD_USECASE = "ResetUserPasswordUseCase",
-  CREATE_NEW_USER_PASSWORD = "CreateNewUserPassword",
+  CREATE_NEW_USER_PASSWORD_USECASE = "CreateNewUserPasswordUseCase",
 }

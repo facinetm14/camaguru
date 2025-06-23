@@ -1,5 +1,5 @@
 import { IncomingMessage, ServerResponse } from "http";
-import { Gateway } from "./infrastructure/delivery/routes/gateway";
+import { Gateway } from "./interface-adapters/web/gateway";
 
 export class App {
   constructor(public req: IncomingMessage, public resp: ServerResponse) {

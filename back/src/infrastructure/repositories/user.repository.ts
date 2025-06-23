@@ -1,0 +1,157 @@
+import { UserRepositoryInteface } from "../../application/interfaces/repositories/user.repository.interface";
+import { pgClient } from "../../database/dataSource";
+import { UserUniqKeys, UserStatus } from "../../core/enum/user.enum";
+import { CreateUserDto } from "../../application/dto/create-user.dto";
+import {
+  buildUserEntityFromModel,
+  buildUserModelForUpdateFormDto,
+  buildUserModelFromCreateUserDto,
+} from "../../interface-adapters/web/mappers/user.mapper";
+import { User } from "../../core/entities/user.entity";
+import { Err, Ok, Result } from "../../shared/result";
+import { RegistrationError } from "../../core/error/user-registration.error";
+import { ActionStatus } from "../../core/enum/action-status";
+import { UpdateUserDto } from "../../application/dto/update-user.dto";
+
+export class UserRepository implements UserRepositoryInteface {
+  async create(
+    createUserDto: CreateUserDto
+  ): Promise<Result<string, RegistrationError>> {
+    const userModel = await buildUserModelFromCreateUserDto(createUserDto);
+
+    const {
+      id,
+      username,
+      first_name,
+      last_name,
+      email,
+      adress,
+      passwd,
+      created_at,
+      updated_at,
+      salt,
+      status,
+      validation_token,
+    } = userModel;
+
+    const insertQuery = {
+      text: `
+        INSERT INTO users(id, username, email, adress, passwd, created_at, updated_at, salt, status, validation_token, first_name, last_name)
+        VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);`,
+      values: [
+        id,
+        username,
+        email,
+        adress,
+        passwd,
+        created_at,
+        updated_at,
+        salt,
+        status,
+        validation_token,
+        first_name,
+        last_name,
+      ],
+    };
+
+    try {
+      const connexion = await pgClient.connect();
+      await pgClient.query(insertQuery);
+      connexion.release();
+      return Ok(id);
+    } catch (error) {
+      console.log(error);
+      return Err(RegistrationError.UNKNOWN_ERROR);
+    }
+  }
+
+  async findAll(): Promise<User[]> {
+    const queryUsers = `SELECT * FROM users;`;
+
+    const connexion = await pgClient.connect();
+    const result = await pgClient.query(queryUsers);
+    connexion.release();
+
+    const usersRawList = result.rows;
+
+    return usersRawList.map((userRaw) => buildUserEntityFromModel(userRaw));
+  }
+
+  async findUserByUniqKey(
+    key: UserUniqKeys,
+    value: string
+  ): Promise<User | null> {
+    const queryUser = {
+      text: `SELECT * FROM users WHERE ${key}=$1 LIMIT 1`,
+      values: [value],
+    };
+
+    const connexion = await pgClient.connect();
+    const result = await pgClient.query(queryUser);
+    connexion.release();
+    const user = result.rows[0];
+    if (!user) {
+      return null;
+    }
+
+    return buildUserEntityFromModel(user);
+  }
+
+  async updateStatusAndRemoveValidationToken(
+    idUser: string,
+    userStatus: UserStatus
+  ): Promise<ActionStatus> {
+    const updateQuery = {
+      text: `UPDATE users SET status=$1, validation_token=null WHERE id=$2`,
+      values: [userStatus, idUser],
+    };
+
+    let status: ActionStatus;
+    const connexion = await pgClient.connect();
+    try {
+      await pgClient.query(updateQuery);
+      status = ActionStatus.SUCCESS;
+    } catch (error) {
+      console.log("Error: unable to update user", idUser);
+      status = ActionStatus.FAILED;
+    }
+    connexion.release();
+    return status;
+  }
+
+  async update(
+    idUser: string,
+    updateUserDto: UpdateUserDto
+  ): Promise<ActionStatus> {
+    const updateUser = buildUserModelForUpdateFormDto(updateUserDto);
+
+    let columns = "";
+    const columnsValues = [];
+
+    let index = 1;
+
+    for (const [colum, value] of Object.entries(updateUser)) {
+      columns += `${index > 1 ? "," : ""} ${colum}=$${index}`;
+      columnsValues.push(value);
+      index += 1;
+    }
+
+    const updateQuery = {
+      text: `UPDATE users SET ${columns} WHERE id=$${index}`,
+      values: [...columnsValues, idUser],
+    };
+
+    let status: ActionStatus;
+    const connexion = await pgClient.connect();
+    try {
+      await pgClient.query(updateQuery);
+      status = ActionStatus.SUCCESS;
+    } catch (error) {
+      console.log("Error: unable to update user", idUser);
+      status = ActionStatus.FAILED;
+    }
+    connexion.release();
+
+    return status;
+  }
+}

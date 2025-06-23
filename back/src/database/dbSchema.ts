@@ -1,6 +1,6 @@
 import { dbConnect } from "./dataSource";
-import { createImageCommentTable } from "./migrations/create-image-comments";
-import { createImageLikesTable } from "./migrations/create-image-likes";
+import { createImageCommentTable } from "./migrations/create-image-comments-table";
+import { createImageLikesTable } from "./migrations/create-image-likes-table";
 import { createSessionTable } from "./migrations/create-sessions-table";
 import { createUserImagesTable } from "./migrations/create-user-images-table";
 import { createUserTable } from "./migrations/create-user-table";

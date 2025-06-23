@@ -149,6 +149,7 @@ export class UserController {
       return;
     }
 
+    console.log("FINDING IMAGE !!!")
     const images = await this.findAllUsersImagesUseCase.execute();
     resp.statusCode = ResponseStatusCode.GET_OK;
     resp.end(JSON.stringify(images));

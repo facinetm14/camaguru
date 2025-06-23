@@ -13,14 +13,9 @@ export class UserRouter extends RouterStrategy implements RouterInterface {
     super();
     this.routes = [
       {
-        pattern: "/users",
+        pattern: `/users/images/:${RoutesParamsKey.FILE_NAME}`,
         method: "GET",
-        handler: this.userController.findAll,
-      },
-      {
-        pattern: `/users/:${RoutesParamsKey.SESSION_ID}`,
-        method: "GET",
-        handler: this.userController.findByIdSession,
+        handler: this.userController.getImageByName,
       },
       {
         pattern: "/users/images",
@@ -33,9 +28,14 @@ export class UserRouter extends RouterStrategy implements RouterInterface {
         handler: this.userController.uploadImage,
       },
       {
-        pattern: `/users/images/:${RoutesParamsKey.FILE_NAME}`,
+        pattern: `/users/:${RoutesParamsKey.SESSION_ID}`,
         method: "GET",
-        handler: this.userController.getImageByName,
+        handler: this.userController.findByIdSession,
+      },
+      {
+        pattern: "/users",
+        method: "GET",
+        handler: this.userController.findAll,
       },
     ];
   }

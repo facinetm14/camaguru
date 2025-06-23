@@ -1,5 +1,7 @@
 ### get user by id
 GET http://localhost:5000/api/v1/users
+Content-Type: application/json
+Authorization: Bearer -mc8wg65v-1g95sb
 
 ### register a user
 POST http://localhost:5000/api/v1/auth/register
@@ -15,7 +17,7 @@ content-type: application/json
 }
 
 ### verify user
-POST http://localhost:5000/api/v1/auth/verify/-mc8qsy6f-w5uwph
+POST http://localhost:5000/api/v1/auth/verify/-mc8wf3i9-1ys56h
 content-type: application/json
 
 {}
@@ -27,7 +29,7 @@ content-type: application/json
 
 {
  "username": "test-42",
- "passwd": "dsdkdks@1Ddkdkdddd"
+ "passwd": "Alt.xp-c0hrhhn@yopmail.com"
 }
 
 ### reset password
@@ -67,9 +69,9 @@ Authorization: Bearer -mc8qsmo9-7wwv33
 
 
 ### get all images
-GET http://localhost:5000/api/v1/users/images-all
+GET http://localhost:5000/api/v1/users/images
 Content-Type: application/json
-Authorization: Bearer -mc8qsmo9-7wwv33
+Authorization: Bearer -mc8u3yh6-hchh8m
 
 ### get image
 GET http://localhost:5000/api/v1/users/images/img-test-42--mbjdokuw-y60uzf.jpg

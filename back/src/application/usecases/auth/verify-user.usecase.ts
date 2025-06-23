@@ -17,9 +17,12 @@ export class VerifyUserUseCase {
       return Err(UserVerificationError.INVALID_TOKEN);
     }
 
-    if (userByToken.status !== UserStatus.VERIFIED) {
-      await this.userRepo.updateStatusAndRemoveValidationToken(userByToken.id);
-    }
+    const userStatus =
+      userByToken.status === UserStatus.UNVERIFIED
+        ? UserStatus.VERIFIED
+        : UserStatus.CHANGING_PASSWORD;
+        
+    await this.userRepo.updateStatusAndRemoveValidationToken(userByToken.id, userStatus);
 
     return Ok(userByToken.id);
   }

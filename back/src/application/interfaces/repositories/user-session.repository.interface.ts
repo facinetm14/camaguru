@@ -5,7 +5,9 @@ import { Result } from "../../../shared/result";
 import { CreateUserSessionDto } from "../../dto/create-user-session.dto";
 
 export interface UserSessionRepositoryInterface {
-  create(createUserSessionDto: CreateUserSessionDto): Promise<Result<UserSession, UserLoginError>>;
-  findById(id: string): Promise<UserSession>;
+  create(
+    createUserSessionDto: CreateUserSessionDto
+  ): Promise<Result<UserSession, UserLoginError>>;
+  findById(id: string): Promise<UserSession | null>;
   delete(id: string): Promise<ActionStatus>;
 }

@@ -97,6 +97,7 @@ export function buildUserEntityFromModel(userModel: UserModel): User {
     passwd: userModel.passwd,
     status: userModel.status,
     salt: userModel.salt,
+    validationToken: userModel.validation_token,
   };
 }
 
@@ -115,6 +116,12 @@ export const buildUserModelForUpdateFormDto = (
     ...(updateUser.passwd !== undefined && { passwd: updateUser.passwd }),
     ...(updateUser.validationToken !== undefined && {
       validation_token: updateUser.validationToken,
+    }),
+    ...(updateUser.status !== undefined && {
+      status: updateUser.status,
+    }),
+    ...(updateUser.salt !== undefined && {
+      salt: updateUser.salt,
     }),
     updated_at: new Date(),
   };

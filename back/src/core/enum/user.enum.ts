@@ -1,6 +1,7 @@
 export enum UserStatus {
   UNVERIFIED = "unverified",
   VERIFIED = "verified",
+  CHANGING_PASSWORD = "changing_password",
 }
 
 export enum UserSessionStatus {

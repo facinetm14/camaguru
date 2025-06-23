@@ -2,18 +2,17 @@ import { CreateUserDto } from "../../dto/create-user.dto";
 import { Result } from "../../../shared/result";
 import { RegistrationError } from "../../../core/error/user-registration.error";
 import { User } from "../../../core/entities/user.entity";
-import { UserUniqKeys } from "../../../core/enum/user.enum";
+import { UserStatus, UserUniqKeys } from "../../../core/enum/user.enum";
 import { UpdateUserDto } from "../../dto/update-user.dto";
 import { ActionStatus } from "../../../core/enum/action-status";
 
 export interface UserRepositoryInteface {
-  create(user: CreateUserDto): Promise<Result<User, RegistrationError>>;
+  create(user: CreateUserDto): Promise<Result<string, RegistrationError>>;
   findAll(): Promise<User[]>;
   findUserByUniqKey(key: UserUniqKeys, value: string): Promise<User | null>;
-  // findUserByOneOfUniqKeyList(
-  //   keys: UserUniqKeys[],
-  //   valueList: string[]
-  // ): Promise<User | null>;
-  updateStatusAndRemoveValidationToken(idUser: string): Promise<ActionStatus>;
+  updateStatusAndRemoveValidationToken(
+    idUser: string,
+    userStatus: UserStatus
+  ): Promise<ActionStatus>;
   update(idUser: string, updateUser: UpdateUserDto): Promise<ActionStatus>;
 }

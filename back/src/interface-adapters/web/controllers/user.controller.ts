@@ -98,6 +98,8 @@ export class UserController {
       return;
     }
 
+    console.log(userId);
+
     let body = "";
 
     req?.on("data", (chunk) => {
@@ -126,7 +128,8 @@ export class UserController {
         await this.saveUserImageUseCase.execute(imageDto);
         resp.statusCode = ResponseStatusCode.CREATED_OK;
         resp.end("file uploaded successfully.");
-      } catch (_error) {
+      } catch (error) {
+        console.log(error);
         resp.statusCode = ResponseStatusCode.SERVER_INTERNAL_ERROR;
         resp.end(uploadImageError.UNKNOWN_ERROR);
       }

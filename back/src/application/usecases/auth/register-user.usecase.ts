@@ -56,8 +56,7 @@ export class RegisterUserUseCase {
     const sendStatus = await this.emailService.send(emailToSend);
 
     if (sendStatus === ActionStatus.SUCCESS) {
-      const newUser = createUserResult.data;
-      return Ok(newUser.id);
+      return Ok(createUserResult.data);
     }
 
     return Err(RegistrationError.FAILLED_TO_SEND_CONFIRMATION_LINK);

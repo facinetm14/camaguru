@@ -1,5 +1,5 @@
 import { ActionStatus } from "../../../core/enum/action-status";
-import { UserUniqKeys } from "../../../core/enum/user.enum";
+import { UserStatus, UserUniqKeys } from "../../../core/enum/user.enum";
 import { CLIENT_HOST } from "../../../core/consts/client-host";
 import { uuid } from "../../../shared/uuid";
 import { UserRepositoryInteface } from "../../interfaces/repositories/user.repository.interface";
@@ -29,6 +29,7 @@ export class ResetUserPasswordUseCase {
     const validationToken = uuid();
     const updatedUser = await this.userRepo.update(user.id, {
       validationToken,
+      status: UserStatus.CHANGING_PASSWORD,
     });
 
     if (updatedUser !== ActionStatus.SUCCESS) {

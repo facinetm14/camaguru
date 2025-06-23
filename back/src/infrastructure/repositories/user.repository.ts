@@ -16,7 +16,7 @@ import { UpdateUserDto } from "../../application/dto/update-user.dto";
 export class UserRepository implements UserRepositoryInteface {
   async create(
     createUserDto: CreateUserDto
-  ): Promise<Result<User, RegistrationError>> {
+  ): Promise<Result<string, RegistrationError>> {
     const userModel = await buildUserModelFromCreateUserDto(createUserDto);
 
     const {
@@ -56,10 +56,9 @@ export class UserRepository implements UserRepositoryInteface {
 
     try {
       const connexion = await pgClient.connect();
-      const result = await pgClient.query(insertQuery);
+      await pgClient.query(insertQuery);
       connexion.release();
-      const user = result.rows[0];
-      return Ok(user);
+      return Ok(id);
     } catch (error) {
       console.log(error);
       return Err(RegistrationError.UNKNOWN_ERROR);
@@ -98,43 +97,13 @@ export class UserRepository implements UserRepositoryInteface {
     return buildUserEntityFromModel(user);
   }
 
-  // async findUserByOneOfUniqKeyList(
-  //   keys: UserUniqKeys[],
-  //   valueList: string[]
-  // ): Promise<User | null> {
-  //   let condition = ``;
-  //   let index = 1;
-
-  //   for (const key of keys) {
-  //     if (index > 1) {
-  //       condition += ` OR `;
-  //     }
-  //     condition += `${key}=$${index}`;
-  //     index++;
-  //   }
-
-  //   const queryUser = {
-  //     text: `SELECT * FROM users WHERE ${condition} LIMIT 1`,
-  //     values: [...valueList],
-  //   };
-
-  //   const connexion = await pgClient.connect();
-  //   const result = await pgClient.query(queryUser);
-  //   connexion.release();
-  //   const user = result.rows[0];
-  //   if (!user) {
-  //     return null;
-  //   }
-
-  //   return buildUserEntityFromModel(user);
-  // }
-
   async updateStatusAndRemoveValidationToken(
-    idUser: string
+    idUser: string,
+    userStatus: UserStatus
   ): Promise<ActionStatus> {
     const updateQuery = {
       text: `UPDATE users SET status=$1, validation_token=null WHERE id=$2`,
-      values: [UserStatus.VERIFIED, idUser],
+      values: [userStatus, idUser],
     };
 
     let status: ActionStatus;

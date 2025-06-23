@@ -25,7 +25,7 @@ export class AuthController {
     private readonly verifyUserUseCase: VerifyUserUseCase,
     private readonly loginUserUseCase: LoginUserUseCase,
     private readonly resetUserPasswordUsecase: ResetUserPasswordUseCase,
-    private readonly LogoutUserUseCase: LogoutUserUseCase,
+    private readonly logoutUserUseCase: LogoutUserUseCase,
     private readonly CreateNewUserPasswordUsecase: CreateNewUserPasswordUseCase
   ) {}
 
@@ -139,7 +139,7 @@ export class AuthController {
     resp.end(error);
   }
 
-  async logout({ req, resp, params }: ControllerInputType) {
+  async logout({ resp, params }: ControllerInputType) {
     if (!params?.has(RoutesParamsKey.SESSION_ID)) {
       resp.statusCode = ResponseStatusCode.BAD_REQUEST;
       resp.end();
@@ -149,7 +149,7 @@ export class AuthController {
     const sessionId = params.get(RoutesParamsKey.SESSION_ID) as string;
 
     try {
-      await this.LogoutUserUseCase.exectute(sessionId);
+      await this.logoutUserUseCase.execute(sessionId);
       resp.statusCode = ResponseStatusCode.GET_OK;
     } catch (error) {
       resp.statusCode = ResponseStatusCode.BAD_REQUEST;
@@ -175,9 +175,8 @@ export class AuthController {
           return;
         }
 
-        const email = emailResult.data;
         const userRessetPasswdResult =
-          await this.resetUserPasswordUsecase.execute(email);
+          await this.resetUserPasswordUsecase.execute(emailResult.data);
 
         if (userRessetPasswdResult !== ActionStatus.SUCCESS) {
           resp.statusCode = ResponseStatusCode.NOT_FOUND;
@@ -209,13 +208,12 @@ export class AuthController {
         return;
       }
 
-      const resetPasswordResult =
-        await this.CreateNewUserPasswordUsecase.execute(
-          createNewPasswordDtoResult.data
-        );
+      const newPasswordResult = await this.CreateNewUserPasswordUsecase.execute(
+        createNewPasswordDtoResult.data
+      );
 
-      if (resetPasswordResult === ActionStatus.FAILED) {
-        resp.statusCode = ResponseStatusCode.SERVER_INTERNAL_ERROR;
+      if (newPasswordResult === ActionStatus.FAILED) {
+        resp.statusCode = ResponseStatusCode.FORBIDDEN;
         resp.end();
         return;
       }

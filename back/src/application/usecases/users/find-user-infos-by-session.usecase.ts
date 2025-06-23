@@ -15,6 +15,6 @@ export class FindUserInfosByIdSessionUsecase {
       return null;
     }
 
-    return this.userRepo.findUserByUniqKey(UserUniqKeys.ID, userSession.id);
+    return this.userRepo.findUserByUniqKey(UserUniqKeys.ID, userSession.userId);
   }
 }

@@ -15,7 +15,7 @@ content-type: application/json
 }
 
 ### verify user
-POST http://localhost:5000/api/v1/auth/verify/-mbhrsnog-r7xuuo
+POST http://localhost:5000/api/v1/auth/verify/-mc8qsy6f-w5uwph
 content-type: application/json
 
 {}
@@ -27,19 +27,28 @@ content-type: application/json
 
 {
  "username": "test-42",
- "passwd": "dsdkdks@1Ddkdkdd"
+ "passwd": "dsdkdks@1Ddkdkdddd"
 }
+
+### reset password
+POST http://localhost:5000/api/v1/auth/reset-password
+Content-Type: : application/json
+
+{
+  "email": "alt.xp-c0hrhhn@yopmail.com"
+}
+
 
 ### create new password
 PATCH http://localhost:5000/api/v1/auth/new-password
 
 {
-  "id": "user-mbkiakgu-x157ir",
-  "passwd": "dsdkdks@1Ddkdkdd"
+  "id": "-mc8qr5y2-tx72c4",
+  "passwd": "dsdkdks@1Ddkdkdddd"
 }
 
 ### logout user
-PATCH  http://localhost:5000/api/v1/auth/logout/session-maqmplae-cq7vl3
+PATCH  http://localhost:5000/api/v1/auth/logout/-mc8quy0l-jxejww
 
 
 ### get all users
@@ -49,7 +58,7 @@ Content-Type: application/json
 ### Upload images
 POST http://localhost:5000/api/v1/users/images
 Content-Type: application/json
-Authorization: Bearer session-mbjcny9y-7ooxzf
+Authorization: Bearer -mc8qsmo9-7wwv33
 
 {
   "filename": "new-imagedd.jpg",
@@ -60,7 +69,7 @@ Authorization: Bearer session-mbjcny9y-7ooxzf
 ### get all images
 GET http://localhost:5000/api/v1/users/images-all
 Content-Type: application/json
-Authorization: Bearer session-mbj6tc48-6fqgvt
+Authorization: Bearer -mc8qsmo9-7wwv33
 
 ### get image
 GET http://localhost:5000/api/v1/users/images/img-test-42--mbjdokuw-y60uzf.jpg

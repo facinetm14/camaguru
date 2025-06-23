@@ -1,4 +1,5 @@
 import { ClassRegistry } from "../../core/enum/class-registry";
+import { UserImageRepository } from "../../infrastructure/repositories/user-image-repository";
 import { USerSessionRepository } from "../../infrastructure/repositories/user-session.repository";
 import { UserRepository } from "../../infrastructure/repositories/user.repository";
 import { EmailService } from "../../infrastructure/services/email.service";
@@ -9,10 +10,14 @@ import { BaseRouter } from "../../interface-adapters/web/routers/base-router";
 import { UserRouter } from "../../interface-adapters/web/routers/user.router";
 import { DIContainer } from "../../shared/di.container";
 import { LoginUserUseCase } from "../usecases/auth/login-user.usecase";
+import { LogoutUserUseCase } from "../usecases/auth/logout-user.usecase";
 import { RegisterUserUseCase } from "../usecases/auth/register-user.usecase";
 import { VerifyUserUseCase } from "../usecases/auth/verify-user.usecase";
+import { CreateNewUserPasswordUseCase } from "../usecases/users/create-new-user-password.usecase";
 import { FindAllUsersImagesUseCase } from "../usecases/users/find-all-users-images.usecase";
 import { FindUserInfosByIdSessionUsecase } from "../usecases/users/find-user-infos-by-session.usecase";
+import { ResetUserPasswordUseCase } from "../usecases/users/reset-user-password.usecase";
+import { SaveUserImageUseCase } from "../usecases/users/save-user-image.usecase";
 
 export function injectDependancies() {
   DIContainer.subscribe(ClassRegistry.BASE_ROUTE, new BaseRouter());
@@ -38,6 +43,11 @@ export function injectDependancies() {
   );
 
   DIContainer.subscribe(
+    ClassRegistry.USER_IMAGES_REPOSITORY,
+    new UserImageRepository()
+  );
+
+  DIContainer.subscribe(
     ClassRegistry.FIND_ALL_USERS_IMAGES_USECASE,
     new FindAllUsersImagesUseCase(
       DIContainer.resolve(ClassRegistry.USER_IMAGES_REPOSITORY)
@@ -49,6 +59,13 @@ export function injectDependancies() {
     new FindUserInfosByIdSessionUsecase(
       DIContainer.resolve(ClassRegistry.USER_REPOSITORY),
       DIContainer.resolve(ClassRegistry.USER_SESSION_REPOSITORY)
+    )
+  );
+
+  DIContainer.subscribe(
+    ClassRegistry.SAVE_USER_IMAGE_USECASE,
+    new SaveUserImageUseCase(
+      DIContainer.resolve(ClassRegistry.USER_IMAGES_REPOSITORY)
     )
   );
 
@@ -75,13 +92,35 @@ export function injectDependancies() {
   );
 
   DIContainer.subscribe(
+    ClassRegistry.CREATE_NEW_USER_PASSWORD_USECASE,
+    new CreateNewUserPasswordUseCase(
+      DIContainer.resolve(ClassRegistry.USER_REPOSITORY)
+    )
+  );
+
+  DIContainer.subscribe(
+    ClassRegistry.RESET_USER_PASSWORD_USECASE,
+    new ResetUserPasswordUseCase(
+      DIContainer.resolve(ClassRegistry.USER_REPOSITORY),
+      DIContainer.resolve(ClassRegistry.EMAIL_SERVICE)
+    )
+  );
+
+  DIContainer.subscribe(
+    ClassRegistry.LOGOUT_USER_USECASE,
+    new LogoutUserUseCase(
+      DIContainer.resolve(ClassRegistry.USER_SESSION_REPOSITORY)
+    )
+  );
+
+  DIContainer.subscribe(
     ClassRegistry.AUTH_CONTROLLER,
     new AuthController(
       DIContainer.resolve(ClassRegistry.RESGISTER_USER_USECASE),
       DIContainer.resolve(ClassRegistry.VERYFY_USER_USECASE),
       DIContainer.resolve(ClassRegistry.LOGIN_USER_USECASE),
-      DIContainer.resolve(ClassRegistry.LOGOUT_USER_USECASE),
       DIContainer.resolve(ClassRegistry.RESET_USER_PASSWORD_USECASE),
+      DIContainer.resolve(ClassRegistry.LOGOUT_USER_USECASE),
       DIContainer.resolve(ClassRegistry.CREATE_NEW_USER_PASSWORD_USECASE)
     )
   );

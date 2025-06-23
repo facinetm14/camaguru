@@ -36,7 +36,10 @@ export class USerSessionRepository implements UserSessionRepositoryInterface {
       }
       const session = await this.findById(createUserSessionDto.id);
       connexion.release();
-      console.log({ session });
+      if (!session) {
+        return Err(UserLoginError.USER_NOT_FOUND);
+      }
+
       return Ok(session);
     } catch (error) {
       console.log(error);
@@ -44,7 +47,7 @@ export class USerSessionRepository implements UserSessionRepositoryInterface {
     }
   }
 
-  async findById(id: string): Promise<UserSession> {
+  async findById(id: string): Promise<UserSession | null> {
     const queryUser = {
       text: `SELECT * FROM users_sessions WHERE id = $1 LIMIT 1`,
       values: [id],
@@ -54,6 +57,10 @@ export class USerSessionRepository implements UserSessionRepositoryInterface {
     const result = await pgClient.query(queryUser);
     connexion.release();
     const sessionRaw = result.rows[0];
+
+    if (!sessionRaw) {
+      return null;
+    }
 
     return buildUserSessionEntityFromModel(sessionRaw);
   }

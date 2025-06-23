@@ -23,7 +23,7 @@ export const verifyPassword = async (
   passwd: string,
   hashPasswd: string,
   salt: string
-) => {
+): Promise<boolean> => {
   const hash = crypto
     .pbkdf2Sync(passwd, salt, NB_ITERATION, SIXTY_FOUR_BITS, SHA_512)
     .toString(HEX_DECIMAL);

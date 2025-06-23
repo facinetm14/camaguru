@@ -6,7 +6,7 @@ export class LogoutUserUseCase {
     private readonly userSessionRepo: UserSessionRepositoryInterface
   ) {}
 
-  exectute(sessionId: string): Promise<ActionStatus> {
+  execute(sessionId: string): Promise<ActionStatus> {
     return this.userSessionRepo.delete(sessionId);
   }
 }

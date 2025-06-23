@@ -88,7 +88,7 @@ const uploadImage = async (filename, image) => {
 
 const getAllImages = async () => {
   const sessionId = sessionStorage.getItem(SESSION_ID_KEY);
-  return fetch(`${API_BASE_ROUTE}/users/images-all`, {
+  return fetch(`${API_BASE_ROUTE}/users/images`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

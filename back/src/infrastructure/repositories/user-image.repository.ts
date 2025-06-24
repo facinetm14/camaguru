@@ -5,6 +5,21 @@ import { pgClient } from "../../database/dataSource";
 import { buildUploadUserImageEntityFromModel } from "../../interface-adapters/web/mappers/user-image.mapper";
 
 export class UserImageRepository implements UserImagesRepositoryInteface {
+  async find(id: string): Promise<UserImage | null> {
+    const queryUserImage = {
+      text: `SELECT * FROM user_images WHERE id=$1;`,
+      values: [id],
+    };
+
+    const connexion = await pgClient.connect();
+    const result = await pgClient.query(queryUserImage);
+    connexion.release();
+
+    const imageRaw = result.rows[0];
+
+    return buildUploadUserImageEntityFromModel(imageRaw);
+  }
+
   async saveImage(userImageDto: SaveImageDto): Promise<void> {
     const { id, userId, name, createdAt, updatedAt } = userImageDto;
 

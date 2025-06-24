@@ -1,5 +1,5 @@
 import { ClassRegistry } from "../../core/enum/class-registry";
-import { UserImageRepository } from "../../infrastructure/repositories/user-image-repository";
+import { UserImageRepository } from "../../infrastructure/repositories/user-image.repository";
 import { USerSessionRepository } from "../../infrastructure/repositories/user-session.repository";
 import { UserRepository } from "../../infrastructure/repositories/user.repository";
 import { EmailService } from "../../infrastructure/services/email.service";

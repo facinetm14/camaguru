@@ -4,4 +4,5 @@ import { SaveImageDto } from "../../dto/save-user-image.dto";
 export interface UserImagesRepositoryInteface {
   saveImage(userImage: SaveImageDto): Promise<void>;
   findAll(): Promise<UserImage[]>;
+  find(id: string): Promise<UserImage | null>;
 }

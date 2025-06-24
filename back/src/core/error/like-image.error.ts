@@ -1,0 +1,4 @@
+export enum LikeImageError {
+  UNAUTHORIZED = "UNAUTHORIZED",
+  IMAGE_NOT_FOUND = "IMAGE_NOT_FOUND",
+}

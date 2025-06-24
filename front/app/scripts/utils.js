@@ -21,3 +21,36 @@ export const uuid = (prefix = "") => {
 
   return `${prefix}-${timestamp}-${random}`;
 };
+
+export const buildUpdateUserInfosRequest = (
+  userFormDataWithNoPasswdField,
+  user
+) => {
+  const updateUserInfosRequest = {};
+  let isAnyFieldChanged = false;
+
+  const setIsAnyFieldChanged = () => {
+    if (!isAnyFieldChanged) {
+      isAnyFieldChanged = true;
+    }
+  };
+
+  for (const [key, value] of Object.entries(userFormDataWithNoPasswdField)) {
+    if (key === "passwd") {
+      updateUserInfosRequest.passwd = value;
+      setIsAnyFieldChanged();
+      continue;
+    }
+
+    if (value.toLowerCase() !== user[key].toLowerCase()) {
+      setIsAnyFieldChanged();
+      updateUserInfosRequest[key] = value;
+    }
+  }
+
+  if (!isAnyFieldChanged) {
+    return null;
+  }
+
+  return updateUserInfosRequest;
+};

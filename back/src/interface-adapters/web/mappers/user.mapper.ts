@@ -105,7 +105,7 @@ export const buildUserModelForUpdateFormDto = (
   updateUser: UpdateUserDto
 ): UserModelForUpdate => {
   return {
-    ...(updateUser.adress !== undefined && { adres: updateUser.adress }),
+    ...(updateUser.adress !== undefined && { adress: updateUser.adress }),
     ...(updateUser.firstName !== undefined && {
       first_name: updateUser.firstName,
     }),
@@ -171,5 +171,19 @@ export const buildCreateNewUserPasswordDto = async (
     id: body.id,
     passwd: hash,
     salt,
+  });
+};
+
+export const buildUpdateUserInfosFromUpdateRequest = (
+  body: any
+): Result<UpdateUserDto, RegistrationError> => {
+  for (const [key, value] of Object.entries(body)) {
+    if (!value) {
+      return Err(RegistrationError.BAD_REQUEST);
+    }
+  }
+
+  return Ok({
+    ...body,
   });
 };

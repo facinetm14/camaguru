@@ -14,12 +14,15 @@ import { buildSaveImageDtoFromRequestBody } from "../mappers/user-image.mapper";
 import { SaveUserImageUseCase } from "../../../application/usecases/users/save-user-image.usecase";
 import { FindUserInfosByIdSessionUsecase } from "../../../application/usecases/users/find-user-infos-by-session.usecase";
 import { UPLOAD_DEST } from "../../../core/consts/upload-destination";
+import { buildUpdateUserInfosFromUpdateRequest } from "../mappers/user.mapper";
+import { UpdateUserInfosUseCase } from "../../../application/usecases/users/update-user-infos.usecase";
 
 export class UserController {
   constructor(
     private readonly findAllUsersImagesUseCase: FindAllUsersImagesUseCase,
     private readonly saveUserImageUseCase: SaveUserImageUseCase,
-    private readonly findUserInfosByIdSessionUseCase: FindUserInfosByIdSessionUsecase
+    private readonly findUserInfosByIdSessionUseCase: FindUserInfosByIdSessionUsecase,
+    private readonly updateUserInfosUseCase: UpdateUserInfosUseCase
   ) {}
 
   async findAll({ req, resp }: ControllerInputType): Promise<void> {
@@ -98,8 +101,6 @@ export class UserController {
       return;
     }
 
-    console.log(userId);
-
     let body = "";
 
     req?.on("data", (chunk) => {
@@ -149,7 +150,6 @@ export class UserController {
       return;
     }
 
-    console.log("FINDING IMAGE !!!")
     const images = await this.findAllUsersImagesUseCase.execute();
     resp.statusCode = ResponseStatusCode.GET_OK;
     resp.end(JSON.stringify(images));
@@ -189,5 +189,46 @@ export class UserController {
     });
 
     fileStream.pipe(resp);
+  }
+
+  async updateUserInfos({
+    req,
+    params,
+    resp,
+  }: ControllerInputType): Promise<void> {
+    const userId = await this.getUserIdFromRequest(req);
+    if (!userId) {
+      resp.statusCode = ResponseStatusCode.FORBIDDEN;
+      resp.end();
+      return;
+    }
+
+    let body = "";
+
+    req?.on("data", (chunk) => {
+      body += chunk.toString();
+    });
+
+    req?.on("end", async () => {
+      const updateUserInfosDtoResult = buildUpdateUserInfosFromUpdateRequest(
+        JSON.parse(body)
+      );
+
+      if (updateUserInfosDtoResult.isErr) {
+        resp.statusCode = ResponseStatusCode.BAD_REQUEST;
+        resp.end();
+        return;
+      }
+      const UpdateUserDto = updateUserInfosDtoResult.data;
+      try {
+        await this.updateUserInfosUseCase.execute(userId, UpdateUserDto);
+        resp.statusCode = ResponseStatusCode.GET_OK;
+        resp.end();
+      } catch (error) {
+        console.log(error);
+        resp.statusCode = ResponseStatusCode.SERVER_INTERNAL_ERROR;
+        resp.end();
+      }
+    });
   }
 }

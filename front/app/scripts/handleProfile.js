@@ -1,7 +1,11 @@
 import { userService } from "../../usecases/userService.js";
 import userStore from "../../scripts/userStore.js";
 import { navigate } from "./events.js";
-import { uuid } from "./utils.js";
+import {
+  buildUpdateUserInfosRequest,
+  isPasswordStrong,
+  uuid,
+} from "./utils.js";
 import { SESSION_ID_KEY } from "./consts.js";
 import { PLAIN_API_BASE_ROUTE } from "../env.js";
 import { RouteUrl } from "./router.js";
@@ -9,10 +13,11 @@ let stream = null;
 let isActiveImageItemView = false;
 
 export const handleProfile = () => {
+  const sessionId = sessionStorage.getItem(SESSION_ID_KEY);
+
   const logoutBtn = document.querySelector("#logout");
   const profileDropdownMenu = document.querySelector("#profile-dropdownMenu");
   const usernameLabel = document.querySelector("#username-label");
-  const sessionId = sessionStorage.getItem(SESSION_ID_KEY);
   const addImageBtn = document.querySelector("#btn-add-image");
   const selfieBlock = document.querySelector("#block-selfie");
   const takePhotoBtn = document.querySelector("#take-photo");
@@ -20,14 +25,22 @@ export const handleProfile = () => {
   const canvas = document.querySelector("#canvas");
   const video = document.querySelector("#video");
   const imageItemList = document.querySelectorAll(".image-item");
+  const editUserInfosBtn = document.querySelector("#edit-infos-btn");
+  const viewInfosBlock = document.querySelector("#view-infos-block");
+
+  const editFirstNameField = document.querySelector("#edit-first-name");
+  const editLastNameField = document.querySelector("#edit-last-name");
+  const editUserNameFIeld = document.querySelector("#edit-username");
+  const editAdressField = document.querySelector("#edit-adress");
+  const editEmail = document.querySelector("#edit-email");
+  const editPasswordField = document.querySelector("#edit-password");
+  const editPasswordConfirmField = document.querySelector(
+    "#edit-password-confirm"
+  );
+  const editSaveBtn = document.querySelector("#edit-save");
 
   const context = canvas ? canvas.getContext("2d") : null;
   const secondImageSrc = `${PLAIN_API_BASE_ROUTE}/users/images/logo.png`;
-
-  if (!sessionId) {
-    navigate(RouteUrl.HOME);
-    return;
-  }
 
   const displayUserInfos = async () => {
     const user = userStore.getState().user;
@@ -47,6 +60,13 @@ export const handleProfile = () => {
 
     const profileAdressLabel = document.querySelector("#profile-adress-label");
     profileAdressLabel.textContent = user.adress;
+
+    editFirstNameField.value = user.firstName;
+    editLastNameField.value = user.lastName;
+    editUserNameFIeld.value = user.username;
+    editAdressField.value = user.adress;
+    editEmail.value = user.email;
+    editAdressField.value = user.adress;
   };
 
   const logout = (_event) => {
@@ -102,7 +122,15 @@ export const handleProfile = () => {
     navigate(RouteUrl.PROFILE);
   };
 
-  const handleGalery = (prefix) => {
+  const toggleBlock = (block) => {
+    if (block.classList.contains("hidden")) {
+      block.classList.remove("hidden");
+    } else {
+      block.classList.add("hidden");
+    }
+  };
+
+  const handleGalery = (_prefix) => {
     for (const imageItem of imageItemList) {
       const id = imageItem.dataset.imageid;
       const imageItemView = document.querySelector(`#${id}`);
@@ -124,11 +152,7 @@ export const handleProfile = () => {
 
       commentsBtn.addEventListener("click", (event) => {
         event.preventDefault();
-        if (inputComment.classList.contains("hidden")) {
-          inputComment.classList.remove("hidden");
-        } else {
-          inputComment.classList.add("hidden");
-        }
+        toggleBlock(inputComment);
       });
 
       closeView.addEventListener("click", (event) => {
@@ -139,6 +163,60 @@ export const handleProfile = () => {
     }
   };
 
+  const updateUserInfos = async (e) => {
+    e.preventDefault();
+
+    const firstName = editFirstNameField.value;
+    const lastName = editLastNameField.value;
+    const username = editUserNameFIeld.value;
+    const adress = editAdressField.value;
+    const email = editEmail.value;
+    const newPasswd = editPasswordField.value;
+    const confirm = editPasswordConfirmField.value;
+    const user = userStore.getState().user;
+    let passwd = "";
+
+    if (newPasswd || confirm) {
+      if (newPasswd !== confirm || !isPasswordStrong(newPasswd)) {
+        //!!TODO hanlde error
+        return;
+      }
+      passwd = newPasswd;
+    }
+
+    const updateUserInfosRequest = buildUpdateUserInfosRequest(
+      {
+        firstName,
+        lastName,
+        username,
+        adress,
+        email,
+        ...(passwd && { passwd }),
+      },
+      user
+    );
+
+    if (!updateUserInfosRequest) {
+      //!!TODO handle error nothing to update
+      return;
+    }
+
+    const updateUserInfosResult = await userService.updateUserInfos(
+      updateUserInfosRequest
+    );
+
+    if (updateUserInfosResult.ok) {
+      navigate(`/${RouteUrl.PROFILE}`);
+    } else {
+      //!!TODO handle error update infos
+    }
+  };
+
+  const handleViewProfile = (e) => {
+    e.preventDefault();
+    toggleBlock(viewInfosBlock);
+  };
+
   displayUserInfos();
   handleGalery();
 
@@ -146,4 +224,6 @@ export const handleProfile = () => {
   addImageBtn.addEventListener("click", showSelfieBlock);
   closePhotoBtn.addEventListener("click", closePhoto);
   takePhotoBtn.addEventListener("click", takePhoto);
+  editUserInfosBtn.addEventListener("click", handleViewProfile);
+  editSaveBtn.addEventListener("click", updateUserInfos);
 };

@@ -6,6 +6,7 @@ import { Profile } from "../pages/Profile.js";
 import { ResetPassword } from "../pages/ResetPassword.js";
 import { ConfrimPasswordReset } from "../pages/ConfirmPasswordReset.js";
 import { CreateNewPassword } from "../pages/CreateNewPassword.js";
+import { EditUserInfos } from "../pages/EditUserInfos.js";
 
 export const RouteUrl = {
   HOME: "",
@@ -30,3 +31,11 @@ export const routes = new Map([
   [RouteUrl.RESET_PASSWORD, ResetPassword],
   [RouteUrl.CREATE_NEW_PASSWORD, CreateNewPassword],
 ]);
+
+export function shouldRedirectToHome(path, sessionId) {
+  if (!sessionId && path === RouteUrl.PROFILE) {
+    return true;
+  }
+
+  return false;
+}

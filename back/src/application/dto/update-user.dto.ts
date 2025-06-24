@@ -1,3 +1,3 @@
 import { CreateUserDto } from "./create-user.dto";
 
-export type UpdateUserDto = Omit<Partial<CreateUserDto>, "id" | "email">;
+export type UpdateUserDto = Omit<Partial<CreateUserDto>, "id">;

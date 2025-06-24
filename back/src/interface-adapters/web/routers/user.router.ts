@@ -33,6 +33,11 @@ export class UserRouter extends RouterStrategy implements RouterInterface {
         handler: this.userController.findByIdSession,
       },
       {
+        pattern: `/users/:${RoutesParamsKey.SESSION_ID}`,
+        method: "PATCH",
+        handler: this.userController.updateUserInfos,
+      },
+      {
         pattern: "/users",
         method: "GET",
         handler: this.userController.findAll,

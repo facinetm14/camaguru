@@ -186,6 +186,7 @@ export class UserController {
     resp.writeHead(ResponseStatusCode.GET_OK, {
       "Content-Type": `image/${type}`,
       "Content-Length": statSync(path).size,
+      "Access-Control-Allow-Origin": "*",
     });
 
     fileStream.pipe(resp);

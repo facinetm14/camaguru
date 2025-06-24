@@ -14,6 +14,7 @@ let isActiveImageItemView = false;
 
 export const handleProfile = () => {
   const sessionId = sessionStorage.getItem(SESSION_ID_KEY);
+  const baseImageUrl = `${PLAIN_API_BASE_ROUTE}/users/images`;
 
   const logoutBtn = document.querySelector("#logout");
   const profileDropdownMenu = document.querySelector("#profile-dropdownMenu");
@@ -37,11 +38,14 @@ export const handleProfile = () => {
   const editPasswordConfirmField = document.querySelector(
     "#edit-password-confirm"
   );
+  const wallPaperItemList = document.querySelectorAll(".wall-paper-item");
+
   const editSaveBtn = document.querySelector("#edit-save");
 
   const context = canvas ? canvas.getContext("2d") : null;
-  const secondImageSrc = `${PLAIN_API_BASE_ROUTE}/users/images/logo.png`;
+  const selectedWallPaper = document.querySelector(".active-wall-paper");
 
+  let secondImageSrc = `${baseImageUrl}/${selectedWallPaper.dataset.imagesrc}`;
   const displayUserInfos = async () => {
     const user = userStore.getState().user;
 
@@ -90,25 +94,26 @@ export const handleProfile = () => {
     takePhotoBtn.classList.add("pressed");
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
     context.globalAlpha = 0.5;
-
-    //testing purpose
     const newImage = document.createElement("img");
+    newImage.crossOrigin = "anonymous";
     newImage.src = secondImageSrc;
 
-    context.drawImage(newImage, 0, 0, canvas.width / 3, canvas.height / 3);
-    context.globalAlpha = 1.0;
+    newImage.onload = () => {
+      context.drawImage(newImage, 0, 0, canvas.width / 3, canvas.height / 3);
+      context.globalAlpha = 1.0;
 
-    const imageDataURL = canvas.toDataURL("image/jpeg");
-    const user = userStore.getState().user;
+      const imageDataURL = canvas.toDataURL("image/jpeg");
+      const user = userStore.getState().user;
 
-    const base64Data = imageDataURL.split(",")[1];
-    const filename = `img-${user.username}-${uuid()}.jpg`;
+      const base64Data = imageDataURL.split(",")[1];
+      const filename = `img-${user.username}-${uuid()}.jpg`;
 
-    userService.uploadImage(filename, base64Data);
+      userService.uploadImage(filename, base64Data);
 
-    video.classList.add("hidden");
-    takePhotoBtn.disabled = true;
-    canvas.classList.remove("hidden");
+      video.classList.add("hidden");
+      takePhotoBtn.disabled = true;
+      canvas.classList.remove("hidden");
+    };
   };
 
   const closePhoto = (_event) => {
@@ -217,8 +222,23 @@ export const handleProfile = () => {
     toggleBlock(viewInfosBlock);
   };
 
+  const handleWallPaperSelection = () => {
+    for (const wallpaperItem of wallPaperItemList) {
+      wallpaperItem.addEventListener("click", (e) => {
+        const src = `${baseImageUrl}/${wallpaperItem.dataset.imagesrc}`;
+        secondImageSrc = src;
+
+        const current = document.querySelector(".active-wall-paper");
+        current.classList.remove("active-wall-paper");
+        wallpaperItem.classList.add("active-wall-paper");
+      });
+    }
+  };
+
   displayUserInfos();
   handleGalery();
+
+  handleWallPaperSelection();
 
   logoutBtn.addEventListener("click", logout);
   addImageBtn.addEventListener("click", showSelfieBlock);

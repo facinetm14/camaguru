@@ -79,23 +79,36 @@ export const Profile = () => {
     <video id="video" width="650" height="480" autoplay playsinline></video>
     <canvas id="canvas" class="hidden" width="650" height="480"></canvas>
     <div class="selfie-action-wrapper">
-      <button type="button" class="selfie-action-btn" id="take-photo">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-camera"
-          viewBox="0 0 16 16">
-          <path
-            d="M15 12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h1.172a3 3 0 0 0 2.12-.879l.83-.828A1 1 0 0 1 6.827 3h2.344a1 1 0 0 1 .707.293l.828.828A3 3 0 0 0 12.828 5H14a1 1 0 0 1 1 1zM2 4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-1.172a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 9.172 2H6.828a2 2 0 0 0-1.414.586l-.828.828A2 2 0 0 1 3.172 4z" />
-          <path
-            d="M8 11a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5m0 1a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7M3 6.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0" />
-        </svg>
-      </button>
-      <button type="button" class="selfie-action-btn" id="close-photo">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle"
-          viewBox="0 0 16 16">
-          <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
-          <path
-            d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708" />
-        </svg>
-      </button>
+      <div class="selfie-action-select-wall-paper">
+        <div class="wall-paper-item active-wall-paper" data-imagesrc="cat.png">
+          <img class="card-img-top" src="${PLAIN_API_BASE_ROUTE}/users/images/cat.png" alt="Card image cap">
+        </div>
+        <div class="wall-paper-item" data-imagesrc="dog.png">
+          <img class="card-img-top" src="${PLAIN_API_BASE_ROUTE}/users/images/dog.png" alt="Card image cap">
+        </div>
+        <div class="wall-paper-item" data-imagesrc="lion.png">
+          <img class="card-img-top" src="${PLAIN_API_BASE_ROUTE}/users/images/lion.png" alt="Card image cap">
+        </div>
+      </div>
+      <div class="selfie-action-btn-block">
+        <button type="button" class="selfie-action-btn" id="take-photo">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-camera"
+            viewBox="0 0 16 16">
+            <path
+              d="M15 12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h1.172a3 3 0 0 0 2.12-.879l.83-.828A1 1 0 0 1 6.827 3h2.344a1 1 0 0 1 .707.293l.828.828A3 3 0 0 0 12.828 5H14a1 1 0 0 1 1 1zM2 4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-1.172a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 9.172 2H6.828a2 2 0 0 0-1.414.586l-.828.828A2 2 0 0 1 3.172 4z" />
+            <path
+              d="M8 11a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5m0 1a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7M3 6.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0" />
+          </svg>
+        </button>
+        <button type="button" class="selfie-action-btn" id="close-photo">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle"
+            viewBox="0 0 16 16">
+            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
+            <path
+              d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708" />
+          </svg>
+        </button>
+      </div>
     </div>
   </div>
   <div class="view-infos hidden" id="view-infos-block">
@@ -248,8 +261,13 @@ export const Profile = () => {
     right: 0;
     left: 0;
     margin: auto;
-    max-width: 652px;
+    max-width: 655px;
     background-color: gray;
+  }
+  
+  .block-selfie {
+    border: 2px solid var(--bg-secondary);
+    border-radius: 5px;
   }
 
   video {
@@ -284,6 +302,12 @@ export const Profile = () => {
 
   .selfie-action-wrapper {
     display: flex;
+    flex-direction: column;
+  }
+
+  .selfie-action-btn-block {
+    display: flex;
+    margin-bottom: 15px;
   }
 
   .view-image-item {
@@ -299,6 +323,24 @@ export const Profile = () => {
     z-index: 3;
   }
   
+  .selfie-action-select-wall-paper {
+    margin-top: 5px;
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+  }
+  .wall-paper-item {
+    width: calc(33.333% - 10px);
+    min-widht: 200px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    border: 1px solid var(--bg-primary);
+    border-radius: 5px;
+  }
+
+  .active-wall-paper {
+    background-color: var(--bg-secondary);
+  }
 </style>
 `;
 

@@ -17,4 +17,5 @@ export enum ClassRegistry {
   FIND_ALL_USERS_IMAGES_USECASE = "findAllUsersImagesUseCase",
   SAVE_USER_IMAGE_USECASE = "saveUserImageUseCase",
   FIND_USER_INFOS_BY_ID_SESSION_USECASE = "findUserInfosByIdSessionUseCase",
+  UPDATE_USER_INFOS_USECASE = "UPDATE_USER_INFOS_USECASE",
 }

@@ -97,6 +97,18 @@ const getAllImages = async () => {
   });
 };
 
+const updateUserInfos = async (updateUserInfosRequest) => {
+  const sessionId = sessionStorage.getItem(SESSION_ID_KEY);
+  return fetch(`${API_BASE_ROUTE}/users/${sessionId}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${sessionId}`,
+    },
+    method: "PATCH",
+    body: JSON.stringify({ ...updateUserInfosRequest }),
+  });
+};
+
 export const userService = {
   register,
   verify,
@@ -108,4 +120,5 @@ export const userService = {
   uploadImage,
   getAllImages,
   updatePassword,
+  updateUserInfos,
 };

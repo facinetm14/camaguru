@@ -4,7 +4,7 @@ import { UserImagesRepositoryInteface } from "../../interfaces/repositories/user
 export class SaveUserImageUseCase {
   constructor(private readonly userImageRepo: UserImagesRepositoryInteface) {}
 
-  execute(saveImageDto: SaveImageDto): Promise<void> {
+  async execute(saveImageDto: SaveImageDto): Promise<void> {
     return this.userImageRepo.saveImage(saveImageDto);
   }
 }

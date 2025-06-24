@@ -18,6 +18,7 @@ import { FindAllUsersImagesUseCase } from "../usecases/users/find-all-users-imag
 import { FindUserInfosByIdSessionUsecase } from "../usecases/users/find-user-infos-by-session.usecase";
 import { ResetUserPasswordUseCase } from "../usecases/users/reset-user-password.usecase";
 import { SaveUserImageUseCase } from "../usecases/users/save-user-image.usecase";
+import { UpdateUserInfosUseCase } from "../usecases/users/update-user-infos.usecase";
 
 export function injectDependancies() {
   DIContainer.subscribe(ClassRegistry.BASE_ROUTE, new BaseRouter());
@@ -70,11 +71,19 @@ export function injectDependancies() {
   );
 
   DIContainer.subscribe(
+    ClassRegistry.UPDATE_USER_INFOS_USECASE,
+    new UpdateUserInfosUseCase(
+      DIContainer.resolve(ClassRegistry.USER_REPOSITORY)
+    )
+  );
+
+  DIContainer.subscribe(
     ClassRegistry.USER_CONTROLLER,
     new UserController(
       DIContainer.resolve(ClassRegistry.FIND_ALL_USERS_IMAGES_USECASE),
       DIContainer.resolve(ClassRegistry.SAVE_USER_IMAGE_USECASE),
-      DIContainer.resolve(ClassRegistry.FIND_USER_INFOS_BY_ID_SESSION_USECASE)
+      DIContainer.resolve(ClassRegistry.FIND_USER_INFOS_BY_ID_SESSION_USECASE),
+      DIContainer.resolve(ClassRegistry.UPDATE_USER_INFOS_USECASE)
     )
   );
 

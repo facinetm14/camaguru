@@ -5,7 +5,8 @@ import userStore from "../scripts/userStore.js";
 
 export const Profile = () => {
   const root = document.querySelector("#app");
-  const { myImageList, otherImageList } = userStore.getState();
+  const { myImageList, user, otherImageList } = userStore.getState();
+
   const GaleryOwner = {
     ME: "me",
     OTHER: "other",
@@ -21,6 +22,7 @@ export const Profile = () => {
       <div class="username-label" id="username-label"></div>
       <div class="user-profile-dropdown-menu" id="profile-dropdownMenu">
         <ul>
+          <li><a href="" id="edit-infos-btn">Edit-infos</a></li>
           <li><a href="" id="logout">Logout</a></li>
         </ul>
       </div>
@@ -70,7 +72,7 @@ export const Profile = () => {
     </div>
     <div class="galery">
       <h2>Others</h2>
-      ${Galery(GaleryOwner.OTHER, myImageList)}
+      ${Galery(GaleryOwner.OTHER, otherImageList)}
     </div>
   </div>
   <div class="block-selfie hidden" id="block-selfie">
@@ -95,6 +97,47 @@ export const Profile = () => {
         </svg>
       </button>
     </div>
+  </div>
+  <div class="view-infos hidden" id="view-infos-block">
+  <form class="signup-form mt-3 mb-3">
+      <div class="mb-3 col-md-11 m-auto">
+        <label for="first-name" class="form-label">First Name</label>
+        <input type="text" class="form-control" id="edit-first-name">
+        <span id="first-name" class=""></span>
+      </div>
+      <div class="mb-3 col-md-11 m-auto">
+        <label for="last-name" class="form-label">Last Name</label>
+        <input type="text" class="form-control" id="edit-last-name">
+        <span id="last-name" class=""></span>
+      </div>
+      <div class="mb-3 col-md-11 m-auto">
+        <label for="username" class="form-label">Username</label>
+        <input type="text" class="form-control" id="edit-username">
+        <span id="username-error" class=""></span>
+      </div>
+      <div class="mb-3 col-md-11 m-auto">
+        <label for="adress" class="form-label">Adress</label>
+        <input type="text" class="form-control" id="edit-adress" >
+        <span id="adress-error" class=""></span>
+      </div>
+      <div class="mb-3 col-md-11 m-auto">
+        <label for="email" class="form-label">Email</label>
+        <input type="email" class="form-control" id="edit-email" >
+        <span id="email-error" class=""></span>
+      </div>
+      <div class="mb-3 col-md-11 m-auto" id="password-block">
+        <label for="password" class="form-label">Password</label>
+        <input type="password" class="form-control" id="edit-password">
+      </div>
+      <div class="mb-3 col-md-11 m-auto">
+        <label for="password-confirmation" class="form-label">Password confirmation</label>
+        <input type="password" class="form-control" id="edit-password-confirm" >
+        <span id="password" class=""></span>
+      </div>
+      <div class="col-md-11 m-auto">
+        <button type="button" class="btn btn-success" id="edit-save">Save</button>
+      </div>
+    </form>
   </div>
 </div>
 
@@ -142,15 +185,20 @@ export const Profile = () => {
       margin: 0;
     }
 
-    .user-profile-dropdown-menu li a {
+    .user-profile-dropdown-menu li a, li span {
       text-decoration: none;
       display: block;
       padding: 10px;
       font-weight: 500;
       transition: background-color 0.3s;
+      cursor: pointer;
     }
 
     .user-profile-dropdown-menu li a:hover {
+      background-color: gray;
+    }
+
+    .user-profile-dropdown-menu li span:hover {
       background-color: gray;
     }
   }
@@ -193,7 +241,7 @@ export const Profile = () => {
     }
   }
 
-  .block-selfie {
+  .block-selfie, .view-infos {
     position: absolute;
     border: 1px solid gray;
     top: 10%;

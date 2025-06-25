@@ -31,17 +31,6 @@ describe("Like image usecase", () => {
     likeImageUseCase = new LikeImageUseCase(userRepo, imageRepo, likeImageRepo);
   });
 
-  it("should return UNAUTHORIZED when user is not connected", async () => {
-    // Act
-    const likeImageResult = await likeImageUseCase.execute("-1", "1");
-
-    // ecpect
-    expect(likeImageResult).toMatchObject({
-      isErr: true,
-      error: LikeImageError.UNAUTHORIZED,
-    });
-  });
-
   it("should return  IMAGE_NOT_FOUND when image is not found", async () => {
     imageRepo.find = jest.fn().mockReturnValue(null);
     const likeImageResult = await likeImageUseCase.execute("1", "-1");

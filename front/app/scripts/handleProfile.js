@@ -135,7 +135,7 @@ export const handleProfile = () => {
     }
   };
 
-  const handleGalery = (_prefix) => {
+  const handleGalery = () => {
     for (const imageItem of imageItemList) {
       const id = imageItem.dataset.imageid;
       const imageItemView = document.querySelector(`#${id}`);

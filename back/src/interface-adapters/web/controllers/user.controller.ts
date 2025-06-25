@@ -16,13 +16,17 @@ import { FindUserInfosByIdSessionUsecase } from "../../../application/usecases/u
 import { UPLOAD_DEST } from "../../../core/consts/upload-destination";
 import { buildUpdateUserInfosFromUpdateRequest } from "../mappers/user.mapper";
 import { UpdateUserInfosUseCase } from "../../../application/usecases/users/update-user-infos.usecase";
+import { LikeImageUseCase } from "../../../application/usecases/users/like-image.usecase";
+import { GetImageLikesUseCase } from "../../../application/usecases/users/get-image-likes-usecase";
 
 export class UserController {
   constructor(
     private readonly findAllUsersImagesUseCase: FindAllUsersImagesUseCase,
     private readonly saveUserImageUseCase: SaveUserImageUseCase,
     private readonly findUserInfosByIdSessionUseCase: FindUserInfosByIdSessionUsecase,
-    private readonly updateUserInfosUseCase: UpdateUserInfosUseCase
+    private readonly updateUserInfosUseCase: UpdateUserInfosUseCase,
+    private readonly likeImageUseCase: LikeImageUseCase,
+    private readonly getImageLikesUseCase: GetImageLikesUseCase
   ) {}
 
   async findAll({ req, resp }: ControllerInputType): Promise<void> {
@@ -36,7 +40,7 @@ export class UserController {
     resp.statusCode = ResponseStatusCode.GET_OK;
     resp.setHeader("Content-Type", "application/json");
 
-    const users = await this.findAllUsersImagesUseCase.execute();
+    const users = await this.findAllUsersImagesUseCase.execute(userId);
 
     resp.end(JSON.stringify(users));
   }
@@ -142,15 +146,15 @@ export class UserController {
     params,
     resp,
   }: ControllerInputType): Promise<void> {
-    const connectedUser = await this.getUserIdFromRequest(req);
+    const userId = await this.getUserIdFromRequest(req);
 
-    if (!connectedUser) {
+    if (!userId) {
       resp.statusCode = ResponseStatusCode.FORBIDDEN;
       resp.end();
       return;
     }
 
-    const images = await this.findAllUsersImagesUseCase.execute();
+    const images = await this.findAllUsersImagesUseCase.execute(userId);
     resp.statusCode = ResponseStatusCode.GET_OK;
     resp.end(JSON.stringify(images));
   }
@@ -231,5 +235,58 @@ export class UserController {
         resp.end();
       }
     });
+  }
+
+  async likeUserImages({
+    req,
+    params,
+    resp,
+  }: ControllerInputType): Promise<void> {
+    const userId = await this.getUserIdFromRequest(req);
+    if (!userId) {
+      resp.statusCode = ResponseStatusCode.FORBIDDEN;
+      resp.end();
+      return;
+    }
+    const imageId = params?.get(RoutesParamsKey.IMAGE_ID) ?? "";
+
+    try {
+      const result = await this.likeImageUseCase.execute(userId, imageId);
+
+      if (result.isErr) {
+        resp.statusCode = ResponseStatusCode.NOT_FOUND;
+        resp.end(result.error);
+        return;
+      }
+
+      resp.statusCode = ResponseStatusCode.CREATED_OK;
+      resp.end();
+    } catch (error) {
+      resp.statusCode = ResponseStatusCode.SERVER_INTERNAL_ERROR;
+      resp.end();
+    }
+  }
+
+  async findImageLikes({
+    req,
+    params,
+    resp,
+  }: ControllerInputType): Promise<void> {
+    const userId = await this.getUserIdFromRequest(req);
+    if (!userId) {
+      resp.statusCode = ResponseStatusCode.FORBIDDEN;
+      resp.end();
+      return;
+    }
+    const imageId = params?.get(RoutesParamsKey.IMAGE_ID) ?? "";
+
+    try {
+      const imageLikes = await this.getImageLikesUseCase.execute(imageId);
+      resp.statusCode = ResponseStatusCode.GET_OK;
+      resp.end(JSON.stringify(imageLikes));
+    } catch (error) {
+      resp.statusCode = ResponseStatusCode.SERVER_INTERNAL_ERROR;
+      resp.end();
+    }
   }
 }

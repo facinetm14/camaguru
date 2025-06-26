@@ -13,6 +13,21 @@ export class UserRouter extends RouterStrategy implements RouterInterface {
     super();
     this.routes = [
       {
+        pattern: `/users/images/:${RoutesParamsKey.IMAGE_ID}/comment`,
+        method: "POST",
+        handler: this.userController.commentImage,
+      },
+      {
+        pattern: `/users/images/:${RoutesParamsKey.IMAGE_ID}/likes`,
+        method: "POST",
+        handler: this.userController.likeUserImages,
+      },
+      {
+        pattern: `/users/images/:${RoutesParamsKey.IMAGE_ID}/likes`,
+        method: "GET",
+        handler: this.userController.findImageLikes,
+      },
+      {
         pattern: `/users/images/:${RoutesParamsKey.FILE_NAME}`,
         method: "GET",
         handler: this.userController.getImageByName,
@@ -36,11 +51,6 @@ export class UserRouter extends RouterStrategy implements RouterInterface {
         pattern: `/users/:${RoutesParamsKey.SESSION_ID}`,
         method: "PATCH",
         handler: this.userController.updateUserInfos,
-      },
-      {
-        pattern: "/users",
-        method: "GET",
-        handler: this.userController.findAll,
       },
     ];
   }

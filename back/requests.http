@@ -9,11 +9,11 @@ content-type: application/json
 
 {
  "username": "test-42",
- "email": "alt.xp-c0hrhhn@yopmail.com",
- "adress": "test",
+ "email": "aalt.xp-c0hrhhn@yopmail.com",
+ "adress": "Somewhere",
  "passwd": "Alt.xp-c0hrhhn@yopmail.com",
- "firstName": "Benois",
- "lastName": "DUPOND"
+ "firstName": "TOM",
+ "lastName": "Blabla"
 }
 
 ### verify user
@@ -28,7 +28,7 @@ POST http://localhost:5000/api/v1/auth/login
 content-type: application/json
 
 {
- "username": "test-42",
+ "username": "Tom",
  "passwd": "Alt.xp-c0hrhhn@yopmail.com"
 }
 
@@ -71,7 +71,28 @@ Authorization: Bearer -mc8qsmo9-7wwv33
 ### get all images
 GET http://localhost:5000/api/v1/users/images
 Content-Type: application/json
-Authorization: Bearer -mc8u3yh6-hchh8m
+Authorization: Bearer -mccggcr8-ra3i87
 
 ### get image
-GET http://localhost:5000/api/v1/users/images/img-test-42--mbjdokuw-y60uzf.jpg
+GET http://localhost:5000/api/v1/users/images/img-test-422--mcc0ak0d-tmz7qy.jpg
+
+
+### Like or dislike image
+POST http://localhost:5000/api/v1/users/images/-mcdf8r2i-0h33q1/likes
+Content-Type: application/json
+Authorization: Bearer -mcdfbv1u-byzj3a
+
+
+### GET image likes
+GET http://localhost:5000/api/v1/users/images/-mcdf8r2i-0h33q1/likes
+Content-Type: application/json
+Authorization: Bearer -mcc10bp0-5ig02f
+
+### Comment Image
+POST http://localhost:3000/api/v1/users/images/-mcd77uay-x8rjov/comment
+Authorization: Bearer -mcd76irx-cen3gh
+Content-Type: application/json
+
+{
+  "comment": "hello world"
+}

@@ -86,9 +86,20 @@ const uploadImage = async (filename, image) => {
   });
 };
 
-const getAllImages = async () => {
+const getMyImages = async () => {
   const sessionId = sessionStorage.getItem(SESSION_ID_KEY);
   return fetch(`${API_BASE_ROUTE}/users/images`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${sessionId}`,
+    },
+  });
+};
+
+const getOtherImages = async () => {
+  const sessionId = sessionStorage.getItem(SESSION_ID_KEY);
+  return fetch(`${API_BASE_ROUTE}/users/other-images`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -109,6 +120,29 @@ const updateUserInfos = async (updateUserInfosRequest) => {
   });
 };
 
+const likeOrDisLikeImage = async (imageId) => {
+  const sessionId = sessionStorage.getItem(SESSION_ID_KEY);
+  return fetch(`${API_BASE_ROUTE}/users/images/${imageId}/likes`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${sessionId}`,
+    },
+    method: "POST",
+  });
+};
+
+const commentImage = async (imageId, comment) => {
+  const sessionId = sessionStorage.getItem(SESSION_ID_KEY);
+  return fetch(`${API_BASE_ROUTE}/users/images/${imageId}/comment`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${sessionId}`,
+    },
+    method: "POST",
+    body: JSON.stringify({ comment }),
+  });
+};
+
 export const userService = {
   register,
   verify,
@@ -118,7 +152,10 @@ export const userService = {
   logout,
   sendResetPasswordRequest,
   uploadImage,
-  getAllImages,
+  getMyImages,
   updatePassword,
   updateUserInfos,
+  likeOrDisLikeImage,
+  getOtherImages,
+  commentImage
 };

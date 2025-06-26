@@ -41,37 +41,32 @@ export class UserImageRepository implements UserImagesRepositoryInteface {
     connexion.release();
   }
 
-  async findAllByUser(userId: string): Promise<UserImageHeavy[]> {
-    const queryUserImages = {
-      text: `
+  async findAll(): Promise<UserImageHeavy[]> {
+    const queryUserImages = `
         SELECT 
           ui.id, ui.name, ui.created_at, ui.updated_at, ui.user_id AS image_author_id, 
-          u1.username AS image_author_name,l.id AS like_id,l.author_id AS like_author_id,
-          u2.username AS like_author_name,
-          l.created_at AS like_created_at,
-          l.updated_at AS like_updated_at
+          u1.username AS image_author_name, i.id AS interaction_id, i.author_id AS interaction_author_id,
+          u2.username AS interaction_author_name,
+          i.created_at AS interaction_created_at,
+          i.updated_at AS interaction_updated_at,
+          i.type AS interaction_type,
+          i.content AS interaction_content
         FROM
           user_images ui
-        INNER JOIN
-          image_likes l ON ui.id = l.image_id
+        LEFT JOIN
+          image_interactions i ON ui.id = i.image_id
         LEFT JOIN
           users u1 ON u1.id = ui.user_id
         LEFT JOIN
-          users u2 ON u2.id = l.author_id
-        WHERE 
-          ui.user_id = $1
+          users u2 ON u2.id = i.author_id
         ORDER BY 
-          l.created_at DESC;
-      `,
-      values: [userId],
-    };
-
+          ui.created_at, i.created_at DESC;
+      `;
     const connexion = await pgClient.connect();
     const result = await pgClient.query(queryUserImages);
     connexion.release();
 
     const imagesRawList = result.rows;
-    console.log({ imagesRawList });
     if (!imagesRawList.length) {
       return [];
     }

@@ -6,7 +6,9 @@ import { Profile } from "../pages/Profile.js";
 import { ResetPassword } from "../pages/ResetPassword.js";
 import { ConfrimPasswordReset } from "../pages/ConfirmPasswordReset.js";
 import { CreateNewPassword } from "../pages/CreateNewPassword.js";
-import { EditUserInfos } from "../pages/EditUserInfos.js";
+import { navigate } from "./events.js";
+import userStore from "./userStore.js";
+import { setGlobalState } from "./userStore.js";
 
 export const RouteUrl = {
   HOME: "",
@@ -32,10 +34,19 @@ export const routes = new Map([
   [RouteUrl.CREATE_NEW_PASSWORD, CreateNewPassword],
 ]);
 
-export function shouldRedirectToHome(path, sessionId) {
+export async function redirectToHomeOrDisplayPage(sessionId, path, page) {
   if (!sessionId && path === RouteUrl.PROFILE) {
-    return true;
+    navigate(`/${RouteUrl.HOME}`);
+    return;
   }
 
-  return false;
+  await setGlobalState(sessionId);
+  const user = userStore.getState().user;
+
+  if (!Object.entries(user).length && path === RouteUrl.PROFILE) {
+    navigate(`/${RouteUrl.HOME}`);
+    return;
+  }
+
+  page();
 }

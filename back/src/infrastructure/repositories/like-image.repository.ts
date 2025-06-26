@@ -1,5 +1,6 @@
 import { LikeImageRepositoryInterface } from "../../application/interfaces/repositories/like-image.repository.interface";
 import { UserImageLike } from "../../core/entities/user-image-like.entity";
+import { ImageInteractionType } from "../../core/enum/user.enum";
 import { LikeImageError } from "../../core/error/like-image.error";
 import { pgClient } from "../../database/dataSource";
 import { buildImageLikesEntityFromModel } from "../../interface-adapters/web/mappers/user-image.mapper";
@@ -11,13 +12,20 @@ export class LikeImageRepository implements LikeImageRepositoryInterface {
     authorId: string,
     imageId: string
   ): Promise<Result<UserImageLike, LikeImageError.UNKNOWN_ERROR>> {
-    const created_at = new Date();
-    const updated_ad = created_at;
+    const createdAt = new Date();
+    const updatedAt = createdAt;
     const id = uuid();
 
     const insertQuery = {
-      text: `INSERT INTO image_likes(id, author_id, image_id, created_at, updated_at) VALUES($1, $2, $3, $4, $5);`,
-      values: [id, authorId, imageId, created_at, updated_ad],
+      text: `INSERT INTO image_interactions(id, author_id, image_id, created_at, updated_at, type) VALUES($1, $2, $3, $4, $5, $6);`,
+      values: [
+        id,
+        authorId,
+        imageId,
+        createdAt,
+        updatedAt,
+        ImageInteractionType.LIKE,
+      ],
     };
 
     try {
@@ -28,8 +36,8 @@ export class LikeImageRepository implements LikeImageRepositoryInterface {
         id,
         authorId,
         imageId,
-        createdAt: created_at,
-        updatedAt: created_at,
+        createdAt,
+        updatedAt,
       });
     } catch (error) {
       console.log(error);
@@ -39,7 +47,7 @@ export class LikeImageRepository implements LikeImageRepositoryInterface {
 
   async findAllByIdMage(imageId: string): Promise<UserImageLike[]> {
     const selectQuery = {
-      text: `SELECT * FROM image_likes WHERE image_id = $1;`,
+      text: `SELECT * FROM image_interactions WHERE image_id = $1;`,
       values: [imageId],
     };
 
@@ -62,8 +70,8 @@ export class LikeImageRepository implements LikeImageRepositoryInterface {
     authorId: string
   ): Promise<UserImageLike | null> {
     const selectQuery = {
-      text: `SELECT * FROM image_likes WHERE image_id = $1 AND author_id = $2 LIMIT 1;`,
-      values: [imageId, authorId],
+      text: `SELECT * FROM image_interactions WHERE image_id = $1 AND author_id = $2 AND type = $3 LIMIT 1;`,
+      values: [imageId, authorId, ImageInteractionType.LIKE],
     };
 
     const connexion = await pgClient.connect();
@@ -80,7 +88,7 @@ export class LikeImageRepository implements LikeImageRepositoryInterface {
 
   async delete(id: string): Promise<void> {
     const deleteQuery = {
-      text: `DELETE FROM image_likes WHERE id = $1;`,
+      text: `DELETE FROM image_interactions WHERE id = $1;`,
       values: [id],
     };
 

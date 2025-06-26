@@ -14,6 +14,7 @@ export class LikeImageUseCase {
     imageId: string
   ): Promise<Result<UserImageLike | null, LikeImageError>> {
     const userImage = await this.imageRepo.find(imageId);
+
     if (!userImage) {
       return Err(LikeImageError.IMAGE_NOT_FOUND);
     }

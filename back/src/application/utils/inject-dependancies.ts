@@ -1,4 +1,5 @@
 import { ClassRegistry } from "../../core/enum/class-registry";
+import { CommentImageRepository } from "../../infrastructure/repositories/comment-image.repository";
 import { LikeImageRepository } from "../../infrastructure/repositories/like-image.repository";
 import { UserImageRepository } from "../../infrastructure/repositories/user-image.repository";
 import { USerSessionRepository } from "../../infrastructure/repositories/user-session.repository";
@@ -14,6 +15,7 @@ import { LoginUserUseCase } from "../usecases/auth/login-user.usecase";
 import { LogoutUserUseCase } from "../usecases/auth/logout-user.usecase";
 import { RegisterUserUseCase } from "../usecases/auth/register-user.usecase";
 import { VerifyUserUseCase } from "../usecases/auth/verify-user.usecase";
+import { CommentImageUseCase } from "../usecases/users/comment-image-usecase";
 import { CreateNewUserPasswordUseCase } from "../usecases/users/create-new-user-password.usecase";
 import { FindAllUsersImagesUseCase } from "../usecases/users/find-all-users-images.usecase";
 import { FindUserInfosByIdSessionUsecase } from "../usecases/users/find-user-infos-by-session.usecase";
@@ -101,6 +103,19 @@ export function injectDependancies() {
   );
 
   DIContainer.subscribe(
+    ClassRegistry.COMMENT_IMAGE_REPOSITORY,
+    new CommentImageRepository()
+  );
+  DIContainer.subscribe(
+    ClassRegistry.COMMENT_IMAGE_USECASE,
+    new CommentImageUseCase(
+      DIContainer.resolve(ClassRegistry.USER_IMAGES_REPOSITORY),
+      DIContainer.resolve(ClassRegistry.COMMENT_IMAGE_REPOSITORY),
+      DIContainer.resolve(ClassRegistry.EMAIL_SERVICE)
+    )
+  );
+
+  DIContainer.subscribe(
     ClassRegistry.USER_CONTROLLER,
     new UserController(
       DIContainer.resolve(ClassRegistry.FIND_ALL_USERS_IMAGES_USECASE),
@@ -108,7 +123,8 @@ export function injectDependancies() {
       DIContainer.resolve(ClassRegistry.FIND_USER_INFOS_BY_ID_SESSION_USECASE),
       DIContainer.resolve(ClassRegistry.UPDATE_USER_INFOS_USECASE),
       DIContainer.resolve(ClassRegistry.LIKE_IMAGE_USECASE),
-      DIContainer.resolve(ClassRegistry.GET_IMAGE_LIKES_USECASE)
+      DIContainer.resolve(ClassRegistry.GET_IMAGE_LIKES_USECASE),
+      DIContainer.resolve(ClassRegistry.COMMENT_IMAGE_USECASE)
     )
   );
 

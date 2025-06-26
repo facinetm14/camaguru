@@ -1,7 +1,4 @@
-import { SESSION_ID_KEY } from "./consts.js";
 import { userService } from "../usecases/userService.js";
-import { navigate } from "./events.js";
-import { RouteUrl } from "./router.js";
 
 class UserStore {
   constructor() {
@@ -24,23 +21,21 @@ class UserStore {
 const userStore = new UserStore();
 
 export async function setGlobalState(sessionId) {
-  if (!sessionId) {
-    return;
-  }
   const userInfosResp = await userService.getMe(sessionId);
   if (userInfosResp.ok) {
     const userInfosRespData = await userInfosResp.json();
     userStore.setState({ user: userInfosRespData });
 
-    const user = userStore.getState().user;
-    const getImagesResult = await userService.getAllImages();
+    const getImagesResult = await userService.getMyImages();
     if (getImagesResult.ok) {
-      const allImages = [...(await getImagesResult.json())];
-      const myImageList = allImages.filter((image) => image.userId === user.id);
-      const otherImageList = allImages.filter(
-        (image) => image.userId !== user.id
+      const imageList = [...(await getImagesResult.json())];
+      const myImageList = imageList.filter(
+        (img) => img.author.id === userInfosRespData.id
       );
 
+      const otherImageList = imageList.filter(
+        (img) => img.author.id !== userInfosRespData.id
+      );
       userStore.setState({ myImageList, otherImageList });
     }
   }

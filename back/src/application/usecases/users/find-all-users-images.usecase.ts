@@ -5,7 +5,7 @@ import { UserImagesRepositoryInteface } from "../../interfaces/repositories/user
 export class FindAllUsersImagesUseCase {
   constructor(private readonly userImageRepo: UserImagesRepositoryInteface) {}
 
-  execute(userId: string): Promise<UserImageHeavy[]> {
-    return this.userImageRepo.findAllByUser(userId);
+  execute(): Promise<UserImageHeavy[]> {
+    return this.userImageRepo.findAll();
   }
 }

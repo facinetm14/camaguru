@@ -9,9 +9,14 @@ export enum UserSessionStatus {
   INVALID = "invalid",
 }
 
-export enum UserUniqKeys{
+export enum UserUniqKeys {
   VALIDATION_TOKEN = "validation_token",
   ID = "id",
   EMAIL = "email",
   USER_NAME = "username",
+}
+
+export enum ImageInteractionType {
+  LIKE = "LIKE",
+  COMMENT = "COMMENT",
 }

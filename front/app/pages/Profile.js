@@ -2,10 +2,12 @@ import { PLAIN_API_BASE_ROUTE } from "../env.js";
 import { handleProfile } from "../scripts/handleProfile.js";
 import { Galery } from "../components/Galery.js";
 import userStore from "../scripts/userStore.js";
+import { navigate } from "../scripts/events.js";
+import { RouteUrl } from "../scripts/router.js";
 
 export const Profile = () => {
   const root = document.querySelector("#app");
-  const { myImageList, user, otherImageList } = userStore.getState();
+  const { myImageList, otherImageList } = userStore.getState();
 
   const GaleryOwner = {
     ME: "me",

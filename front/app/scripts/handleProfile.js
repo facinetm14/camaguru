@@ -6,7 +6,7 @@ import {
   isPasswordStrong,
   uuid,
 } from "./utils.js";
-import { SESSION_ID_KEY } from "./consts.js";
+import { ENTER_KEY, SESSION_ID_KEY } from "./consts.js";
 import { PLAIN_API_BASE_ROUTE } from "../env.js";
 import { RouteUrl } from "./router.js";
 let stream = null;
@@ -135,14 +135,16 @@ export const handleProfile = () => {
     }
   };
 
-  const handleGalery = (_prefix) => {
+  const handleGalery = () => {
     for (const imageItem of imageItemList) {
       const id = imageItem.dataset.imageid;
-      const imageItemView = document.querySelector(`#${id}`);
-      const closeView = document.querySelector(`#close-view-${id}`);
-      const viewFullBtn = document.querySelector(`#view-full-btn-${id}`);
-      const commentsBtn = document.querySelector(`#comments-btn-${id}`);
-      const inputComment = document.querySelector(`#input-comment-${id}`);
+      const key = imageItem.dataset.imagekey;
+      const imageItemView = document.querySelector(`#${key}`);
+      const closeView = document.querySelector(`#close-view-${key}`);
+      const viewFullBtn = document.querySelector(`#view-full-btn-${key}`);
+      const commentsBtn = document.querySelector(`#comments-btn-${key}`);
+      const likesBtn = document.querySelector(`#likes-btn-${key}`);
+      const inputComment = document.querySelector(`#input-comment-${key}`);
 
       viewFullBtn.addEventListener("click", (event) => {
         event.preventDefault();
@@ -164,6 +166,25 @@ export const handleProfile = () => {
         event.preventDefault();
         imageItemView.classList.add("hidden");
         isActiveImageItemView = false;
+      });
+
+      likesBtn.addEventListener("click", async (e) => {
+        e.preventDefault();
+        await userService.likeOrDisLikeImage(id);
+        navigate(`/${RouteUrl.PROFILE}`);
+      });
+
+      inputComment.addEventListener("keydown", async (e) => {
+        const key = e.keyCode;
+        if (key !== ENTER_KEY) {
+          return;
+        }
+
+        const comment = `${e.target.value}`.trim();
+        await userService.commentImage(id, comment);
+        e.target.value = "";
+        toggleBlock(inputComment);
+        navigate(`/${RouteUrl.PROFILE}`);
       });
     }
   };

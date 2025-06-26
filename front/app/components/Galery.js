@@ -4,9 +4,21 @@ export const Galery = (owner, imageList) => {
   let template = `<div class="card-deck">`;
 
   for (const image of imageList) {
+    const likeCount = image.likeList.length ? image.likeList.length : "";
+    const commentCount = image.commentList.length
+      ? image.commentList.length
+      : "";
+    let commentListTemplate = "";
+
+    for (const comment of image.commentList) {
+      const line = `<span class="comment-author">${comment.authorName} </span> <span>${comment.content}</span><br/>`;
+      commentListTemplate += line;
+    }
+
     const imageItem = `
-    <div class="card image-item" data-imageid="${image.id}-${owner}">
+    <div class="card image-item" data-imagekey="${image.id}-${owner}" data-imageid="${image.id}">
       <img class="card-img-top" src="${PLAIN_API_BASE_ROUTE}/users/images/${image.name}" alt="Card image cap">
+      <div class="image-author">Author: <span>${image.author.name}</span></div>
       <div class="card-body image-score-block">
         <div class="likes-block">
           <button type="button" class="view-item-action" id="likes-btn-${image.id}-${owner}">
@@ -14,6 +26,7 @@ export const Galery = (owner, imageList) => {
               <path d="M6.956 1.745C7.021.81 7.908.087 8.864.325l.261.066c.463.116.874.456 1.012.965.22.816.533 2.511.062 4.51a10 10 0 0 1 .443-.051c.713-.065 1.669-.072 2.516.21.518.173.994.681 1.2 1.273.184.532.16 1.162-.234 1.733q.086.18.138.363c.077.27.113.567.113.856s-.036.586-.113.856c-.039.135-.09.273-.16.404.169.387.107.819-.003 1.148a3.2 3.2 0 0 1-.488.901c.054.152.076.312.076.465 0 .305-.089.625-.253.912C13.1 15.522 12.437 16 11.5 16H8c-.605 0-1.07-.081-1.466-.218a4.8 4.8 0 0 1-.97-.484l-.048-.03c-.504-.307-.999-.609-2.068-.722C2.682 14.464 2 13.846 2 13V9c0-.85.685-1.432 1.357-1.615.849-.232 1.574-.787 2.132-1.41.56-.627.914-1.28 1.039-1.639.199-.575.356-1.539.428-2.59z"/>
             </svg>
           </button>
+          <div class="like-count">${likeCount}</div>
         </div>
         <div class="comments-block">
           <button type="button" class="view-item-action" id="comments-btn-${image.id}-${owner}">
@@ -21,6 +34,7 @@ export const Galery = (owner, imageList) => {
               <path d="M16 2a2 2 0 0 0-2-2H2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h9.586a1 1 0 0 1 .707.293l2.853 2.853a.5.5 0 0 0 .854-.353zM3.5 3h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1 0-1m0 2.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1 0-1m0 2.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1 0-1"/>
             </svg>
           </button>
+          <div class="comment-count">${commentCount}</div>
         </div>
         <div class="view-full-block">
           <button type="button" class="view-item-action" id="view-full-btn-${image.id}-${owner}">
@@ -37,7 +51,6 @@ export const Galery = (owner, imageList) => {
       </div>
     </div>
     
-    
     <div class="view-image-item hidden" id="${image.id}-${owner}">
       <button type="button" class="view-item-action" id="close-view-${image.id}-${owner}">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#01081c" class="bi bi-x-circle"
@@ -47,7 +60,8 @@ export const Galery = (owner, imageList) => {
             d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708" />
         </svg>
       </button>
-      <img class="card-img-top" src="${PLAIN_API_BASE_ROUTE}/users/images/${image.name}" alt="Card image cap">
+      <div><img class="card-img-top" src="${PLAIN_API_BASE_ROUTE}/users/images/${image.name}" alt="Card image cap"></div>
+      <div class="comment-section">${commentListTemplate}</div>
     </div>
     `;
     template += imageItem;
@@ -85,6 +99,32 @@ export const Galery = (owner, imageList) => {
       justify-content: center;
       gap: 10px;
       flex-wrap: wrap;
+    }
+
+    .image-author {
+      color: var(--bg-primary);
+      margin-top: 15px;
+      margin: auto;
+      span {
+        font-weight: bolder;
+      }
+    }
+
+    .like-count, .comment-count {
+      color: var(--bg-primary);
+      font-weight: bolder;
+      width: 50px;
+      height: 30px;
+      text-align: center;
+    }
+
+    .comment-author {
+      font-weight: bolder;
+      color: var(--bg-primary);
+    }
+
+    .comment-section {
+      padding: 10px;
     }
 
   </style>

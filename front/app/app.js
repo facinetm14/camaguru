@@ -1,9 +1,11 @@
 import { Events } from "./scripts/enums.js";
-import { routes, RouteUrl, shouldRedirectToHome } from "./scripts/router.js";
+import {
+  redirectToHomeOrDisplayPage,
+  routes,
+  RouteUrl,
+} from "./scripts/router.js";
 import { navigate } from "./scripts/events.js";
-import { setGlobalState } from "./scripts/userStore.js";
 import { SESSION_ID_KEY } from "./scripts/consts.js";
-import { Home } from "./pages/Home.js";
 
 [Events.NAVIGATE_TO_PAGE, Events.POP_STATE].forEach((event) => {
   window.addEventListener(event, async () => {
@@ -17,7 +19,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 export async function renderApp() {
   const [_, path] = window.location.pathname.split("/");
-
   const page = routes.get(path);
 
   if (!page) {
@@ -26,12 +27,5 @@ export async function renderApp() {
   }
 
   const sessionId = sessionStorage.getItem(SESSION_ID_KEY);
-
-  if (shouldRedirectToHome(path, sessionId)) {
-    navigate(`/${RouteUrl.HOME}`);
-    return;
-  }
-
-  await setGlobalState(sessionId);
-  page();
+  await redirectToHomeOrDisplayPage(sessionId, path, page);
 }

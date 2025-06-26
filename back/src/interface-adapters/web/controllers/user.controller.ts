@@ -16,30 +16,21 @@ import { FindUserInfosByIdSessionUsecase } from "../../../application/usecases/u
 import { UPLOAD_DEST } from "../../../core/consts/upload-destination";
 import { buildUpdateUserInfosFromUpdateRequest } from "../mappers/user.mapper";
 import { UpdateUserInfosUseCase } from "../../../application/usecases/users/update-user-infos.usecase";
+import { LikeImageUseCase } from "../../../application/usecases/users/like-image.usecase";
+import { GetImageLikesUseCase } from "../../../application/usecases/users/get-image-likes-usecase";
+import { CommentImageUseCase } from "../../../application/usecases/users/comment-image-usecase";
+import { CommentImageError } from "../../../core/error/comment-image.error";
 
 export class UserController {
   constructor(
     private readonly findAllUsersImagesUseCase: FindAllUsersImagesUseCase,
     private readonly saveUserImageUseCase: SaveUserImageUseCase,
     private readonly findUserInfosByIdSessionUseCase: FindUserInfosByIdSessionUsecase,
-    private readonly updateUserInfosUseCase: UpdateUserInfosUseCase
+    private readonly updateUserInfosUseCase: UpdateUserInfosUseCase,
+    private readonly likeImageUseCase: LikeImageUseCase,
+    private readonly getImageLikesUseCase: GetImageLikesUseCase,
+    private readonly commentImageUseCase: CommentImageUseCase
   ) {}
-
-  async findAll({ req, resp }: ControllerInputType): Promise<void> {
-    const userId = await this.getUserIdFromRequest(req);
-    if (!userId) {
-      resp.statusCode = ResponseStatusCode.FORBIDDEN;
-      resp.end();
-      return;
-    }
-
-    resp.statusCode = ResponseStatusCode.GET_OK;
-    resp.setHeader("Content-Type", "application/json");
-
-    const users = await this.findAllUsersImagesUseCase.execute();
-
-    resp.end(JSON.stringify(users));
-  }
 
   async findByIdSession({
     req,
@@ -142,9 +133,9 @@ export class UserController {
     params,
     resp,
   }: ControllerInputType): Promise<void> {
-    const connectedUser = await this.getUserIdFromRequest(req);
+    const userId = await this.getUserIdFromRequest(req);
 
-    if (!connectedUser) {
+    if (!userId) {
       resp.statusCode = ResponseStatusCode.FORBIDDEN;
       resp.end();
       return;
@@ -230,6 +221,105 @@ export class UserController {
         resp.statusCode = ResponseStatusCode.SERVER_INTERNAL_ERROR;
         resp.end();
       }
+    });
+  }
+
+  async likeUserImages({
+    req,
+    params,
+    resp,
+  }: ControllerInputType): Promise<void> {
+    const userId = await this.getUserIdFromRequest(req);
+    if (!userId) {
+      resp.statusCode = ResponseStatusCode.FORBIDDEN;
+      resp.end();
+      return;
+    }
+    const imageId = params?.get(RoutesParamsKey.IMAGE_ID) ?? "";
+
+    try {
+      const result = await this.likeImageUseCase.execute(userId, imageId);
+
+      if (result.isErr) {
+        resp.statusCode = ResponseStatusCode.NOT_FOUND;
+        resp.end(result.error);
+        return;
+      }
+
+      resp.statusCode = ResponseStatusCode.CREATED_OK;
+      resp.end();
+    } catch (error) {
+      resp.statusCode = ResponseStatusCode.SERVER_INTERNAL_ERROR;
+      resp.end();
+    }
+  }
+
+  async findImageLikes({
+    req,
+    params,
+    resp,
+  }: ControllerInputType): Promise<void> {
+    const userId = await this.getUserIdFromRequest(req);
+    if (!userId) {
+      resp.statusCode = ResponseStatusCode.FORBIDDEN;
+      resp.end();
+      return;
+    }
+    const imageId = params?.get(RoutesParamsKey.IMAGE_ID) ?? "";
+
+    try {
+      const imageLikes = await this.getImageLikesUseCase.execute(imageId);
+      resp.statusCode = ResponseStatusCode.GET_OK;
+      resp.end(JSON.stringify(imageLikes));
+    } catch (error) {
+      resp.statusCode = ResponseStatusCode.SERVER_INTERNAL_ERROR;
+      resp.end();
+    }
+  }
+
+  async commentImage({
+    req,
+    params,
+    resp,
+  }: ControllerInputType): Promise<void> {
+    const authorId = await this.getUserIdFromRequest(req);
+    if (!authorId) {
+      resp.statusCode = ResponseStatusCode.FORBIDDEN;
+      resp.end();
+      return;
+    }
+    const imageId = params?.get(RoutesParamsKey.IMAGE_ID) ?? "";
+    let body = "";
+
+    req?.on("data", (chunk) => {
+      body += chunk.toString();
+    });
+
+    req?.on("end", async () => {
+      const commentRequestBody = JSON.parse(body);
+      const comment = commentRequestBody.comment;
+
+      const commentResult = await this.commentImageUseCase.execute({
+        imageId,
+        authorId,
+        comment,
+      });
+      if (!commentResult.isErr) {
+        resp.statusCode = ResponseStatusCode.CREATED_OK;
+        resp.end();
+        return;
+      }
+
+      const error = commentResult.error;
+      if (error === CommentImageError.IMAGE_NOT_FOUND) {
+        resp.statusCode = ResponseStatusCode.NOT_FOUND;
+      }
+
+      if (error === CommentImageError.UNKNOWN_ERROR) {
+        resp.statusCode = ResponseStatusCode.SERVER_INTERNAL_ERROR;
+      }
+
+      resp.end();
     });
   }
 }

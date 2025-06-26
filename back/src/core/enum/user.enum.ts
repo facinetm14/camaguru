@@ -15,3 +15,8 @@ export enum UserUniqKeys {
   EMAIL = "email",
   USER_NAME = "username",
 }
+
+export enum ImageInteractionType {
+  LIKE = "LIKE",
+  COMMENT = "COMMENT",
+}

@@ -54,3 +54,14 @@ export const buildUpdateUserInfosRequest = (
 
   return updateUserInfosRequest;
 };
+
+export const isImportingValidImage = (file) => {
+  return (
+    file && (file.type.match("image/jpeg") || file.type.match("image/png"))
+  );
+};
+
+export const CommentNotificationStatus = {
+  ACTIVE: "ACTIVE",
+  DISABLED: "DISABLED",
+};

@@ -1,3 +1,5 @@
+import { CommentNotificationStatus } from "../enum/user.enum";
+
 export type User = {
   id: string;
   email: string;
@@ -11,4 +13,5 @@ export type User = {
   status: string;
   validationToken?: string;
   salt?: string;
+  commentNotification: CommentNotificationStatus;
 };

@@ -4,28 +4,13 @@ import { LikeImageRepository } from "../../src/infrastructure/repositories/like-
 import { UserImageRepository } from "../../src/infrastructure/repositories/user-image.repository";
 import { UserRepositoryInMemory } from "../../src/infrastructure/repositories/user-repository-in-memory";
 import { Ok } from "../../src/shared/result";
+
 describe("Like image usecase", () => {
   let likeImageUseCase: LikeImageUseCase;
   let imageRepo: UserImageRepository;
   let likeImageRepo: LikeImageRepository;
 
   beforeAll(() => {
-    const userRepo = new UserRepositoryInMemory([
-      {
-        id: "1",
-        email: "jane.doe@example.com",
-        firstName: "Jane",
-        lastName: "Doe",
-        adress: "123 Elm Street, Springfield, USA",
-        username: "janedoe",
-        passwd: "hashed_password_here",
-        createdAt: new Date("2024-11-15T10:20:30Z"),
-        updatedAt: new Date("2025-06-20T08:45:00Z"),
-        status: "active",
-        validationToken: "abc123validationtoken",
-        salt: "randomsaltstring",
-      },
-    ]);
     imageRepo = {} as UserImageRepository;
     likeImageRepo = {} as LikeImageRepository;
 
@@ -66,8 +51,6 @@ describe("Like image usecase", () => {
     //Act
     const likeImageResult = await likeImageUseCase.execute("1", "1");
 
-    console.log(likeImageResult);
-
     //Expect
     expect(likeImageResult).toMatchObject({
       isErr: false,
@@ -92,7 +75,7 @@ describe("Like image usecase", () => {
       createdAt: new Date("2025-06-22T15:10:00Z"),
       updatedAt: new Date("2025-06-22T15:10:00Z"),
     });
-    likeImageRepo.delete = jest.fn().mockResolvedValue();
+    likeImageRepo.delete = jest.fn().mockResolvedValue(undefined);
 
     //Act
     const likeImageResult = await likeImageUseCase.execute("1", "1");

@@ -10,6 +10,7 @@ export interface UserRepositoryInteface {
   create(user: CreateUserDto): Promise<Result<string, RegistrationError>>;
   findAll(): Promise<User[]>;
   findUserByUniqKey(key: UserUniqKeys, value: string): Promise<User | null>;
+  findUserListByUniqKey(key: UserUniqKeys, values: string[]): Promise<User[]>;
   updateStatusAndRemoveValidationToken(
     idUser: string,
     userStatus: UserStatus

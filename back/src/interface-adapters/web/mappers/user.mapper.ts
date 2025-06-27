@@ -3,7 +3,10 @@ import { LoginUserDto } from "../../../application/dto/login-user.dto";
 import { CreateNewUserPasswordDto } from "../../../application/dto/reset-password.dto";
 import { UpdateUserDto } from "../../../application/dto/update-user.dto";
 import { User } from "../../../core/entities/user.entity";
-import { UserStatus } from "../../../core/enum/user.enum";
+import {
+  CommentNotificationStatus,
+  UserStatus,
+} from "../../../core/enum/user.enum";
 import { UserLoginError } from "../../../core/error/user-login.error";
 import { RegistrationError } from "../../../core/error/user-registration.error";
 import {
@@ -62,6 +65,7 @@ export const buildCreateUserDtoFromRequestBody = async (
     createdAt: new Date(),
     updatedAt: new Date(),
     status: UserStatus.UNVERIFIED,
+    commentNotification: CommentNotificationStatus.ACITIVE,
   });
 };
 
@@ -81,6 +85,7 @@ export const buildUserModelFromCreateUserDto = async (
     validation_token: createUserDto.validationToken,
     created_at: createUserDto.createdAt,
     updated_at: createUserDto.updatedAt,
+    comment_notification: createUserDto.commentNotification,
   };
 };
 
@@ -98,6 +103,7 @@ export function buildUserEntityFromModel(userModel: UserModel): User {
     status: userModel.status,
     salt: userModel.salt,
     validationToken: userModel.validation_token,
+    commentNotification: userModel.comment_notification,
   };
 }
 
@@ -122,6 +128,12 @@ export const buildUserModelForUpdateFormDto = (
     }),
     ...(updateUser.salt !== undefined && {
       salt: updateUser.salt,
+    }),
+    ...(updateUser.commentNotification !== undefined && {
+      comment_notification: updateUser.commentNotification,
+    }),
+    ...(updateUser.email !== undefined && {
+      email: updateUser.email,
     }),
     updated_at: new Date(),
   };

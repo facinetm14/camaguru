@@ -9,6 +9,9 @@ import { Result } from "../../shared/result";
 
 export class UserRepositoryInMemory implements UserRepositoryInteface {
   constructor(private users: User[] = []) {}
+  findUserListByUniqKey(key: UserUniqKeys, values: string[]): Promise<User[]> {
+    throw new Error("Method not implemented.");
+  }
 
   create(user: CreateUserDto): Promise<Result<string, RegistrationError>> {
     throw new Error("Method not implemented.");

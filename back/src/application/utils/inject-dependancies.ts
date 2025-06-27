@@ -111,6 +111,7 @@ export function injectDependancies() {
     new CommentImageUseCase(
       DIContainer.resolve(ClassRegistry.USER_IMAGES_REPOSITORY),
       DIContainer.resolve(ClassRegistry.COMMENT_IMAGE_REPOSITORY),
+      DIContainer.resolve(ClassRegistry.USER_REPOSITORY),
       DIContainer.resolve(ClassRegistry.EMAIL_SERVICE)
     )
   );

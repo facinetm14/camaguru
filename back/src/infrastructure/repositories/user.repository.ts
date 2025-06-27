@@ -32,12 +32,13 @@ export class UserRepository implements UserRepositoryInteface {
       salt,
       status,
       validation_token,
+      comment_notification,
     } = userModel;
 
     const insertQuery = {
       text: `
-        INSERT INTO users(id, username, email, adress, passwd, created_at, updated_at, salt, status, validation_token, first_name, last_name)
-        VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);`,
+        INSERT INTO users(id, username, email, adress, passwd, created_at, updated_at, salt, status, validation_token, first_name, last_name, comment_notification)
+        VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13);`,
       values: [
         id,
         username,
@@ -51,6 +52,7 @@ export class UserRepository implements UserRepositoryInteface {
         validation_token,
         first_name,
         last_name,
+        comment_notification,
       ],
     };
 
@@ -97,6 +99,32 @@ export class UserRepository implements UserRepositoryInteface {
     return buildUserEntityFromModel(user);
   }
 
+  async findUserListByUniqKey(
+    key: UserUniqKeys,
+    values: string[]
+  ): Promise<User[]> {
+    const valuePlaceholders = values
+      .map((_, index) => `$${index + 1}`)
+      .join(", ");
+
+    const queryUser = {
+      text: `SELECT * FROM users WHERE ${key} IN (${valuePlaceholders})`,
+      values: values,
+    };
+
+    const connexion = await pgClient.connect();
+    const result = await pgClient.query(queryUser);
+    connexion.release();
+
+    const userRawList = result.rows;
+
+    if (!userRawList.length) {
+      return [];
+    }
+
+    return userRawList.map((userRaw) => buildUserEntityFromModel(userRaw));
+  }
+
   async updateStatusAndRemoveValidationToken(
     idUser: string,
     userStatus: UserStatus
@@ -124,6 +152,7 @@ export class UserRepository implements UserRepositoryInteface {
     updateUserDto: UpdateUserDto
   ): Promise<ActionStatus> {
     const updateUser = buildUserModelForUpdateFormDto(updateUserDto);
+    console.log(updateUser);
 
     let columns = "";
     const columnsValues = [];

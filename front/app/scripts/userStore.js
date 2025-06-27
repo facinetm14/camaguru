@@ -1,4 +1,5 @@
 import { userService } from "../usecases/userService.js";
+import { GaleryPagination } from "./utils.js";
 
 class UserStore {
   constructor() {
@@ -6,6 +7,8 @@ class UserStore {
       user: {},
       myImageList: [],
       otherImageList: [],
+      myGaleryStart: 0,
+      otherGaleryStart: 0,
     };
   }
 
@@ -36,7 +39,18 @@ export async function setGlobalState(sessionId) {
       const otherImageList = imageList.filter(
         (img) => img.author.id !== userInfosRespData.id
       );
-      userStore.setState({ myImageList, otherImageList });
+      const myGaleryStart =
+        +localStorage.getItem(GaleryPagination.MY_GALERY_START) ?? 0;
+      const otherGaleryStart =
+        +localStorage.getItem(GaleryPagination.OTHER_GALERY_START) ?? 0;
+      localStorage.removeItem(GaleryPagination.MY_GALERY_START);
+
+      userStore.setState({
+        myImageList,
+        otherImageList,
+        myGaleryStart,
+        otherGaleryStart,
+      });
     }
   }
 }

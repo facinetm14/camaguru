@@ -4,6 +4,8 @@ import { navigate } from "./events.js";
 import {
   buildUpdateUserInfosRequest,
   CommentNotificationStatus,
+  GaleryOwner,
+  GaleryPagination,
   isImportingValidImage,
   isPasswordStrong,
   uuid,
@@ -11,6 +13,8 @@ import {
 import { ENTER_KEY, SESSION_ID_KEY } from "./consts.js";
 import { PLAIN_API_BASE_ROUTE } from "../env.js";
 import { RouteUrl } from "./router.js";
+import { GALERY_ITEM_LIMIT_PER_PAGE } from "./utils.js";
+
 let stream = null;
 let isActiveImageItemView = false;
 
@@ -43,6 +47,18 @@ export const handleProfile = () => {
   );
   const commentNotificationOption = document.querySelector(
     "#comment-notification"
+  );
+
+  const previousFromMyGalery = document.querySelector(
+    `#prev-${GaleryOwner.ME}`
+  );
+  const nextFromMyGalery = document.querySelector(`#next-${GaleryOwner.ME}`);
+
+  const previousFromOtherGalery = document.querySelector(
+    `#prev-${GaleryOwner.OTHER}`
+  );
+  const nextFromOtherGalery = document.querySelector(
+    `#next-${GaleryOwner.OTHER}`
   );
 
   const wallPaperItemList = document.querySelectorAll(".wall-paper-item");
@@ -168,6 +184,25 @@ export const handleProfile = () => {
     takePhotoBtn.classList.add("btn-active");
     filename = "";
     fileInbase64 = "";
+  };
+
+  const handlePagination = () => {
+    const { myImageList, otherImageList, myGaleryStart, otherGaleryStart } =
+      userStore.getState();
+    if (myImageList.length > myGaleryStart + GALERY_ITEM_LIMIT_PER_PAGE) {
+      nextFromMyGalery.removeAttribute("hidden");
+    }
+    if (myGaleryStart > 0) {
+      previousFromMyGalery.removeAttribute("hidden");
+    }
+
+    if (otherImageList.length > otherGaleryStart + GALERY_ITEM_LIMIT_PER_PAGE) {
+      nextFromOtherGalery.removeAttribute("hidden");
+    }
+
+    if (otherGaleryStart > 0) {
+      previousFromOtherGalery.removeAttribute("hidden");
+    }
   };
 
   const handleGalery = () => {
@@ -329,7 +364,13 @@ export const handleProfile = () => {
 
   displayUserInfos();
   handleGalery();
+  handlePagination();
   handleWallPaperSelection();
+
+  const movePage = (start, origin) => {
+    localStorage.setItem(origin, start);
+    navigate(`${RouteUrl.HOME}`);
+  };
 
   logoutBtn.addEventListener("click", logout);
   addImageBtn.addEventListener("click", showSelfieBlock);
@@ -339,4 +380,30 @@ export const handleProfile = () => {
   editUserInfosBtn.addEventListener("click", handleViewProfile);
   editSaveBtn.addEventListener("click", updateUserInfos);
   importPhotoBtn.addEventListener("change", importPhoto);
+
+  nextFromMyGalery.addEventListener("click", (e) => {
+    const { myGaleryStart } = userStore.getState();
+
+    const start = myGaleryStart + GALERY_ITEM_LIMIT_PER_PAGE;
+    localStorage.setItem(GaleryPagination.MY_GALERY_START, start);
+    navigate(`${RouteUrl.HOME}`);
+  });
+
+  previousFromMyGalery.addEventListener("click", (e) => {
+    const { myGaleryStart } = userStore.getState();
+    const start = myGaleryStart - GALERY_ITEM_LIMIT_PER_PAGE;
+    movePage(start, GaleryPagination.MY_GALERY_START);
+  });
+
+  nextFromOtherGalery.addEventListener("click", (e) => {
+    const { otherGaleryStart } = userStore.getState();
+    const start = otherGaleryStart + GALERY_ITEM_LIMIT_PER_PAGE;
+    movePage(start, GaleryPagination.OTHER_GALERY_START);
+  });
+
+  previousFromOtherGalery.addEventListener("click", (e) => {
+    const { otherGaleryStart } = userStore.getState();
+    const start = otherGaleryStart - GALERY_ITEM_LIMIT_PER_PAGE;
+    movePage(start, GaleryPagination.OTHER_GALERY_START);
+  });
 };

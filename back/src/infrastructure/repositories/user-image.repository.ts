@@ -60,7 +60,7 @@ export class UserImageRepository implements UserImagesRepositoryInteface {
         LEFT JOIN
           users u2 ON u2.id = i.author_id
         ORDER BY 
-          ui.created_at, i.created_at DESC;
+          ui.created_at DESC, i.created_at DESC;
       `;
     const connexion = await pgClient.connect();
     const result = await pgClient.query(queryUserImages);

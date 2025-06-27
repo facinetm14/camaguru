@@ -65,3 +65,15 @@ export const CommentNotificationStatus = {
   ACTIVE: "ACTIVE",
   DISABLED: "DISABLED",
 };
+
+export const GaleryOwner = {
+  ME: "me",
+  OTHER: "other",
+};
+
+export const GALERY_ITEM_LIMIT_PER_PAGE = 6;
+
+export const GaleryPagination = {
+  MY_GALERY_START: "MY_GALERY_START",
+  OTHER_GALERY_START: "OTHER_GALERY_START",
+};

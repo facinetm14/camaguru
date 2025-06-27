@@ -1,9 +1,17 @@
 import { PLAIN_API_BASE_ROUTE } from "../env.js";
+import userStore from "../scripts/userStore.js";
+import { GALERY_ITEM_LIMIT_PER_PAGE } from "../scripts/utils.js";
+import { GaleryOwner } from "../scripts/utils.js";
 
 export const Galery = (owner, imageList) => {
+  const { myGaleryStart, otherGaleryStart } = userStore.getState();
   let template = `<div class="card-deck">`;
+  const start = owner === GaleryOwner.ME ? myGaleryStart : otherGaleryStart;
+  const limitItem = start + GALERY_ITEM_LIMIT_PER_PAGE;
+  const limit = limitItem < imageList.length ? limitItem : imageList.length;
 
-  for (const image of imageList) {
+  for (let i = start; i < limit; i++) {
+    const image = imageList[i];
     const likeCount = image.likeList.length ? image.likeList.length : "";
     const commentCount = image.commentList.length
       ? image.commentList.length
@@ -70,6 +78,21 @@ export const Galery = (owner, imageList) => {
   template += `</div>`;
 
   template += `
+    <div class="pagination-bloc">
+      <button class="pagination-btn" id="prev-${owner}" data-owner="${owner}" hidden>
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" class="bi bi-arrow-left" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
+      </svg>
+      </button>
+      <button class="pagination-btn" id="next-${owner}" data-owner="${owner}" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" class="bi bi-arrow-right" viewBox="0 0 16 16">
+          <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/>
+        </svg>
+      </button>
+    </div>
+  `;
+
+  template += `
   <style>
     .image-item {
       width: calc(33.333% - 10px);
@@ -125,6 +148,14 @@ export const Galery = (owner, imageList) => {
 
     .comment-section {
       padding: 10px;
+    }
+
+    .pagination-btn{
+      border: none;
+      background-color: var(--bg-secondary);
+       &:hover {
+        background-color: var(--secondary);
+      }
     }
 
   </style>

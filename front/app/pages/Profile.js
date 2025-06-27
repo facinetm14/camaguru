@@ -2,17 +2,11 @@ import { PLAIN_API_BASE_ROUTE } from "../env.js";
 import { handleProfile } from "../scripts/handleProfile.js";
 import { Galery } from "../components/Galery.js";
 import userStore from "../scripts/userStore.js";
-import { navigate } from "../scripts/events.js";
-import { RouteUrl } from "../scripts/router.js";
+import { GaleryOwner } from "../scripts/utils.js";
 
 export const Profile = () => {
   const root = document.querySelector("#app");
   const { myImageList, otherImageList } = userStore.getState();
-
-  const GaleryOwner = {
-    ME: "me",
-    OTHER: "other",
-  };
 
   const template = `
   <div>
@@ -254,6 +248,7 @@ export const Profile = () => {
 
   .galery {
     max-width: 45%;
+    min-height:800px;
     background-color: var(--bg-primary);
     color: white;
     margin: 16px;

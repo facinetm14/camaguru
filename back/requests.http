@@ -16,6 +16,17 @@ content-type: application/json
  "lastName": "Blabla"
 }
 
+### does username exists
+GET http://localhost:5000/api/v1/users/test/exists
+
+### does email exists
+POST http://localhost:5000/api/v1/users/exists
+content-type: application/json
+
+{
+  "email": "kskfkkf@gmail.com"
+}
+
 ### verify user
 POST http://localhost:5000/api/v1/auth/verify/-mc8wf3i9-1ys56h
 content-type: application/json

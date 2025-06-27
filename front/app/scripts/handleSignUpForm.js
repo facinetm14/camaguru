@@ -34,43 +34,98 @@ export const handleSignUpForm = () => {
     const username = usernameInput.value;
     const adress = adressInput.value;
     const email = emailInput.value;
-    const agreement = agreementCheckbox.value === "on";
+    const agreement = agreementCheckbox.checked;
     const passwdConfirmation = passwdConfirmationInput.value;
     const passwd = passwdInput.value;
     const firstName = firstNameInput.value;
     const lastName = lastNameInput.value;
 
+    const errorFirstName = document.querySelector("#first-name-error");
     if (!firstName) {
+      errorFirstName.removeAttribute("hidden");
       return;
     }
+    errorFirstName.setAttribute("hidden", "true");
 
+    const errorLastName = document.querySelector("#last-name-error");
     if (!lastName) {
+      errorLastName.removeAttribute("hidden");
       return;
     }
+    errorLastName.setAttribute("hidden", "true");
 
+    const errorUsername = document.querySelector("#username-error");
     if (!username) {
+      errorUsername.removeAttribute("hidden");
       return;
     }
+    const doesUserNameExists = await userService.doesUserNameExists(username);
+    if (doesUserNameExists) {
+      errorUsername.textContent = "this username is already used";
+      errorUsername.removeAttribute("hidden");
+      return;
+    }
+    errorUsername.setAttribute("hidden", "true");
 
+    const errorAdress = document.querySelector("#adress-error");
     if (!adress) {
+      errorAdress.removeAttribute("hidden");
       return;
     }
+    errorAdress.setAttribute("hidden", "true");
 
-    if (!email || !isValidEmail(email)) {
+    const emailError = document.querySelector("#email-error");
+    if (!email) {
+      emailError.removeAttribute("hidden");
       return;
     }
-
-    if (!passwd || !isPasswordStrong(passwd)) {
+    if (!isValidEmail(email)) {
+      emailError.textContent = "Invalid email";
+      emailError.removeAttribute("hidden");
       return;
     }
+    const doesEmailExists = await userService.doesEmailExists(email);
+    if (doesEmailExists) {
+      emailError.textContent = "This email is already used";
+      emailError.removeAttribute("hidden");
+      return;
+    }
+    emailError.setAttribute("hidden", "true");
 
+    const errorPassword = document.querySelector("#password-error");
+    if (!passwd) {
+      errorPassword.removeAttribute("hidden");
+      return;
+    }
+    if (!isPasswordStrong(passwd)) {
+      errorPassword.innerHTML = `<span>
+      Your password is two weak, it must contain</br>
+      <ul>
+        <li>At least 12 caracters</li>
+        <li>At least a lowercase</li>
+        <li>At least an Uppercase</li>
+        <li>At least a special carracter</li>
+        <li>At least a digit</li>
+      </ul>
+      </span>`;
+      errorPassword.removeAttribute("hidden");
+      return;
+    }
+    errorPassword.setAttribute("hidden", "true");
+
+    const errorConfirm = document.querySelector("#confirm-error");
     if (!passwdConfirmation || !isMatchedPassword(passwdConfirmation)) {
+      errorConfirm.removeAttribute("hidden");
       return;
     }
+    errorConfirm.setAttribute("hidden", "true");
 
+    const errorAgrement = document.querySelector("#agreement-error");
     if (!agreement) {
+      errorAgrement.removeAttribute("hidden");
       return;
     }
+    errorAgrement.setAttribute("hidden", "true");
 
     const user = {
       email,
@@ -84,7 +139,10 @@ export const handleSignUpForm = () => {
     const registerUser = await userService.register(user);
     if (registerUser.ok) {
       navigate(RouteUrl.CONFIRM);
+      return;
     }
+
+    document.querySelector("#register-error").removeAttribute("hidden");
   }
 
   passwdInput.addEventListener("input", (event) =>

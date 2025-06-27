@@ -43,6 +43,16 @@ export class UserRouter extends RouterStrategy implements RouterInterface {
         handler: this.userController.uploadImage,
       },
       {
+        pattern: `/users/exists`,
+        method: "POST",
+        handler: this.userController.doesEmailExists,
+      },
+      {
+        pattern: `/users/:${RoutesParamsKey.USER_NAME}/exists`,
+        method: "GET",
+        handler: this.userController.doesUserNameExists,
+      },
+      {
         pattern: `/users/:${RoutesParamsKey.SESSION_ID}`,
         method: "GET",
         handler: this.userController.findByIdSession,

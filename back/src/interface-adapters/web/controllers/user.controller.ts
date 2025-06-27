@@ -20,6 +20,7 @@ import { LikeImageUseCase } from "../../../application/usecases/users/like-image
 import { GetImageLikesUseCase } from "../../../application/usecases/users/get-image-likes-usecase";
 import { CommentImageUseCase } from "../../../application/usecases/users/comment-image-usecase";
 import { CommentImageError } from "../../../core/error/comment-image.error";
+import { parseRequestBodyAsJson } from "../../../shared/parse-request-body";
 
 export class UserController {
   constructor(
@@ -99,8 +100,14 @@ export class UserController {
     });
 
     req?.on("end", async () => {
+      const requestBody = parseRequestBodyAsJson(body);
+      if (requestBody.isErr) {
+        resp.statusCode = ResponseStatusCode.BAD_REQUEST;
+        resp.end();
+        return;
+      }
       const uploadImageDtoResult = buildSaveImageDtoFromRequestBody(
-        JSON.parse(body),
+        requestBody.data,
         userId
       );
 
@@ -202,8 +209,14 @@ export class UserController {
     });
 
     req?.on("end", async () => {
+      const requestBody = parseRequestBodyAsJson(body);
+      if (requestBody.isErr) {
+        resp.statusCode = ResponseStatusCode.BAD_REQUEST;
+        resp.end();
+        return;
+      }
       const updateUserInfosDtoResult = buildUpdateUserInfosFromUpdateRequest(
-        JSON.parse(body)
+        requestBody.data
       );
 
       if (updateUserInfosDtoResult.isErr) {
@@ -296,7 +309,14 @@ export class UserController {
     });
 
     req?.on("end", async () => {
-      const commentRequestBody = JSON.parse(body);
+      const requestBody = parseRequestBodyAsJson(body);
+      if (requestBody.isErr) {
+        resp.statusCode = ResponseStatusCode.BAD_REQUEST;
+        resp.end();
+        return;
+      }
+
+      const commentRequestBody = requestBody.data;
       const comment = commentRequestBody.comment;
 
       const commentResult = await this.commentImageUseCase.execute({
@@ -304,6 +324,7 @@ export class UserController {
         authorId,
         comment,
       });
+
       if (!commentResult.isErr) {
         resp.statusCode = ResponseStatusCode.CREATED_OK;
         resp.end();

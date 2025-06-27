@@ -93,7 +93,14 @@ export const Profile = () => {
         </div>
       </div>
       <div class="selfie-action-btn-block">
-        <button type="button" class="selfie-action-btn" id="take-photo">
+        <label class="selfie-action-btn btn-active" id="import-photo">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-images" viewBox="0 0 16 16">
+            <path d="M4.502 9a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3"/>
+            <path d="M14.002 13a2 2 0 0 1-2 2h-10a2 2 0 0 1-2-2V5A2 2 0 0 1 2 3a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v8a2 2 0 0 1-1.998 2M14 2H4a1 1 0 0 0-1 1h9.002a2 2 0 0 1 2 2v7A1 1 0 0 0 15 11V3a1 1 0 0 0-1-1M2.002 4a1 1 0 0 0-1 1v8l2.646-2.354a.5.5 0 0 1 .63-.062l2.66 1.773 3.71-3.71a.5.5 0 0 1 .577-.094l1.777 1.947V5a1 1 0 0 0-1-1z"/>
+          </svg>
+           <input type="file" accept=".jpg, .jpeg, .png" />
+        </label>
+        <button type="button" class="selfie-action-btn btn-active" id="take-photo">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-camera"
             viewBox="0 0 16 16">
             <path
@@ -102,7 +109,13 @@ export const Profile = () => {
               d="M8 11a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5m0 1a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7M3 6.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0" />
           </svg>
         </button>
-        <button type="button" class="selfie-action-btn" id="close-photo">
+        <button type="button" class="selfie-action-btn btn-disabled" id="save-photo" disabled="true">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-floppy" viewBox="0 0 16 16">
+            <path d="M11 2H9v3h2z"/>
+            <path d="M1.5 0h11.586a1.5 1.5 0 0 1 1.06.44l1.415 1.414A1.5 1.5 0 0 1 16 2.914V14.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 14.5v-13A1.5 1.5 0 0 1 1.5 0M1 1.5v13a.5.5 0 0 0 .5.5H2v-4.5A1.5 1.5 0 0 1 3.5 9h9a1.5 1.5 0 0 1 1.5 1.5V15h.5a.5.5 0 0 0 .5-.5V2.914a.5.5 0 0 0-.146-.353l-1.415-1.415A.5.5 0 0 0 13.086 1H13v4.5A1.5 1.5 0 0 1 11.5 7h-7A1.5 1.5 0 0 1 3 5.5V1H1.5a.5.5 0 0 0-.5.5m3 4a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5V1H4zM3 15h10v-4.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5z"/>
+          </svg>
+        </button>
+        <button type="button" class="selfie-action-btn btn-active" id="close-photo">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle"
             viewBox="0 0 16 16">
             <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
@@ -292,14 +305,19 @@ export const Profile = () => {
     width: 50px;
     height: 50px;
     margin-top: 16px;
+    
+    input {
+      display: none;
+    }
+  }
+
+  .btn-active:hover {
+    background-color: var(--bg-secondary)
   }
 
   .pressed {
     background-color: green;
-  }
-
-  #close-photo:hover {
-    background-color: red;
+    cursor: not-allowed !important; 
   }
 
   .selfie-action-wrapper {
@@ -308,6 +326,8 @@ export const Profile = () => {
   }
 
   .selfie-action-btn-block {
+    margin: auto;
+    width: 300px;
     display: flex;
     margin-bottom: 15px;
   }
@@ -343,6 +363,18 @@ export const Profile = () => {
   .active-wall-paper {
     background-color: var(--bg-secondary);
   }
+
+  .btn-disabled {
+    background-color: #666666;
+    cursor: not-allowed !important; 
+  }
+
+  #import-photo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
 </style>
 `;
 

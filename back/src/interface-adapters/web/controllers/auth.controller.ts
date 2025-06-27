@@ -18,6 +18,7 @@ import { ResetUserPasswordUseCase } from "../../../application/usecases/users/re
 import { ActionStatus } from "../../../core/enum/action-status";
 import { LogoutUserUseCase } from "../../../application/usecases/auth/logout-user.usecase";
 import { CreateNewUserPasswordUseCase } from "../../../application/usecases/users/create-new-user-password.usecase";
+import { parseRequestBodyAsJson } from "../../../shared/parse-request-body";
 
 export class AuthController {
   constructor(
@@ -37,8 +38,15 @@ export class AuthController {
     });
 
     req?.on("end", async () => {
+      const requestBody = parseRequestBodyAsJson(body);
+      if (requestBody.isErr) {
+        resp.statusCode = ResponseStatusCode.BAD_REQUEST;
+        resp.end();
+        return;
+      }
+
       const createUserDtoResult = await buildCreateUserDtoFromRequestBody(
-        JSON.parse(body)
+        requestBody.data
       );
 
       if (createUserDtoResult.isErr) {
@@ -95,8 +103,15 @@ export class AuthController {
     });
 
     req?.on("end", async () => {
+      const requestBody = parseRequestBodyAsJson(body);
+      if (requestBody.isErr) {
+        resp.statusCode = ResponseStatusCode.BAD_REQUEST;
+        resp.end();
+        return;
+      }
+
       const loginUserDtoResult = buildUserLoginDtoFromRequestBody(
-        JSON.parse(body)
+        requestBody.data
       );
 
       if (loginUserDtoResult.isErr) {
@@ -165,8 +180,15 @@ export class AuthController {
 
     req?.on("end", () => {
       (async () => {
+        const requestBody = parseRequestBodyAsJson(body);
+        if (requestBody.isErr) {
+          resp.statusCode = ResponseStatusCode.BAD_REQUEST;
+          resp.end();
+          return;
+        }
+
         const emailResult = buildResetPasswordDtoFromRequestBody(
-          JSON.parse(body)
+          requestBody.data
         );
 
         if (emailResult.isErr) {
@@ -198,8 +220,15 @@ export class AuthController {
     });
 
     req?.on("end", async () => {
+      const requestBody = parseRequestBodyAsJson(body);
+      if (requestBody.isErr) {
+        resp.statusCode = ResponseStatusCode.BAD_REQUEST;
+        resp.end();
+        return;
+      }
+
       const createNewPasswordDtoResult = await buildCreateNewUserPasswordDto(
-        JSON.parse(body)
+        requestBody.data
       );
 
       if (createNewPasswordDtoResult.isErr) {

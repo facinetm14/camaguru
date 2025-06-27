@@ -3,6 +3,7 @@ import userStore from "../../scripts/userStore.js";
 import { navigate } from "./events.js";
 import {
   buildUpdateUserInfosRequest,
+  isImportingValidImage,
   isPasswordStrong,
   uuid,
 } from "./utils.js";
@@ -13,9 +14,9 @@ let stream = null;
 let isActiveImageItemView = false;
 
 export const handleProfile = () => {
+  // layout binding
   const sessionId = sessionStorage.getItem(SESSION_ID_KEY);
   const baseImageUrl = `${PLAIN_API_BASE_ROUTE}/users/images`;
-
   const logoutBtn = document.querySelector("#logout");
   const profileDropdownMenu = document.querySelector("#profile-dropdownMenu");
   const usernameLabel = document.querySelector("#username-label");
@@ -23,12 +24,13 @@ export const handleProfile = () => {
   const selfieBlock = document.querySelector("#block-selfie");
   const takePhotoBtn = document.querySelector("#take-photo");
   const closePhotoBtn = document.querySelector("#close-photo");
+  const importPhotoBtn = document.querySelector("#import-photo");
   const canvas = document.querySelector("#canvas");
   const video = document.querySelector("#video");
+  const savePhotoBtn = document.querySelector("#save-photo");
   const imageItemList = document.querySelectorAll(".image-item");
   const editUserInfosBtn = document.querySelector("#edit-infos-btn");
   const viewInfosBlock = document.querySelector("#view-infos-block");
-
   const editFirstNameField = document.querySelector("#edit-first-name");
   const editLastNameField = document.querySelector("#edit-last-name");
   const editUserNameFIeld = document.querySelector("#edit-username");
@@ -39,13 +41,14 @@ export const handleProfile = () => {
     "#edit-password-confirm"
   );
   const wallPaperItemList = document.querySelectorAll(".wall-paper-item");
-
   const editSaveBtn = document.querySelector("#edit-save");
-
   const context = canvas ? canvas.getContext("2d") : null;
   const selectedWallPaper = document.querySelector(".active-wall-paper");
 
+  let filename;
+  let fileInbase64;
   let secondImageSrc = `${baseImageUrl}/${selectedWallPaper.dataset.imagesrc}`;
+
   const displayUserInfos = async () => {
     const user = userStore.getState().user;
 
@@ -90,13 +93,16 @@ export const handleProfile = () => {
     }
   };
 
-  const takePhoto = (_event) => {
-    takePhotoBtn.classList.add("pressed");
-    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+  const clearCanvas = () => {
+    context.clearRect(0, 0, canvas.width, canvas.height);
+  };
+
+  const mergeImage = (primarySrc, secondarySrc) => {
+    context.drawImage(primarySrc, 0, 0, canvas.width, canvas.height);
     context.globalAlpha = 0.5;
     const newImage = document.createElement("img");
     newImage.crossOrigin = "anonymous";
-    newImage.src = secondImageSrc;
+    newImage.src = secondarySrc;
 
     newImage.onload = () => {
       context.drawImage(newImage, 0, 0, canvas.width / 3, canvas.height / 3);
@@ -105,15 +111,23 @@ export const handleProfile = () => {
       const imageDataURL = canvas.toDataURL("image/jpeg");
       const user = userStore.getState().user;
 
-      const base64Data = imageDataURL.split(",")[1];
-      const filename = `img-${user.username}-${uuid()}.jpg`;
-
-      userService.uploadImage(filename, base64Data);
-
-      video.classList.add("hidden");
-      takePhotoBtn.disabled = true;
+      fileInbase64 = imageDataURL.split(",")[1];
+      filename = `img-${user.username}-${uuid()}.jpg`;
+      savePhotoBtn.classList.remove("btn-disabled");
+      savePhotoBtn.classList.add("btn-active");
+      savePhotoBtn.removeAttribute("disabled");
       canvas.classList.remove("hidden");
     };
+  };
+
+  const takePhoto = (_event) => {
+    takePhotoBtn.classList.add("pressed");
+    takePhotoBtn.classList.remove("btn-active");
+
+    mergeImage(video, secondImageSrc);
+    video.classList.add("hidden");
+
+    takePhotoBtn.setAttribute("disabled", "true");
   };
 
   const closePhoto = (_event) => {
@@ -122,7 +136,7 @@ export const handleProfile = () => {
     }
     selfieBlock.classList.add("hidden");
     canvas.classList.add("hidden");
-    takePhotoBtn.disabled = false;
+    takePhotoBtn.removeAttribute("disabled");
     takePhotoBtn.classList.remove("pressed");
     navigate(RouteUrl.PROFILE);
   };
@@ -133,6 +147,19 @@ export const handleProfile = () => {
     } else {
       block.classList.add("hidden");
     }
+  };
+
+  const cleanUp = () => {
+    clearCanvas();
+    video.classList.remove("hidden");
+    canvas.classList.add("hidden");
+    savePhotoBtn.classList.add("btn-disabled");
+    savePhotoBtn.classList.remove("btn-active");
+    savePhotoBtn.setAttribute("disabled", "true");
+    takePhotoBtn.removeAttribute("disabled");
+    takePhotoBtn.classList.add("btn-active");
+    filename = "";
+    fileInbase64 = "";
   };
 
   const handleGalery = () => {
@@ -186,6 +213,38 @@ export const handleProfile = () => {
         toggleBlock(inputComment);
         navigate(`/${RouteUrl.PROFILE}`);
       });
+    }
+  };
+
+  const savePhoto = async (e) => {
+    e.preventDefault();
+    takePhotoBtn.classList.remove("pressed");
+
+    if (filename && fileInbase64) {
+      await userService.uploadImage(filename, fileInbase64);
+    }
+
+    cleanUp();
+  };
+
+  const importPhoto = (e) => {
+    video.classList.add("hidden");
+    canvas.classList.remove("hidden");
+    const file = e.target.files[0];
+
+    if (isImportingValidImage(file)) {
+      const reader = new FileReader();
+
+      reader.onload = function (subEvent) {
+        const imageDataUrl = subEvent.target.result;
+        const primarySrc = new Image();
+        primarySrc.crossOrigin = "anonymous";
+        primarySrc.src = imageDataUrl;
+        primarySrc.onload = function (e) {
+          mergeImage(primarySrc, secondImageSrc);
+        };
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -258,13 +317,14 @@ export const handleProfile = () => {
 
   displayUserInfos();
   handleGalery();
-
   handleWallPaperSelection();
 
   logoutBtn.addEventListener("click", logout);
   addImageBtn.addEventListener("click", showSelfieBlock);
   closePhotoBtn.addEventListener("click", closePhoto);
   takePhotoBtn.addEventListener("click", takePhoto);
+  savePhotoBtn.addEventListener("click", savePhoto);
   editUserInfosBtn.addEventListener("click", handleViewProfile);
   editSaveBtn.addEventListener("click", updateUserInfos);
+  importPhotoBtn.addEventListener("change", importPhoto);
 };

@@ -8,11 +8,11 @@ POST http://localhost:5000/api/v1/auth/register
 content-type: application/json
 
 {
- "username": "test-42",
+ "username": "guest-42",
  "email": "aalt.xp-c0hrhhn@yopmail.com",
  "adress": "Somewhere",
  "passwd": "Alt.xp-c0hrhhn@yopmail.com",
- "firstName": "TOM",
+ "firstName": "GUEST",
  "lastName": "Blabla"
 }
 
@@ -94,5 +94,5 @@ Authorization: Bearer -mcd76irx-cen3gh
 Content-Type: application/json
 
 {
-  "comment": "hello world"
+  "comment": "hello world",
 }

@@ -11,6 +11,7 @@ const query = `
             adress VARCHAR(60) NOT NULL,
             validation_token VARCHAR(255) DEFAULT NULL,
             status VARCHAR(25) NOT NULL,
+            comment_notification VARCHAR(25) NOT NULL,
             created_at TIMESTAMP DEFAULT NOW(),
             updated_at TIMESTAMP DEFAULT NOW()
         );

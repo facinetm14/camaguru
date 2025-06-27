@@ -52,6 +52,35 @@ const getMe = async (sessionId) => {
   });
 };
 
+const doesUserNameExists = async (username) => {
+  const result = await fetch(`${API_BASE_ROUTE}/users/${username}/exists`, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    method: "GET",
+  });
+
+  const resultBody = await result.json();
+  const { exists } = resultBody;
+
+  return exists;
+};
+
+const doesEmailExists = async (email) => {
+  const result = await fetch(`${API_BASE_ROUTE}/users/exists`, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    method: "POST",
+    body: JSON.stringify({ email }),
+  });
+
+  const resultBody = await result.json();
+  const { exists } = resultBody;
+
+  return exists;
+};
+
 const logout = async (sessionId) => {
   return fetch(`${API_BASE_ROUTE}/auth/logout/${sessionId}`, {
     headers: {
@@ -89,17 +118,6 @@ const uploadImage = async (filename, image) => {
 const getMyImages = async () => {
   const sessionId = sessionStorage.getItem(SESSION_ID_KEY);
   return fetch(`${API_BASE_ROUTE}/users/images`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${sessionId}`,
-    },
-  });
-};
-
-const getOtherImages = async () => {
-  const sessionId = sessionStorage.getItem(SESSION_ID_KEY);
-  return fetch(`${API_BASE_ROUTE}/users/other-images`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -156,6 +174,7 @@ export const userService = {
   updatePassword,
   updateUserInfos,
   likeOrDisLikeImage,
-  getOtherImages,
-  commentImage
+  commentImage,
+  doesUserNameExists,
+  doesEmailExists,
 };

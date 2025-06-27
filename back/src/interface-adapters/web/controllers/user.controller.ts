@@ -343,4 +343,61 @@ export class UserController {
       resp.end();
     });
   }
+
+  async doesUserNameExists({
+    req,
+    params,
+    resp,
+  }: ControllerInputType): Promise<void> {
+    const username = params?.get(RoutesParamsKey.USER_NAME) as string;
+    if (!username) {
+      resp.statusCode = ResponseStatusCode.BAD_REQUEST;
+      resp.end();
+      return;
+    }
+
+    const user = await this.findUserInfosByIdSessionUseCase.doesUserNameExists(
+      username
+    );
+    const result = { exists: !!user };
+    resp.statusCode = ResponseStatusCode.GET_OK;
+    resp.end(JSON.stringify(result));
+  }
+
+  async doesEmailExists({
+    req,
+    params,
+    resp,
+  }: ControllerInputType): Promise<void> {
+    let body = "";
+
+    req?.on("data", (chunk) => {
+      body += chunk.toString();
+    });
+
+    req?.on("end", async () => {
+      const result = parseRequestBodyAsJson(body);
+      if (result.isErr) {
+        resp.statusCode = ResponseStatusCode.BAD_REQUEST;
+        resp.end();
+        return;
+      }
+
+      const requestBody = result.data;
+      const email = requestBody.email;
+
+      if (!email) {
+        resp.statusCode = ResponseStatusCode.BAD_REQUEST;
+        resp.end();
+        return;
+      }
+
+      const user = await this.findUserInfosByIdSessionUseCase.doesEmailExists(
+        email
+      );
+
+      resp.statusCode = 200;
+      resp.end(JSON.stringify({ exists: !!user }));
+    });
+  }
 }

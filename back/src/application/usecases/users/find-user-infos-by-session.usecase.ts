@@ -17,4 +17,12 @@ export class FindUserInfosByIdSessionUsecase {
 
     return this.userRepo.findUserByUniqKey(UserUniqKeys.ID, userSession.userId);
   }
+
+  async doesUserNameExists(username: string): Promise<User | null> {
+    return this.userRepo.findUserByUniqKey(UserUniqKeys.USER_NAME, username);
+  }
+
+  async doesEmailExists(email: string): Promise<User | null> {
+    return this.userRepo.findUserByUniqKey(UserUniqKeys.EMAIL, email);
+  }
 }

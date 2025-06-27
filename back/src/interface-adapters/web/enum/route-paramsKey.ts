@@ -3,4 +3,5 @@ export enum RoutesParamsKey {
   SESSION_ID = "sessionId",
   FILE_NAME = "filename",
   IMAGE_ID = "imageId",
+  USER_NAME = "username",
 }

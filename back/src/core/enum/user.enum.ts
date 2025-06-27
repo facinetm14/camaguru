@@ -20,3 +20,8 @@ export enum ImageInteractionType {
   LIKE = "LIKE",
   COMMENT = "COMMENT",
 }
+
+export enum CommentNotificationStatus {
+  ACITIVE = "ACTIVE",
+  DISABLED = "DISABLED",
+}

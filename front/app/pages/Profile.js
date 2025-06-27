@@ -153,6 +153,10 @@ export const Profile = () => {
         <input type="email" class="form-control" id="edit-email" >
         <span id="email-error" class=""></span>
       </div>
+      <div class="mb-3 col-md-11 m-auto">
+        <input class="camagru-checkbox" type="checkbox" id="comment-notification">
+        <label class="form-label">Receive comment notification on my images</label>
+      </div>
       <div class="mb-3 col-md-11 m-auto" id="password-block">
         <label for="password" class="form-label">Password</label>
         <input type="password" class="form-control" id="edit-password">

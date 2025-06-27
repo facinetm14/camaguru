@@ -60,3 +60,8 @@ export const isImportingValidImage = (file) => {
     file && (file.type.match("image/jpeg") || file.type.match("image/png"))
   );
 };
+
+export const CommentNotificationStatus = {
+  ACTIVE: "ACTIVE",
+  DISABLED: "DISABLED",
+};

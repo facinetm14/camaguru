@@ -1,4 +1,7 @@
-import { UserStatus } from "../../core/enum/user.enum";
+import {
+  CommentNotificationStatus,
+  UserStatus,
+} from "../../core/enum/user.enum";
 
 export type CreateUserDto = {
   id: string;
@@ -13,4 +16,5 @@ export type CreateUserDto = {
   validationToken: string;
   salt: string;
   status: UserStatus;
+  commentNotification: CommentNotificationStatus;
 };

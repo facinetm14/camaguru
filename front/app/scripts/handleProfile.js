@@ -3,6 +3,7 @@ import userStore from "../../scripts/userStore.js";
 import { navigate } from "./events.js";
 import {
   buildUpdateUserInfosRequest,
+  CommentNotificationStatus,
   isImportingValidImage,
   isPasswordStrong,
   uuid,
@@ -40,6 +41,10 @@ export const handleProfile = () => {
   const editPasswordConfirmField = document.querySelector(
     "#edit-password-confirm"
   );
+  const commentNotificationOption = document.querySelector(
+    "#comment-notification"
+  );
+
   const wallPaperItemList = document.querySelectorAll(".wall-paper-item");
   const editSaveBtn = document.querySelector("#edit-save");
   const context = canvas ? canvas.getContext("2d") : null;
@@ -74,6 +79,9 @@ export const handleProfile = () => {
     editAdressField.value = user.adress;
     editEmail.value = user.email;
     editAdressField.value = user.adress;
+    if (user.commentNotification === CommentNotificationStatus.ACTIVE) {
+      commentNotificationOption.setAttribute("checked", "true");
+    }
   };
 
   const logout = (_event) => {
@@ -258,6 +266,7 @@ export const handleProfile = () => {
     const email = editEmail.value;
     const newPasswd = editPasswordField.value;
     const confirm = editPasswordConfirmField.value;
+
     const user = userStore.getState().user;
     let passwd = "";
 
@@ -277,6 +286,9 @@ export const handleProfile = () => {
         adress,
         email,
         ...(passwd && { passwd }),
+        commentNotification: commentNotificationOption.checked
+          ? CommentNotificationStatus.ACTIVE
+          : CommentNotificationStatus.DISABLED,
       },
       user
     );

@@ -1,4 +1,7 @@
-import { UserStatus } from "../../core/enum/user.enum";
+import {
+  CommentNotificationStatus,
+  UserStatus,
+} from "../../core/enum/user.enum";
 
 export type UserModel = {
   id: string;
@@ -13,9 +16,10 @@ export type UserModel = {
   salt: string;
   validation_token: string;
   status: UserStatus;
+  comment_notification: CommentNotificationStatus;
 };
 
 export type UserModelForUpdate = Omit<
   Partial<UserModel>,
-  "id" | "email" | "status" | "created_at"
+  "id" | "status" | "created_at"
 >;

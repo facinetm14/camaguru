@@ -12,7 +12,7 @@ export const handleCreateNewPassword = () => {
       return navigate(`/${RouteUrl.NOT_FOUND}`);
     }
 
-    const idUser = await resp.json();
+    const userId = await resp.json();
 
     const newPasswordInput = document.querySelector("#new-password-input");
     const newPasswordConfirmation = document.querySelector(
@@ -33,7 +33,7 @@ export const handleCreateNewPassword = () => {
         return;
       }
 
-      await userService.updatePassword(idUser, password);
+      await userService.updatePassword(userId, password);
 
       navigate(`/${RouteUrl.HOME}`);
     }

@@ -1,13 +1,13 @@
 import { UserImageLike } from "../../../core/entities/user-image-like.entity";
 import { LikeImageError } from "../../../core/error/like-image.error";
-import { LikeImageRepository } from "../../../infrastructure/repositories/like-image.repository";
-import { UserImageRepository } from "../../../infrastructure/repositories/user-image.repository";
 import { Err, Ok, Result } from "../../../shared/result";
+import { LikeImageRepositoryInterface } from "../../ports/repositories/like-image.repository.interface";
+import { UserImagesRepositoryInteface } from "../../ports/repositories/user-image.repository.inteface";
 
 export class LikeImageUseCase {
   constructor(
-    private readonly imageRepo: UserImageRepository,
-    private readonly likeImageRepo: LikeImageRepository
+    private readonly imageRepo: UserImagesRepositoryInteface,
+    private readonly likeImageRepo: LikeImageRepositoryInterface
   ) {}
   async execute(
     authorId: string,

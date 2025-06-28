@@ -1,5 +1,5 @@
 import { CommentImageDto } from "../../application/dto/comment-image.dto";
-import { CommentImageRepositoryInterface } from "../../application/interfaces/repositories/comment-image.repository.interface";
+import { CommentImageRepositoryInterface } from "../../application/ports/repositories/comment-image.repository.interface";
 import { ImageInteractionType } from "../../core/enum/user.enum";
 import { pgClient } from "../../database/dataSource";
 import { uuid } from "../../shared/uuid";

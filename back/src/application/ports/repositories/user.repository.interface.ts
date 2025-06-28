@@ -12,8 +12,8 @@ export interface UserRepositoryInteface {
   findUserByUniqKey(key: UserUniqKeys, value: string): Promise<User | null>;
   findUserListByUniqKey(key: UserUniqKeys, values: string[]): Promise<User[]>;
   updateStatusAndRemoveValidationToken(
-    idUser: string,
+    userId: string,
     userStatus: UserStatus
   ): Promise<ActionStatus>;
-  update(idUser: string, updateUser: UpdateUserDto): Promise<ActionStatus>;
+  update(userId: string, updateUser: UpdateUserDto): Promise<ActionStatus>;
 }

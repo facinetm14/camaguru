@@ -1,4 +1,4 @@
-import { UserRepositoryInteface } from "../../application/interfaces/repositories/user.repository.interface";
+import { UserRepositoryInteface } from "../../application/ports/repositories/user.repository.interface";
 import { pgClient } from "../../database/dataSource";
 import { UserUniqKeys, UserStatus } from "../../core/enum/user.enum";
 import { CreateUserDto } from "../../application/dto/create-user.dto";
@@ -6,7 +6,7 @@ import {
   buildUserEntityFromModel,
   buildUserModelForUpdateFormDto,
   buildUserModelFromCreateUserDto,
-} from "../../interface-adapters/web/mappers/user.mapper";
+} from "../../adapters/web/mappers/user.mapper";
 import { User } from "../../core/entities/user.entity";
 import { Err, Ok, Result } from "../../shared/result";
 import { RegistrationError } from "../../core/error/user-registration.error";
@@ -126,12 +126,12 @@ export class UserRepository implements UserRepositoryInteface {
   }
 
   async updateStatusAndRemoveValidationToken(
-    idUser: string,
+    userId: string,
     userStatus: UserStatus
   ): Promise<ActionStatus> {
     const updateQuery = {
       text: `UPDATE users SET status=$1, validation_token=null WHERE id=$2`,
-      values: [userStatus, idUser],
+      values: [userStatus, userId],
     };
 
     let status: ActionStatus;
@@ -140,7 +140,7 @@ export class UserRepository implements UserRepositoryInteface {
       await pgClient.query(updateQuery);
       status = ActionStatus.SUCCESS;
     } catch (error) {
-      console.log("Error: unable to update user", idUser);
+      console.log("Error: unable to update user", userId);
       status = ActionStatus.FAILED;
     }
     connexion.release();
@@ -148,7 +148,7 @@ export class UserRepository implements UserRepositoryInteface {
   }
 
   async update(
-    idUser: string,
+    userId: string,
     updateUserDto: UpdateUserDto
   ): Promise<ActionStatus> {
     const updateUser = buildUserModelForUpdateFormDto(updateUserDto);
@@ -167,7 +167,7 @@ export class UserRepository implements UserRepositoryInteface {
 
     const updateQuery = {
       text: `UPDATE users SET ${columns} WHERE id=$${index}`,
-      values: [...columnsValues, idUser],
+      values: [...columnsValues, userId],
     };
 
     let status: ActionStatus;
@@ -176,7 +176,7 @@ export class UserRepository implements UserRepositoryInteface {
       await pgClient.query(updateQuery);
       status = ActionStatus.SUCCESS;
     } catch (error) {
-      console.log("Error: unable to update user", idUser);
+      console.log("Error: unable to update user", userId);
       status = ActionStatus.FAILED;
     }
     connexion.release();

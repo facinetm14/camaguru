@@ -1,9 +1,9 @@
-import { LikeImageRepositoryInterface } from "../../application/interfaces/repositories/like-image.repository.interface";
+import { LikeImageRepositoryInterface } from "../../application/ports/repositories/like-image.repository.interface";
 import { UserImageLike } from "../../core/entities/user-image-like.entity";
 import { ImageInteractionType } from "../../core/enum/user.enum";
 import { LikeImageError } from "../../core/error/like-image.error";
 import { pgClient } from "../../database/dataSource";
-import { buildImageLikesEntityFromModel } from "../../interface-adapters/web/mappers/user-image.mapper";
+import { buildImageLikesEntityFromModel } from "../../adapters/web/mappers/user-image.mapper";
 import { Err, Ok, Result } from "../../shared/result";
 import { uuid } from "../../shared/uuid";
 

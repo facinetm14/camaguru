@@ -1,0 +1,112 @@
+@baseUrl = http://localhost:5000/api/v1
+@authToken = Bearer ajb8u9-mcgkiem8-oc27tj
+
+### base
+GET {{baseUrl}}/
+Content-Type: application/json
+
+### --------------AUTH-----------------------------------
+
+### register a user
+POST {{baseUrl}}/auth/register
+content-type: application/json
+
+{
+ "username": "guest-42",
+ "email": "aalt.xp-c0hrhhn@yopmail.com",
+ "adress": "Somewhere",
+ "passwd": "Alt.xp-c0hrhhn@yopmail.com",
+ "firstName": "GUEST",
+ "lastName": "Blabla"
+}
+
+### login user
+# @name loginUser
+POST {{baseUrl}}/auth/login
+content-type: application/json
+
+{
+ "username": "test-42",
+ "passwd": "Alt.xp-c0hrhhn@yopmail.com"
+}
+
+### verify a user token to confirm (registration or password change)
+POST {{baseUrl}}/auth/verify/-mc8wf3i9-1ys56h
+content-type: application/json
+
+### logout user
+PATCH  {{baseUrl}}/auth/logout/-mc8quy0l-jxejww
+
+### reset password
+POST {{baseUrl}}/auth/reset-password
+Content-Type: : application/json
+
+{
+  "email": "alt.xp-c0hrhhn@yopmail.com"
+}
+
+
+### create new password
+PATCH {{baseUrl}}/auth/new-password
+
+{
+  "id": "-mc8qr5y2-tx72c4",
+  "passwd": "dsdkdks@1Ddkdkdddd"
+}
+
+### ----------------USERS--------------------------------
+
+### check if a username is already used
+@username = "blabla"
+
+GET {{baseUrl}}/users/{{username}}/exists
+
+### check if an email is already used
+POST {{baseUrl}}/users/exists
+content-type: application/json
+
+{
+  "email": "kskfkkf@gmail.com"
+}
+
+### upload image
+POST {{baseUrl}}/users/images
+Content-Type: application/json
+Authorization: {{authToken}}
+
+{
+  "filename": "new-imagedd.jpg",
+  "image": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8Xw8AApMBgYj6aHsAAAAASUVORK5CYII="
+}
+
+
+### get all images
+GET {{baseUrl}}/users/images
+Content-Type: application/json
+Authorization: {{authToken}}
+
+### get image
+@imageName = "blldsd.jpg"
+GET {{baseUrl}}/users/images/{{imageName}}
+
+
+### Like or dislike image
+@imageId = "-mcdf8r2i-0h33q1"
+POST {{baseUrl}}/users/images/{{imageId}}/likes
+Content-Type: application/json
+Authorization: {{authToken}}
+
+
+### GET image likes
+GET {{baseUrl}}/users/images/{{imageId}}/likes
+Content-Type: application/json
+Authorization: {{authToken}}
+
+### Comment Image
+POST {{baseUrl}}/users/images/{{imageId}}/comment
+Content-Type: application/json
+Authorization: {{authToken}}
+
+{
+  "comment": "hello world"
+}

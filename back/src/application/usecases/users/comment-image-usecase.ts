@@ -4,21 +4,23 @@ import {
   UserUniqKeys,
 } from "../../../core/enum/user.enum";
 import { CommentImageError } from "../../../core/error/comment-image.error";
-import { CommentImageRepository } from "../../../infrastructure/repositories/comment-image.repository";
-import { UserImageRepository } from "../../../infrastructure/repositories/user-image.repository";
-import { UserRepository } from "../../../infrastructure/repositories/user.repository";
-import { EmailService } from "../../../infrastructure/services/email.service";
 import { Err, Ok, Result } from "../../../shared/result";
 import { CommentNotificationTemplate } from "../../../template/email";
 import { CommentImageDto } from "../../dto/comment-image.dto";
-import { Email } from "../../interfaces/services/email.service.interface";
+import { CommentImageRepositoryInterface } from "../../ports/repositories/comment-image.repository.interface";
+import { UserImagesRepositoryInteface } from "../../ports/repositories/user-image.repository.inteface";
+import { UserRepositoryInteface } from "../../ports/repositories/user.repository.interface";
+import {
+  Email,
+  EmailServiceInterface,
+} from "../../ports/services/email.service.interface";
 
 export class CommentImageUseCase {
   constructor(
-    private readonly imageRepo: UserImageRepository,
-    private readonly commentImageRepo: CommentImageRepository,
-    private userRepo: UserRepository,
-    private readonly emailService: EmailService
+    private readonly imageRepo: UserImagesRepositoryInteface,
+    private readonly commentImageRepo: CommentImageRepositoryInterface,
+    private userRepo: UserRepositoryInteface,
+    private readonly emailService: EmailServiceInterface
   ) {}
 
   async execute(

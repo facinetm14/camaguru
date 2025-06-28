@@ -1,12 +1,12 @@
 import { SaveImageDto } from "../../application/dto/save-user-image.dto";
-import { UserImagesRepositoryInteface } from "../../application/interfaces/repositories/user-image.repository.inteface";
+import { UserImagesRepositoryInteface } from "../../application/ports/repositories/user-image.repository.inteface";
 import { UserImageHeavy } from "../../core/entities/user-image-heavy.entity";
 import { UserImage } from "../../core/entities/user-image.entity";
 import { pgClient } from "../../database/dataSource";
 import {
   buildUploadUserImageEntityFromModel,
   buildUserImageHeavyFromAggregate,
-} from "../../interface-adapters/web/mappers/user-image.mapper";
+} from "../../adapters/web/mappers/user-image.mapper";
 
 export class UserImageRepository implements UserImagesRepositoryInteface {
   async find(id: string): Promise<UserImage | null> {

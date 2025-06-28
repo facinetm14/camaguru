@@ -12,7 +12,7 @@ import { extractFileExtension } from "../../../shared/extract-file-extension";
 import { RoutesParamsKey } from "../enum/route-paramsKey";
 import { buildSaveImageDtoFromRequestBody } from "../mappers/user-image.mapper";
 import { SaveUserImageUseCase } from "../../../application/usecases/users/save-user-image.usecase";
-import { FindUserInfosByIdSessionUsecase } from "../../../application/usecases/users/find-user-infos-by-session.usecase";
+import { FindUserInfosUseCase } from "../../../application/usecases/users/find-user-infos.usecase";
 import { UPLOAD_DEST } from "../../../core/consts/upload-destination";
 import { buildUpdateUserInfosFromUpdateRequest } from "../mappers/user.mapper";
 import { UpdateUserInfosUseCase } from "../../../application/usecases/users/update-user-infos.usecase";
@@ -26,7 +26,7 @@ export class UserController {
   constructor(
     private readonly findAllUsersImagesUseCase: FindAllUsersImagesUseCase,
     private readonly saveUserImageUseCase: SaveUserImageUseCase,
-    private readonly findUserInfosByIdSessionUseCase: FindUserInfosByIdSessionUsecase,
+    private readonly findUserInfosUseCase: FindUserInfosUseCase,
     private readonly updateUserInfosUseCase: UpdateUserInfosUseCase,
     private readonly likeImageUseCase: LikeImageUseCase,
     private readonly getImageLikesUseCase: GetImageLikesUseCase,
@@ -45,8 +45,7 @@ export class UserController {
     }
 
     const sessionId = params.get(RoutesParamsKey.SESSION_ID) as string;
-
-    const user = await this.findUserInfosByIdSessionUseCase.execute(sessionId);
+    const user = await this.findUserInfosUseCase.execute(sessionId);
 
     try {
       if (!user) {
@@ -74,9 +73,7 @@ export class UserController {
       return null;
     }
 
-    const user = await this.findUserInfosByIdSessionUseCase.execute(
-      sessionToken
-    );
+    const user = await this.findUserInfosUseCase.execute(sessionToken);
 
     if (!user) {
       return null;
@@ -356,8 +353,9 @@ export class UserController {
       return;
     }
 
-    const user = await this.findUserInfosByIdSessionUseCase.doesUserNameExists(
-      username
+    const user = await this.findUserInfosUseCase.execute(
+      username,
+      UserUniqKeys.USER_NAME
     );
     const result = { exists: !!user };
     resp.statusCode = ResponseStatusCode.GET_OK;
@@ -392,8 +390,9 @@ export class UserController {
         return;
       }
 
-      const user = await this.findUserInfosByIdSessionUseCase.doesEmailExists(
-        email
+      const user = await this.findUserInfosUseCase.execute(
+        email,
+        UserUniqKeys.EMAIL
       );
 
       resp.statusCode = 200;

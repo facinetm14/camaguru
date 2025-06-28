@@ -1,9 +1,9 @@
-import { UserRepository } from "../../../infrastructure/repositories/user.repository";
 import { hashPassword } from "../../../shared/password";
 import { UpdateUserDto } from "../../dto/update-user.dto";
+import { UserRepositoryInteface } from "../../ports/repositories/user.repository.interface";
 
 export class UpdateUserInfosUseCase {
-  constructor(private userRepo: UserRepository) {}
+  constructor(private userRepo: UserRepositoryInteface) {}
 
   async execute(userId: string, updateUserDto: UpdateUserDto): Promise<void> {
     if (updateUserDto.passwd) {

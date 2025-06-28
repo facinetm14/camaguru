@@ -1,12 +1,12 @@
 import { ActionStatus } from "../../../core/enum/action-status";
-import { UserRepository } from "../../../infrastructure/repositories/user.repository";
 import { CreateNewUserPasswordDto } from "../../dto/reset-password.dto";
 import { omit } from "../../../shared/omit-object-properties";
 import { UserStatus, UserUniqKeys } from "../../../core/enum/user.enum";
 import { canChangePassword } from "../../utils/user.utils";
+import { UserRepositoryInteface } from "../../ports/repositories/user.repository.interface";
 
 export class CreateNewUserPasswordUseCase {
-  constructor(private readonly userRepo: UserRepository) {}
+  constructor(private readonly userRepo: UserRepositoryInteface) {}
 
   async execute(
     createNewUserPasswordDto: CreateNewUserPasswordDto

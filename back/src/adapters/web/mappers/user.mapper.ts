@@ -12,7 +12,7 @@ import { RegistrationError } from "../../../core/error/user-registration.error";
 import {
   UserModel,
   UserModelForUpdate,
-} from "../../../infrastructure/data/user.model";
+} from "../../../infrastructure/model/user.model";
 import { isValidEmail } from "../../../shared/email-validator";
 import { hashPassword, isPasswordStrong } from "../../../shared/password";
 import { Err, Ok, Result } from "../../../shared/result";

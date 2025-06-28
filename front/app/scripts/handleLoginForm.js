@@ -1,4 +1,4 @@
-import { userService } from "../usecases/userService.js";
+import { authApi } from "../api/auth.api.js";
 import { navigate } from "./events.js";
 import { RouteUrl } from "./router.js";
 
@@ -20,7 +20,7 @@ export const handleLoginForm = () => {
     const passwd = passwdInput.value;
 
     if (username && passwd) {
-      const loginUserResp = await userService.signIn(username, passwd);
+      const loginUserResp = await authApi.signIn(username, passwd);
       if (loginUserResp.ok) {
         const user = await loginUserResp.json();
         const { sessionId } = user;

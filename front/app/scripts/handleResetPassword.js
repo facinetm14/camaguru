@@ -1,4 +1,4 @@
-import { userService } from "../usecases/userService.js";
+import { authApi } from "../api/auth.api.js";
 import { navigate } from "./events.js";
 import { RouteUrl } from "./router.js";
 import { isValidEmail } from "./utils.js";
@@ -17,7 +17,7 @@ export const handleResetPasswordForm = () => {
       return;
     }
 
-    const resut = await userService.sendResetPasswordRequest(email);
+    const resut = await authApi.sendResetPasswordRequest(email);
     if (resut.ok) {
       navigate(RouteUrl.CONFIRM_PASSWORD_RESET);
     }

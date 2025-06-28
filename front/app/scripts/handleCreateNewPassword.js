@@ -1,13 +1,13 @@
 import { navigate } from "./events.js";
 import { RouteUrl } from "./router.js";
-import { userService } from "../usecases/userService.js";
 import { isPasswordStrong } from "./utils.js";
+import { authApi } from "../api/auth.api.js";
 
 export const handleCreateNewPassword = () => {
   const [_, _page, token] = window.location.pathname.split("/");
 
   (async () => {
-    const resp = await userService.verify(token);
+    const resp = await authApi.verify(token);
     if (!resp.ok) {
       return navigate(`/${RouteUrl.NOT_FOUND}`);
     }
@@ -33,7 +33,7 @@ export const handleCreateNewPassword = () => {
         return;
       }
 
-      await userService.updatePassword(userId, password);
+      await authApi.updatePassword(userId, password);
 
       navigate(`/${RouteUrl.HOME}`);
     }

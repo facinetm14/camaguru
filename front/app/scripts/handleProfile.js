@@ -1,4 +1,3 @@
-import { userService } from "../../usecases/userService.js";
 import userStore from "../../scripts/userStore.js";
 import { navigate } from "./events.js";
 import {
@@ -14,6 +13,8 @@ import { ENTER_KEY, SESSION_ID_KEY } from "./consts.js";
 import { PLAIN_API_BASE_ROUTE } from "../env.js";
 import { RouteUrl } from "./router.js";
 import { GALERY_ITEM_LIMIT_PER_PAGE } from "./utils.js";
+import { authApi } from "../api/auth.api.js";
+import { userApi } from "../api/user.api.js";
 
 let stream = null;
 let isActiveImageItemView = false;
@@ -101,7 +102,7 @@ export const handleProfile = () => {
   };
 
   const logout = (_event) => {
-    userService.logout(sessionId);
+    authApi.logout(sessionId);
     sessionStorage.removeItem(SESSION_ID_KEY);
   };
 
@@ -240,7 +241,7 @@ export const handleProfile = () => {
 
       likesBtn.addEventListener("click", async (e) => {
         e.preventDefault();
-        await userService.likeOrDisLikeImage(id);
+        await userApi.likeOrDisLikeImage(id);
         navigate(`/${RouteUrl.PROFILE}`);
       });
 
@@ -251,7 +252,7 @@ export const handleProfile = () => {
         }
 
         const comment = `${e.target.value}`.trim();
-        await userService.commentImage(id, comment);
+        await userApi.commentImage(id, comment);
         e.target.value = "";
         toggleBlock(inputComment);
         navigate(`/${RouteUrl.PROFILE}`);
@@ -264,7 +265,7 @@ export const handleProfile = () => {
     takePhotoBtn.classList.remove("pressed");
 
     if (filename && fileInbase64) {
-      await userService.uploadImage(filename, fileInbase64);
+      await userApi.uploadImage(filename, fileInbase64);
     }
 
     cleanUp();
@@ -333,7 +334,7 @@ export const handleProfile = () => {
       return;
     }
 
-    const updateUserInfosResult = await userService.updateUserInfos(
+    const updateUserInfosResult = await userApi.updateUserInfos(
       updateUserInfosRequest
     );
 

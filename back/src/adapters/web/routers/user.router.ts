@@ -28,6 +28,11 @@ export class UserRouter extends RouterStrategy implements RouterInterface {
         handler: this.userController.findImageLikes,
       },
       {
+        pattern: `/users/images/:${RoutesParamsKey.IMAGE_ID}`,
+        method: "DELETE",
+        handler: this.userController.deleteUserImage,
+      },
+      {
         pattern: `/users/images/:${RoutesParamsKey.FILE_NAME}`,
         method: "GET",
         handler: this.userController.getImageByName,

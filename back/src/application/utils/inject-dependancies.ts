@@ -5,25 +5,26 @@ import { UserImageRepository } from "../../infrastructure/repositories/user-imag
 import { USerSessionRepository } from "../../infrastructure/repositories/user-session.repository";
 import { UserRepository } from "../../infrastructure/repositories/user.repository";
 import { EmailService } from "../../infrastructure/services/email.service";
-import { AuthController } from "../../interface-adapters/web/controllers/auth.controller";
-import { UserController } from "../../interface-adapters/web/controllers/user.controller";
-import { AuthRouter } from "../../interface-adapters/web/routers/auth.router";
-import { BaseRouter } from "../../interface-adapters/web/routers/base-router";
-import { UserRouter } from "../../interface-adapters/web/routers/user.router";
+import { AuthController } from "../../adapters/web/controllers/auth.controller";
+import { UserController } from "../../adapters/web/controllers/user.controller";
+import { AuthRouter } from "../../adapters/web/routers/auth.router";
+import { BaseRouter } from "../../adapters/web/routers/base-router";
+import { UserRouter } from "../../adapters/web/routers/user.router";
 import { DIContainer } from "../../shared/di.container";
 import { LoginUserUseCase } from "../usecases/auth/login-user.usecase";
 import { LogoutUserUseCase } from "../usecases/auth/logout-user.usecase";
 import { RegisterUserUseCase } from "../usecases/auth/register-user.usecase";
 import { VerifyUserUseCase } from "../usecases/auth/verify-user.usecase";
-import { CommentImageUseCase } from "../usecases/users/comment-image-usecase";
+import { CommentImageUseCase } from "../usecases/users/comment-image.usecase";
 import { CreateNewUserPasswordUseCase } from "../usecases/users/create-new-user-password.usecase";
 import { FindAllUsersImagesUseCase } from "../usecases/users/find-all-users-images.usecase";
-import { FindUserInfosByIdSessionUsecase } from "../usecases/users/find-user-infos-by-session.usecase";
+import { FindUserInfosUseCase } from "../usecases/users/find-user-infos.usecase";
 import { GetImageLikesUseCase } from "../usecases/users/get-image-likes-usecase";
 import { LikeImageUseCase } from "../usecases/users/like-image.usecase";
 import { ResetUserPasswordUseCase } from "../usecases/users/reset-user-password.usecase";
 import { SaveUserImageUseCase } from "../usecases/users/save-user-image.usecase";
 import { UpdateUserInfosUseCase } from "../usecases/users/update-user-infos.usecase";
+import { DeleteUserImageUseCase } from "../usecases/users/delete-user-image.usecase";
 
 export function injectDependancies() {
   DIContainer.subscribe(ClassRegistry.BASE_ROUTE, new BaseRouter());
@@ -61,8 +62,8 @@ export function injectDependancies() {
   );
 
   DIContainer.subscribe(
-    ClassRegistry.FIND_USER_INFOS_BY_ID_SESSION_USECASE,
-    new FindUserInfosByIdSessionUsecase(
+    ClassRegistry.FIND_USER_INFOS_USECASE,
+    new FindUserInfosUseCase(
       DIContainer.resolve(ClassRegistry.USER_REPOSITORY),
       DIContainer.resolve(ClassRegistry.USER_SESSION_REPOSITORY)
     )
@@ -117,15 +118,23 @@ export function injectDependancies() {
   );
 
   DIContainer.subscribe(
+    ClassRegistry.DELETE_USER_IMAGE_USECASE,
+    new DeleteUserImageUseCase(
+      DIContainer.resolve(ClassRegistry.USER_IMAGES_REPOSITORY)
+    )
+  );
+
+  DIContainer.subscribe(
     ClassRegistry.USER_CONTROLLER,
     new UserController(
       DIContainer.resolve(ClassRegistry.FIND_ALL_USERS_IMAGES_USECASE),
       DIContainer.resolve(ClassRegistry.SAVE_USER_IMAGE_USECASE),
-      DIContainer.resolve(ClassRegistry.FIND_USER_INFOS_BY_ID_SESSION_USECASE),
+      DIContainer.resolve(ClassRegistry.FIND_USER_INFOS_USECASE),
       DIContainer.resolve(ClassRegistry.UPDATE_USER_INFOS_USECASE),
       DIContainer.resolve(ClassRegistry.LIKE_IMAGE_USECASE),
       DIContainer.resolve(ClassRegistry.GET_IMAGE_LIKES_USECASE),
-      DIContainer.resolve(ClassRegistry.COMMENT_IMAGE_USECASE)
+      DIContainer.resolve(ClassRegistry.COMMENT_IMAGE_USECASE),
+      DIContainer.resolve(ClassRegistry.DELETE_USER_IMAGE_USECASE)
     )
   );
 

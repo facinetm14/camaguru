@@ -4,8 +4,8 @@ import { verifyPassword } from "../../../shared/password";
 import { Result, Err, Ok } from "../../../shared/result";
 import { uuid } from "../../../shared/uuid";
 import { LoginUserDto } from "../../dto/login-user.dto";
-import { UserSessionRepositoryInterface } from "../../interfaces/repositories/user-session.repository.interface";
-import { UserRepositoryInteface } from "../../interfaces/repositories/user.repository.interface";
+import { UserSessionRepositoryInterface } from "../../ports/repositories/user-session.repository.interface";
+import { UserRepositoryInteface } from "../../ports/repositories/user.repository.interface";
 import { isUserVerified } from "../../utils/user.utils";
 
 export class LoginUserUseCase {

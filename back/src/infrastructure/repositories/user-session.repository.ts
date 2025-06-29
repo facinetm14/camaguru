@@ -1,6 +1,6 @@
 import { text } from "stream/consumers";
 import { pgClient } from "../../database/dataSource";
-import { UserSessionRepositoryInterface } from "../../application/interfaces/repositories/user-session.repository.interface";
+import { UserSessionRepositoryInterface } from "../../application/ports/repositories/user-session.repository.interface";
 import { Err, Ok, Result } from "../../shared/result";
 import { UserSession } from "../../core/entities/user-session.entity";
 import { UserLoginError } from "../../core/error/user-login.error";
@@ -8,7 +8,7 @@ import { CreateUserSessionDto } from "../../application/dto/create-user-session.
 import {
   buildCreateUserSessionModelFromDto,
   buildUserSessionEntityFromModel,
-} from "../../interface-adapters/web/mappers/user-session.mapper";
+} from "../../adapters/web/mappers/user-session.mapper";
 import { ActionStatus } from "../../core/enum/action-status";
 
 export class USerSessionRepository implements UserSessionRepositoryInterface {

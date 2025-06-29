@@ -1,8 +1,8 @@
 import {
   Email,
   EmailServiceInterface,
-} from "../../interfaces/services/email.service.interface";
-import { UserRepositoryInteface } from "../../interfaces/repositories/user.repository.interface";
+} from "../../ports/services/email.service.interface";
+import { UserRepositoryInteface } from "../../ports/repositories/user.repository.interface";
 import { CreateUserDto } from "../../dto/create-user.dto";
 import { EmailSubject } from "../../../core/enum/email-subject";
 import { RegistrationError } from "../../../core/error/user-registration.error";
@@ -34,7 +34,7 @@ export class RegisterUserUseCase {
       createUserDto.username
     );
     if (userByUsername) {
-      return Err(RegistrationError.USER_NAME_ALREADY_EXISTS)
+      return Err(RegistrationError.USER_NAME_ALREADY_EXISTS);
     }
 
     const createUserResult = await this.userRepo.create(createUserDto);

@@ -2,12 +2,12 @@ import { ActionStatus } from "../../../core/enum/action-status";
 import { UserStatus, UserUniqKeys } from "../../../core/enum/user.enum";
 import { CLIENT_HOST } from "../../../core/consts/client-host";
 import { uuid } from "../../../shared/uuid";
-import { UserRepositoryInteface } from "../../interfaces/repositories/user.repository.interface";
+import { UserRepositoryInteface } from "../../ports/repositories/user.repository.interface";
 import { resetPasswordLinkTemplate } from "../../../template/email";
 import {
   Email,
   EmailServiceInterface,
-} from "../../interfaces/services/email.service.interface";
+} from "../../ports/services/email.service.interface";
 import { EmailSubject } from "../../../core/enum/email-subject";
 
 export class ResetUserPasswordUseCase {

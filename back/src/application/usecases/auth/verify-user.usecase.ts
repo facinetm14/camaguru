@@ -1,7 +1,7 @@
 import { UserStatus, UserUniqKeys } from "../../../core/enum/user.enum";
 import { UserVerificationError } from "../../../core/error/user-verificatio.error";
 import { Err, Ok, Result } from "../../../shared/result";
-import { UserRepositoryInteface } from "../../interfaces/repositories/user.repository.interface";
+import { UserRepositoryInteface } from "../../ports/repositories/user.repository.interface";
 
 export class VerifyUserUseCase {
   constructor(private readonly userRepo: UserRepositoryInteface) {}
@@ -21,8 +21,11 @@ export class VerifyUserUseCase {
       userByToken.status === UserStatus.UNVERIFIED
         ? UserStatus.VERIFIED
         : UserStatus.CHANGING_PASSWORD;
-        
-    await this.userRepo.updateStatusAndRemoveValidationToken(userByToken.id, userStatus);
+
+    await this.userRepo.updateStatusAndRemoveValidationToken(
+      userByToken.id,
+      userStatus
+    );
 
     return Ok(userByToken.id);
   }

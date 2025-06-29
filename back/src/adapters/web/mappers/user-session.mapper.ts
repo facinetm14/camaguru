@@ -1,6 +1,6 @@
 import { CreateUserSessionDto } from "../../../application/dto/create-user-session.dto";
 import { UserSession } from "../../../core/entities/user-session.entity";
-import { UserSessionModel } from "../../../infrastructure/data/user-session.model";
+import { UserSessionModel } from "../../../infrastructure/model/user-session.model";
 
 export const buildCreateUserSessionModelFromDto = (
   createSessionDto: CreateUserSessionDto

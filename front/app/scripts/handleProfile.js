@@ -1,4 +1,3 @@
-import { userService } from "../../usecases/userService.js";
 import userStore from "../../scripts/userStore.js";
 import { navigate } from "./events.js";
 import {
@@ -8,12 +7,15 @@ import {
   GaleryPagination,
   isImportingValidImage,
   isPasswordStrong,
+  isValidEmail,
   uuid,
 } from "./utils.js";
 import { ENTER_KEY, SESSION_ID_KEY } from "./consts.js";
-import { PLAIN_API_BASE_ROUTE } from "../env.js";
+import { PLAIN_API_BASE_ROUTE } from "../../env.js";
 import { RouteUrl } from "./router.js";
 import { GALERY_ITEM_LIMIT_PER_PAGE } from "./utils.js";
+import { authApi } from "../api/auth.api.js";
+import { userApi } from "../api/user.api.js";
 
 let stream = null;
 let isActiveImageItemView = false;
@@ -101,7 +103,7 @@ export const handleProfile = () => {
   };
 
   const logout = (_event) => {
-    userService.logout(sessionId);
+    authApi.logout(sessionId);
     sessionStorage.removeItem(SESSION_ID_KEY);
   };
 
@@ -215,6 +217,9 @@ export const handleProfile = () => {
       const commentsBtn = document.querySelector(`#comments-btn-${key}`);
       const likesBtn = document.querySelector(`#likes-btn-${key}`);
       const inputComment = document.querySelector(`#input-comment-${key}`);
+      const deleteImageBtn = document.querySelector(`#delete-image-btn-${key}`);
+      const shareImageBtn = document.querySelector(`#share-image-btn-${key}`);
+      const img = document.querySelector(`#img-${key}`);
 
       viewFullBtn.addEventListener("click", (event) => {
         event.preventDefault();
@@ -240,7 +245,7 @@ export const handleProfile = () => {
 
       likesBtn.addEventListener("click", async (e) => {
         e.preventDefault();
-        await userService.likeOrDisLikeImage(id);
+        await userApi.likeOrDisLikeImage(id);
         navigate(`/${RouteUrl.PROFILE}`);
       });
 
@@ -251,10 +256,22 @@ export const handleProfile = () => {
         }
 
         const comment = `${e.target.value}`.trim();
-        await userService.commentImage(id, comment);
+        await userApi.commentImage(id, comment);
         e.target.value = "";
         toggleBlock(inputComment);
         navigate(`/${RouteUrl.PROFILE}`);
+      });
+
+      deleteImageBtn.addEventListener("click", async (e) => {
+        e.preventDefault();
+        await userApi.deleteUserImage(id);
+        navigate(`/${RouteUrl.PROFILE}`);
+      });
+
+      shareImageBtn.addEventListener("click", async (e) => {
+        e.preventDefault();
+        const src = img.src;
+        await userApi.shareImage(src);
       });
     }
   };
@@ -264,7 +281,7 @@ export const handleProfile = () => {
     takePhotoBtn.classList.remove("pressed");
 
     if (filename && fileInbase64) {
-      await userService.uploadImage(filename, fileInbase64);
+      await userApi.uploadImage(filename, fileInbase64);
     }
 
     cleanUp();
@@ -305,11 +322,90 @@ export const handleProfile = () => {
     const user = userStore.getState().user;
     let passwd = "";
 
-    if (newPasswd || confirm) {
-      if (newPasswd !== confirm || !isPasswordStrong(newPasswd)) {
-        //!!TODO hanlde error
+    const errorFirstName = document.querySelector("#edit-first-name-error");
+    if (!firstName) {
+      errorFirstName.removeAttribute("hidden");
+      return;
+    }
+    errorFirstName.setAttribute("hidden", "true");
+
+    const errorLastName = document.querySelector("#edit-last-name-error");
+    if (!lastName) {
+      errorLastName.removeAttribute("hidden");
+      return;
+    }
+    errorLastName.setAttribute("hidden", "true");
+
+    const errorUsername = document.querySelector("#edit-username-error");
+    if (!username) {
+      errorUsername.removeAttribute("hidden");
+      return;
+    }
+
+    if (username.toLowerCase() !== user.username.toLowerCase()) {
+      const doesUserNameExists = await userApi.doesUserNameExists(username);
+      if (doesUserNameExists) {
+        errorUsername.textContent = "username already exists";
+        errorUsername.removeAttribute("hidden");
         return;
       }
+    }
+    errorUsername.setAttribute("hidden", "true");
+
+    const errorAdress = document.querySelector("#edit-adress-error");
+    if (!adress) {
+      errorAdress.removeAttribute("hidden");
+      return;
+    }
+    errorAdress.setAttribute("hidden", "true");
+
+    const errorEmail = document.querySelector("#edit-email-error");
+    if (!email) {
+      errorEmail.removeAttribute("hidden");
+      return;
+    }
+
+    if (!isValidEmail(email)) {
+      errorEmail.textContent = "Please enter a valid email";
+      errorEmail.removeAttribute("hidden");
+      return;
+    }
+
+    if (email.toLowerCase() !== user.email.toLowerCase()) {
+      const doesEmailExists = await userApi.doesEmailExists(email);
+      if (doesEmailExists) {
+        errorEmail.textContent = "email already exists";
+        errorEmail.removeAttribute("hidden");
+        return;
+      }
+    }
+    errorEmail.setAttribute("hidden", "true");
+
+    if (newPasswd || confirm) {
+      const errorPassword = document.querySelector("#edit-password-error");
+      if (!isPasswordStrong(newPasswd)) {
+        errorPassword.innerHTML = `<span>
+      Your password is two weak, it must contain</br>
+      <ul>
+        <li>At least 12 caracters</li>
+        <li>At least a lowercase</li>
+        <li>At least an Uppercase</li>
+        <li>At least a special carracter</li>
+        <li>At least a digit</li>
+      </ul>
+      </span>`;
+        errorPassword.removeAttribute("hidden");
+        return;
+      }
+      errorPassword.setAttribute("hidden", "true");
+
+      const errorConfirm = document.querySelector("#edit-confirm-error");
+      if (newPasswd !== confirm) {
+        errorConfirm.removeAttribute("hidden");
+        return;
+      }
+      errorConfirm.setAttribute("hidden", "true");
+
       passwd = newPasswd;
     }
 
@@ -327,20 +423,23 @@ export const handleProfile = () => {
       },
       user
     );
-
+    const errorSave = document.querySelector("#edit-save-error");
     if (!updateUserInfosRequest) {
-      //!!TODO handle error nothing to update
+      errorSave.textContent = "No field change";
+      errorSave.removeAttribute("hidden");
       return;
     }
+    errorSave.setAttribute("hidden", "true");
 
-    const updateUserInfosResult = await userService.updateUserInfos(
+    const updateUserInfosResult = await userApi.updateUserInfos(
       updateUserInfosRequest
     );
 
     if (updateUserInfosResult.ok) {
       navigate(`/${RouteUrl.PROFILE}`);
+      return;
     } else {
-      //!!TODO handle error update infos
+      errorSave.removeAttribute("hidden");
     }
   };
 

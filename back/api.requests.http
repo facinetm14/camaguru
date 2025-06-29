@@ -12,15 +12,15 @@ POST {{baseUrl}}/auth/register
 content-type: application/json
 
 {
- "username": "guest-42",
- "email": "aalt.xp-c0hrhhn@yopmail.com",
+ "username": "guestt-42",
+ "email": "bhhhhh",
  "adress": "Somewhere",
  "passwd": "Alt.xp-c0hrhhn@yopmail.com",
  "firstName": "GUEST",
  "lastName": "Blabla"
 }
 
-### login user
+### login userkiç
 # @name loginUser
 POST {{baseUrl}}/auth/login
 content-type: application/json

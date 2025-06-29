@@ -13,11 +13,12 @@ export const CreateNewPassword = () => {
       <div class="mb-3 col-md-11 m-auto">
         <label for="password" class="form-label">New password</label>
         <input type="password" class="form-control" id="new-password-input">
+        <span id="password-error" class="text-danger" hidden>Please enter your new password</span>
       </div>
       <div class="mb-3 col-md-11 m-auto">
         <label for="password-confirmation" class="form-label">Password confirmation</label>
         <input type="password" class="form-control" id="new-password-input-confirmation">
-        <span id="password" class=""></span>
+        <span id="confirm-error" class="text-danger" hidden>Please confirm your new password</span>
       </div>
       <div class="col-md-11 m-auto">
         <button type="button" class="btn btn-success" id="btn-new-password">Valider</button>

@@ -222,8 +222,18 @@ export class UserController {
         return;
       }
       const UpdateUserDto = updateUserInfosDtoResult.data;
+
       try {
-        await this.updateUserInfosUseCase.execute(userId, UpdateUserDto);
+        const result = await this.updateUserInfosUseCase.execute(
+          userId,
+          UpdateUserDto
+        );
+
+        if (result.isErr) {
+          resp.statusCode = ResponseStatusCode.BAD_REQUEST;
+          resp.end(result.error);
+          return;
+        }
         resp.statusCode = ResponseStatusCode.GET_OK;
         resp.end();
       } catch (error) {

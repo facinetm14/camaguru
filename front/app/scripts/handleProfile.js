@@ -7,6 +7,7 @@ import {
   GaleryPagination,
   isImportingValidImage,
   isPasswordStrong,
+  isValidEmail,
   uuid,
 } from "./utils.js";
 import { ENTER_KEY, SESSION_ID_KEY } from "./consts.js";
@@ -306,11 +307,90 @@ export const handleProfile = () => {
     const user = userStore.getState().user;
     let passwd = "";
 
-    if (newPasswd || confirm) {
-      if (newPasswd !== confirm || !isPasswordStrong(newPasswd)) {
-        //!!TODO hanlde error
+    const errorFirstName = document.querySelector("#edit-first-name-error");
+    if (!firstName) {
+      errorFirstName.removeAttribute("hidden");
+      return;
+    }
+    errorFirstName.setAttribute("hidden", "true");
+
+    const errorLastName = document.querySelector("#edit-last-name-error");
+    if (!lastName) {
+      errorLastName.removeAttribute("hidden");
+      return;
+    }
+    errorLastName.setAttribute("hidden", "true");
+
+    const errorUsername = document.querySelector("#edit-username-error");
+    if (!username) {
+      errorUsername.removeAttribute("hidden");
+      return;
+    }
+
+    if (username.toLowerCase() !== user.username.toLowerCase()) {
+      const doesUserNameExists = await userApi.doesUserNameExists(username);
+      if (doesUserNameExists) {
+        errorUsername.textContent = "username already exists";
+        errorUsername.removeAttribute("hidden");
         return;
       }
+    }
+    errorUsername.setAttribute("hidden", "true");
+
+    const errorAdress = document.querySelector("#edit-adress-error");
+    if (!adress) {
+      errorAdress.removeAttribute("hidden");
+      return;
+    }
+    errorAdress.setAttribute("hidden", "true");
+
+    const errorEmail = document.querySelector("#edit-email-error");
+    if (!email) {
+      errorEmail.removeAttribute("hidden");
+      return;
+    }
+
+    if (!isValidEmail(email)) {
+      errorEmail.textContent = "Please enter a valid email";
+      errorEmail.removeAttribute("hidden");
+      return;
+    }
+
+    if (email.toLowerCase() !== user.email.toLowerCase()) {
+      const doesEmailExists = await userApi.doesEmailExists(email);
+      if (doesEmailExists) {
+        errorEmail.textContent = "email already exists";
+        errorEmail.removeAttribute("hidden");
+        return;
+      }
+    }
+    errorEmail.setAttribute("hidden", "true");
+
+    if (newPasswd || confirm) {
+      const errorPassword = document.querySelector("#edit-password-error");
+      if (!isPasswordStrong(newPasswd)) {
+        errorPassword.innerHTML = `<span>
+      Your password is two weak, it must contain</br>
+      <ul>
+        <li>At least 12 caracters</li>
+        <li>At least a lowercase</li>
+        <li>At least an Uppercase</li>
+        <li>At least a special carracter</li>
+        <li>At least a digit</li>
+      </ul>
+      </span>`;
+        errorPassword.removeAttribute("hidden");
+        return;
+      }
+      errorPassword.setAttribute("hidden", "true");
+
+      const errorConfirm = document.querySelector("#edit-confirm-error");
+      if (newPasswd !== confirm) {
+        errorConfirm.removeAttribute("hidden");
+        return;
+      }
+      errorConfirm.setAttribute("hidden", "true");
+
       passwd = newPasswd;
     }
 
@@ -328,11 +408,13 @@ export const handleProfile = () => {
       },
       user
     );
-
+    const errorSave = document.querySelector("#edit-save-error");
     if (!updateUserInfosRequest) {
-      //!!TODO handle error nothing to update
+      errorSave.textContent = "No field change";
+      errorSave.removeAttribute("hidden");
       return;
     }
+    errorSave.setAttribute("hidden", "true");
 
     const updateUserInfosResult = await userApi.updateUserInfos(
       updateUserInfosRequest
@@ -340,8 +422,9 @@ export const handleProfile = () => {
 
     if (updateUserInfosResult.ok) {
       navigate(`/${RouteUrl.PROFILE}`);
+      return;
     } else {
-      //!!TODO handle error update infos
+      errorSave.removeAttribute("hidden");
     }
   };
 

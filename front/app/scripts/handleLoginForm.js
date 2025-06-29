@@ -26,7 +26,10 @@ export const handleLoginForm = () => {
         const { sessionId } = user;
         sessionStorage.setItem("sessionId", sessionId);
         navigate(RouteUrl.PROFILE);
+        return;
       }
+
+      document.querySelector("#login-password-error").removeAttribute("hidden");
     }
   }
 

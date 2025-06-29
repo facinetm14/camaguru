@@ -25,13 +25,33 @@ export const handleCreateNewPassword = () => {
       const password = newPasswordInput.value;
       const confirmation = newPasswordConfirmation.value;
 
-      if (!password || !isPasswordStrong(password)) {
+      const errorPassword = document.querySelector("#password-error");
+      if (!password) {
+        errorPassword.removeAttribute("hidden");
         return;
       }
+      if (!isPasswordStrong(password)) {
+        errorPassword.innerHTML = `<span>
+            Your password is two weak, it must contain</br>
+            <ul>
+              <li>At least 12 caracters</li>
+              <li>At least a lowercase</li>
+              <li>At least an Uppercase</li>
+              <li>At least a special carracter</li>
+              <li>At least a digit</li>
+            </ul>
+            </span>`;
+        errorPassword.removeAttribute("hidden");
+        return;
+      }
+      errorPassword.setAttribute("hidden", "true");
 
-      if (password !== confirmation) {
+      const errorConfirm = document.querySelector("#confirm-error");
+      if (!confirmation || !isMatchedPassword(confirmation)) {
+        errorConfirm.removeAttribute("hidden");
         return;
       }
+      errorConfirm.setAttribute("hidden", "true");
 
       await authApi.updatePassword(userId, password);
 

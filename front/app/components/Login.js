@@ -10,7 +10,7 @@ export const Login = () => {
       <div class="mb-3 col-md-11 m-auto">
         <label for="password" class="form-label">Password</label>
         <input type="password" class="form-control" id="password-from-login">
-        <span id="password-error" class="text-danger" hidden></span>
+        <span id="login-password-error" class="text-danger" hidden>Invalid credentials</span>
       </div>
       <div class="col-md-11 m-auto">
         <button type="button" class="btn btn-success" id="login-btn">Login</button>

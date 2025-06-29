@@ -1,5 +1,5 @@
 import { User } from "../../../core/entities/user.entity";
-import { UserRepositoryInteface } from "../../interfaces/repositories/user.repository.interface";
+import { UserRepositoryInteface } from "../../ports/repositories/user.repository.interface";
 
 export class FindAllUsersUseCas {
   constructor(private readonly userRepo: UserRepositoryInteface) {}

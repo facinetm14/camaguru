@@ -1,4 +1,4 @@
-import { writeFile } from "node:fs/promises";
+import { unlink, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { createReadStream, existsSync, statSync } from "node:fs";
 import { IncomingMessage } from "node:http";
@@ -12,25 +12,28 @@ import { extractFileExtension } from "../../../shared/extract-file-extension";
 import { RoutesParamsKey } from "../enum/route-paramsKey";
 import { buildSaveImageDtoFromRequestBody } from "../mappers/user-image.mapper";
 import { SaveUserImageUseCase } from "../../../application/usecases/users/save-user-image.usecase";
-import { FindUserInfosByIdSessionUsecase } from "../../../application/usecases/users/find-user-infos-by-session.usecase";
+import { FindUserInfosUseCase } from "../../../application/usecases/users/find-user-infos.usecase";
 import { UPLOAD_DEST } from "../../../core/consts/upload-destination";
 import { buildUpdateUserInfosFromUpdateRequest } from "../mappers/user.mapper";
 import { UpdateUserInfosUseCase } from "../../../application/usecases/users/update-user-infos.usecase";
 import { LikeImageUseCase } from "../../../application/usecases/users/like-image.usecase";
 import { GetImageLikesUseCase } from "../../../application/usecases/users/get-image-likes-usecase";
-import { CommentImageUseCase } from "../../../application/usecases/users/comment-image-usecase";
+import { CommentImageUseCase } from "../../../application/usecases/users/comment-image.usecase";
 import { CommentImageError } from "../../../core/error/comment-image.error";
 import { parseRequestBodyAsJson } from "../../../shared/parse-request-body";
+import { DeleteUserImageUseCase } from "../../../application/usecases/users/delete-user-image.usecase";
+import { DeleteUserImageError } from "../../../core/error/delete-image.error";
 
 export class UserController {
   constructor(
     private readonly findAllUsersImagesUseCase: FindAllUsersImagesUseCase,
     private readonly saveUserImageUseCase: SaveUserImageUseCase,
-    private readonly findUserInfosByIdSessionUseCase: FindUserInfosByIdSessionUsecase,
+    private readonly findUserInfosUseCase: FindUserInfosUseCase,
     private readonly updateUserInfosUseCase: UpdateUserInfosUseCase,
     private readonly likeImageUseCase: LikeImageUseCase,
     private readonly getImageLikesUseCase: GetImageLikesUseCase,
-    private readonly commentImageUseCase: CommentImageUseCase
+    private readonly commentImageUseCase: CommentImageUseCase,
+    private readonly deleteUserImageUseCase: DeleteUserImageUseCase
   ) {}
 
   async findByIdSession({
@@ -45,8 +48,7 @@ export class UserController {
     }
 
     const sessionId = params.get(RoutesParamsKey.SESSION_ID) as string;
-
-    const user = await this.findUserInfosByIdSessionUseCase.execute(sessionId);
+    const user = await this.findUserInfosUseCase.execute(sessionId);
 
     try {
       if (!user) {
@@ -74,9 +76,7 @@ export class UserController {
       return null;
     }
 
-    const user = await this.findUserInfosByIdSessionUseCase.execute(
-      sessionToken
-    );
+    const user = await this.findUserInfosUseCase.execute(sessionToken);
 
     if (!user) {
       return null;
@@ -225,8 +225,18 @@ export class UserController {
         return;
       }
       const UpdateUserDto = updateUserInfosDtoResult.data;
+
       try {
-        await this.updateUserInfosUseCase.execute(userId, UpdateUserDto);
+        const result = await this.updateUserInfosUseCase.execute(
+          userId,
+          UpdateUserDto
+        );
+
+        if (result.isErr) {
+          resp.statusCode = ResponseStatusCode.BAD_REQUEST;
+          resp.end(result.error);
+          return;
+        }
         resp.statusCode = ResponseStatusCode.GET_OK;
         resp.end();
       } catch (error) {
@@ -356,8 +366,9 @@ export class UserController {
       return;
     }
 
-    const user = await this.findUserInfosByIdSessionUseCase.doesUserNameExists(
-      username
+    const user = await this.findUserInfosUseCase.execute(
+      username,
+      UserUniqKeys.USER_NAME
     );
     const result = { exists: !!user };
     resp.statusCode = ResponseStatusCode.GET_OK;
@@ -392,12 +403,52 @@ export class UserController {
         return;
       }
 
-      const user = await this.findUserInfosByIdSessionUseCase.doesEmailExists(
-        email
+      const user = await this.findUserInfosUseCase.execute(
+        email,
+        UserUniqKeys.EMAIL
       );
 
       resp.statusCode = 200;
       resp.end(JSON.stringify({ exists: !!user }));
     });
+  }
+
+  async deleteUserImage({
+    req,
+    params,
+    resp,
+  }: ControllerInputType): Promise<void> {
+    const imageId = params?.get(RoutesParamsKey.IMAGE_ID) as string;
+    if (!imageId) {
+      resp.statusCode = ResponseStatusCode.BAD_REQUEST;
+      resp.end();
+      return;
+    }
+
+    const userId = await this.getUserIdFromRequest(req);
+    if (!userId) {
+      resp.statusCode = ResponseStatusCode.FORBIDDEN;
+      resp.end();
+      return;
+    }
+
+    const result = await this.deleteUserImageUseCase.execute(imageId, userId);
+    if (!result.isErr) {
+      const path = join(process.cwd(), UPLOAD_DEST, result.data);
+      await unlink(path);
+
+      resp.statusCode = ResponseStatusCode.GET_OK;
+      resp.end();
+      return;
+    }
+
+    const error = result.error;
+
+    if (error === DeleteUserImageError.IMAGE_NOT_FOUND) {
+      resp.statusCode = ResponseStatusCode.NOT_FOUND;
+    } else {
+      resp.statusCode = ResponseStatusCode.FORBIDDEN;
+    }
+    resp.end();
   }
 }

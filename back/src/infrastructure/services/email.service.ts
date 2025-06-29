@@ -2,7 +2,7 @@ import sgMail from "@sendgrid/mail";
 import {
   Email,
   EmailServiceInterface,
-} from "../../application/interfaces/services/email.service.interface";
+} from "../../application/ports/services/email.service.interface";
 import { ActionStatus } from "../../core/enum/action-status";
 
 export class EmailService implements EmailServiceInterface {

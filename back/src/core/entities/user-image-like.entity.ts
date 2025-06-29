@@ -1,5 +1,3 @@
-import { ImageInteractionType } from "../enum/user.enum";
-
 export type UserImageLike = {
   id: string;
   imageId: string;
@@ -7,4 +5,4 @@ export type UserImageLike = {
   authorName?: string;
   createdAt: Date;
   updatedAt: Date;
-}
+};

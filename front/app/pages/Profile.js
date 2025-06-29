@@ -1,4 +1,4 @@
-import { PLAIN_API_BASE_ROUTE } from "../env.js";
+import { PLAIN_API_BASE_ROUTE } from "../../env.js";
 import { handleProfile } from "../scripts/handleProfile.js";
 import { Galery } from "../components/Galery.js";
 import userStore from "../scripts/userStore.js";
@@ -125,27 +125,27 @@ export const Profile = () => {
       <div class="mb-3 col-md-11 m-auto">
         <label for="first-name" class="form-label">First Name</label>
         <input type="text" class="form-control" id="edit-first-name">
-        <span id="first-name" class=""></span>
+        <span id="edit-first-name-error" hidden class="text-danger">Please enter your first name</span>
       </div>
       <div class="mb-3 col-md-11 m-auto">
         <label for="last-name" class="form-label">Last Name</label>
         <input type="text" class="form-control" id="edit-last-name">
-        <span id="last-name" class=""></span>
+          <span id="edit-last-name-error" hidden class="text-danger">Please enter your last name</span>
       </div>
       <div class="mb-3 col-md-11 m-auto">
         <label for="username" class="form-label">Username</label>
         <input type="text" class="form-control" id="edit-username">
-        <span id="username-error" class=""></span>
+        <span id="edit-username-error" class="text-danger" hidden>Please enter your username</span>
       </div>
       <div class="mb-3 col-md-11 m-auto">
         <label for="adress" class="form-label">Adress</label>
         <input type="text" class="form-control" id="edit-adress" >
-        <span id="adress-error" class=""></span>
+        <span id="edit-adress-error" class="text-danger" hidden>Please enter your new adress</span>
       </div>
       <div class="mb-3 col-md-11 m-auto">
         <label for="email" class="form-label">Email</label>
         <input type="email" class="form-control" id="edit-email" >
-        <span id="email-error" class=""></span>
+        <span id="edit-email-error" class="text-danger" hidden>Please enter your new email</span>
       </div>
       <div class="mb-3 col-md-11 m-auto">
         <input class="camagru-checkbox" type="checkbox" id="comment-notification">
@@ -154,14 +154,16 @@ export const Profile = () => {
       <div class="mb-3 col-md-11 m-auto" id="password-block">
         <label for="password" class="form-label">Password</label>
         <input type="password" class="form-control" id="edit-password">
+        <span id="edit-password-error" class="text-danger" hidden>Please enter your new adrs</span>
       </div>
       <div class="mb-3 col-md-11 m-auto">
         <label for="password-confirmation" class="form-label">Password confirmation</label>
         <input type="password" class="form-control" id="edit-password-confirm" >
-        <span id="password" class=""></span>
+        <span id="edit-confirm-error" class="text-danger" hidden>passwords don't match</span>
       </div>
       <div class="col-md-11 m-auto">
         <button type="button" class="btn btn-success" id="edit-save">Save</button>
+        <span id="edit-save-error" class="text-danger" hidden>Failled to edit user infos</span>
       </div>
     </form>
   </div>

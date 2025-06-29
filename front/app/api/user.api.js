@@ -1,46 +1,5 @@
-import { API_BASE_ROUTE } from "../env.js";
+import { API_BASE_ROUTE, APP_ID, FB_SHARE_URL, HOST } from "../../env.js";
 import { SESSION_ID_KEY } from "../scripts/consts.js";
-
-const register = async (user) => {
-  return fetch(`${API_BASE_ROUTE}/auth/register`, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-    method: "POST",
-    body: JSON.stringify(user),
-  });
-};
-
-const verify = async (token) => {
-  return fetch(`${API_BASE_ROUTE}/auth/verify/${token}`, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-    method: "POST",
-  });
-};
-
-const updatePassword = async (id, passwd) => {
-  return fetch(`${API_BASE_ROUTE}/auth/new-password`, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-    method: "PATCH",
-    body: JSON.stringify({ passwd, id }),
-  });
-};
-
-const signIn = async (username, passwd) => {
-  return fetch(`${API_BASE_ROUTE}/auth/login`, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-    method: "POST",
-    body: JSON.stringify({ username, passwd }),
-  });
-};
-
-const isAuth = async () => {};
 
 const getMe = async (sessionId) => {
   return fetch(`${API_BASE_ROUTE}/users/${sessionId}`, {
@@ -79,25 +38,6 @@ const doesEmailExists = async (email) => {
   const { exists } = resultBody;
 
   return exists;
-};
-
-const logout = async (sessionId) => {
-  return fetch(`${API_BASE_ROUTE}/auth/logout/${sessionId}`, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-    method: "PATCH",
-  });
-};
-
-const sendResetPasswordRequest = async (email) => {
-  return fetch(`${API_BASE_ROUTE}/auth/reset-password`, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-    method: "POST",
-    body: JSON.stringify({ email }),
-  });
 };
 
 const uploadImage = async (filename, image) => {
@@ -161,20 +101,32 @@ const commentImage = async (imageId, comment) => {
   });
 };
 
-export const userService = {
-  register,
-  verify,
-  signIn,
+const deleteUserImage = async (imageId) => {
+  const sessionId = sessionStorage.getItem(SESSION_ID_KEY);
+  return fetch(`${API_BASE_ROUTE}/users/images/${imageId}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${sessionId}`,
+    },
+    method: "DELETE",
+  });
+};
+
+const shareImage = (imageDataUrl) => {
+  return fetch(
+    `${FB_SHARE_URL}app_id=${APP_ID}&display=popup&href=${imageDataUrl}$redirect_uri=${HOST}/profile`
+  );
+};
+
+export const userApi = {
   getMe,
-  isAuth,
-  logout,
-  sendResetPasswordRequest,
   uploadImage,
   getMyImages,
-  updatePassword,
   updateUserInfos,
   likeOrDisLikeImage,
   commentImage,
   doesUserNameExists,
   doesEmailExists,
+  deleteUserImage,
+  shareImage,
 };

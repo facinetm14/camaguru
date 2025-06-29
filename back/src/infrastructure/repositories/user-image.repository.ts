@@ -1,12 +1,13 @@
 import { SaveImageDto } from "../../application/dto/save-user-image.dto";
-import { UserImagesRepositoryInteface } from "../../application/interfaces/repositories/user-image.repository.inteface";
+import { UserImagesRepositoryInteface } from "../../application/ports/repositories/user-image.repository.inteface";
 import { UserImageHeavy } from "../../core/entities/user-image-heavy.entity";
 import { UserImage } from "../../core/entities/user-image.entity";
 import { pgClient } from "../../database/dataSource";
 import {
   buildUploadUserImageEntityFromModel,
   buildUserImageHeavyFromAggregate,
-} from "../../interface-adapters/web/mappers/user-image.mapper";
+} from "../../adapters/web/mappers/user-image.mapper";
+import { ActionStatus } from "../../core/enum/action-status";
 
 export class UserImageRepository implements UserImagesRepositoryInteface {
   async find(id: string): Promise<UserImage | null> {
@@ -72,5 +73,22 @@ export class UserImageRepository implements UserImagesRepositoryInteface {
     }
 
     return buildUserImageHeavyFromAggregate(imagesRawList);
+  }
+
+  async delete(id: string): Promise<ActionStatus> {
+    const deleteQuery = {
+      text: `DELETE FROM user_images WHERE id = $1`,
+      values: [id],
+    };
+
+    try {
+      const connexion = await pgClient.connect();
+      await pgClient.query(deleteQuery);
+      connexion.release();
+      return ActionStatus.SUCCESS;
+    } catch (error) {
+      console.log(error);
+      return ActionStatus.FAILED;
+    }
   }
 }

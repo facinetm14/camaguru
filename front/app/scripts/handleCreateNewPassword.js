@@ -1,18 +1,18 @@
 import { navigate } from "./events.js";
 import { RouteUrl } from "./router.js";
-import { userService } from "../usecases/userService.js";
 import { isPasswordStrong } from "./utils.js";
+import { authApi } from "../api/auth.api.js";
 
 export const handleCreateNewPassword = () => {
   const [_, _page, token] = window.location.pathname.split("/");
 
   (async () => {
-    const resp = await userService.verify(token);
+    const resp = await authApi.verify(token);
     if (!resp.ok) {
       return navigate(`/${RouteUrl.NOT_FOUND}`);
     }
 
-    const idUser = await resp.json();
+    const userId = await resp.json();
 
     const newPasswordInput = document.querySelector("#new-password-input");
     const newPasswordConfirmation = document.querySelector(
@@ -25,15 +25,35 @@ export const handleCreateNewPassword = () => {
       const password = newPasswordInput.value;
       const confirmation = newPasswordConfirmation.value;
 
-      if (!password || !isPasswordStrong(password)) {
+      const errorPassword = document.querySelector("#password-error");
+      if (!password) {
+        errorPassword.removeAttribute("hidden");
         return;
       }
-
-      if (password !== confirmation) {
+      if (!isPasswordStrong(password)) {
+        errorPassword.innerHTML = `<span>
+            Your password is two weak, it must contain</br>
+            <ul>
+              <li>At least 12 caracters</li>
+              <li>At least a lowercase</li>
+              <li>At least an Uppercase</li>
+              <li>At least a special carracter</li>
+              <li>At least a digit</li>
+            </ul>
+            </span>`;
+        errorPassword.removeAttribute("hidden");
         return;
       }
+      errorPassword.setAttribute("hidden", "true");
 
-      await userService.updatePassword(idUser, password);
+      const errorConfirm = document.querySelector("#confirm-error");
+      if (confirmation !== password) {
+        errorConfirm.removeAttribute("hidden");
+        return;
+      }
+      errorConfirm.setAttribute("hidden", "true");
+
+      await authApi.updatePassword(userId, password);
 
       navigate(`/${RouteUrl.HOME}`);
     }

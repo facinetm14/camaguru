@@ -1,5 +1,5 @@
 import { ActionStatus } from "../../../core/enum/action-status";
-import { UserSessionRepositoryInterface } from "../../interfaces/repositories/user-session.repository.interface";
+import { UserSessionRepositoryInterface } from "../../ports/repositories/user-session.repository.interface";
 
 export class LogoutUserUseCase {
   constructor(

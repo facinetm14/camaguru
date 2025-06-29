@@ -1,6 +1,6 @@
 import { ImageInteractionType } from "../../core/enum/user.enum";
 
-export interface UserImageLikeModel {
+export interface UserImageInteractionModel {
   id: string;
   image_id: string;
   author_id: string;

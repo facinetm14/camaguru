@@ -1,6 +1,6 @@
 import { CreateUserDto } from "../../application/dto/create-user.dto";
 import { UpdateUserDto } from "../../application/dto/update-user.dto";
-import { UserRepositoryInteface } from "../../application/interfaces/repositories/user.repository.interface";
+import { UserRepositoryInteface } from "../../application/ports/repositories/user.repository.interface";
 import { User } from "../../core/entities/user.entity";
 import { ActionStatus } from "../../core/enum/action-status";
 import { UserUniqKeys, UserStatus } from "../../core/enum/user.enum";
@@ -28,12 +28,12 @@ export class UserRepositoryInMemory implements UserRepositoryInteface {
   }
 
   updateStatusAndRemoveValidationToken(
-    idUser: string,
+    userId: string,
     userStatus: UserStatus
   ): Promise<ActionStatus> {
     throw new Error("Method not implemented.");
   }
-  update(idUser: string, updateUser: UpdateUserDto): Promise<ActionStatus> {
+  update(userId: string, updateUser: UpdateUserDto): Promise<ActionStatus> {
     throw new Error("Method not implemented.");
   }
 }

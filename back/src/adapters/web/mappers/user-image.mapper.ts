@@ -4,9 +4,9 @@ import { UserImageLike } from "../../../core/entities/user-image-like.entity";
 import { UserImage } from "../../../core/entities/user-image.entity";
 import { ImageInteractionType } from "../../../core/enum/user.enum";
 import { uploadImageError } from "../../../core/error/upload-image.error";
-import { UserImageAggreate } from "../../../infrastructure/data/user-image-aggregate";
-import { UserImageLikeModel } from "../../../infrastructure/data/user-image-like";
-import { UserImageModel } from "../../../infrastructure/data/user-image.model";
+import { UserImageAggreate } from "../../../infrastructure/model/user-image.aggregate";
+import { UserImageInteractionModel } from "../../../infrastructure/model/user-image-interaction.model";
+import { UserImageModel } from "../../../infrastructure/model/user-image.model";
 import { Err, Ok, Result } from "../../../shared/result";
 import { isNotEmptyString } from "../../../shared/string";
 import { uuid } from "../../../shared/uuid";
@@ -46,7 +46,7 @@ export const buildSaveImageDtoFromRequestBody = (
 };
 
 export const buildImageLikesEntityFromModel = (
-  imageLike: UserImageLikeModel
+  imageLike: UserImageInteractionModel
 ): UserImageLike => {
   return {
     id: imageLike.id,

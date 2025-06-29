@@ -1,4 +1,4 @@
-import { userService } from "../usecases/userService.js";
+import { userApi } from "../api/user.api.js";
 import { GaleryPagination } from "./utils.js";
 
 class UserStore {
@@ -24,12 +24,15 @@ class UserStore {
 const userStore = new UserStore();
 
 export async function setGlobalState(sessionId) {
-  const userInfosResp = await userService.getMe(sessionId);
+  if (!sessionId) {
+    return null;
+  }
+  const userInfosResp = await userApi.getMe(sessionId);
   if (userInfosResp.ok) {
     const userInfosRespData = await userInfosResp.json();
     userStore.setState({ user: userInfosRespData });
 
-    const getImagesResult = await userService.getMyImages();
+    const getImagesResult = await userApi.getMyImages();
     if (getImagesResult.ok) {
       const imageList = [...(await getImagesResult.json())];
       const myImageList = imageList.filter(

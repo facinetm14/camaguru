@@ -1,6 +1,6 @@
 import { isValidEmail, isPasswordStrong } from "../../scripts/utils.js";
-
-import { userService } from "../usecases/userService.js";
+import { authApi } from "../api/auth.api.js";
+import { userApi } from "../api/user.api.js";
 import { navigate } from "./events.js";
 import { RouteUrl } from "./router.js";
 
@@ -59,7 +59,7 @@ export const handleSignUpForm = () => {
       errorUsername.removeAttribute("hidden");
       return;
     }
-    const doesUserNameExists = await userService.doesUserNameExists(username);
+    const doesUserNameExists = await userApi.doesUserNameExists(username);
     if (doesUserNameExists) {
       errorUsername.textContent = "this username is already used";
       errorUsername.removeAttribute("hidden");
@@ -84,7 +84,7 @@ export const handleSignUpForm = () => {
       emailError.removeAttribute("hidden");
       return;
     }
-    const doesEmailExists = await userService.doesEmailExists(email);
+    const doesEmailExists = await userApi.doesEmailExists(email);
     if (doesEmailExists) {
       emailError.textContent = "This email is already used";
       emailError.removeAttribute("hidden");
@@ -136,7 +136,7 @@ export const handleSignUpForm = () => {
       lastName,
     };
 
-    const registerUser = await userService.register(user);
+    const registerUser = await authApi.register(user);
     if (registerUser.ok) {
       navigate(RouteUrl.CONFIRM);
       return;

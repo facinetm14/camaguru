@@ -42,7 +42,7 @@ describe("Input validation test", () => {
     });
   });
 
-  it.only("A hashed passwd is diffrent from original // hello", async () => {
+  it("A hashed passwd is diffrent from original // hello", async () => {
     const passwd = "hello";
 
     const hashed = await hashPassword(passwd);

@@ -47,7 +47,7 @@ export const handleCreateNewPassword = () => {
       errorPassword.setAttribute("hidden", "true");
 
       const errorConfirm = document.querySelector("#confirm-error");
-      if (confirmation !== password) {
+      if (!confirmation || !isMatchedPassword(confirmation)) {
         errorConfirm.removeAttribute("hidden");
         return;
       }

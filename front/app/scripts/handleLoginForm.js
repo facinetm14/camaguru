@@ -1,4 +1,5 @@
 import { authApi } from "../api/auth.api.js";
+import { SESSION_ID_KEY } from "./consts.js";
 import { navigate } from "./events.js";
 import { RouteUrl } from "./router.js";
 
@@ -24,7 +25,7 @@ export const handleLoginForm = () => {
       if (loginUserResp.ok) {
         const user = await loginUserResp.json();
         const { sessionId } = user;
-        sessionStorage.setItem("sessionId", sessionId);
+        sessionStorage.setItem(SESSION_ID_KEY, sessionId);
         navigate(RouteUrl.PROFILE);
         return;
       }

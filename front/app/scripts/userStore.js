@@ -24,6 +24,9 @@ class UserStore {
 const userStore = new UserStore();
 
 export async function setGlobalState(sessionId) {
+  if (!sessionId) {
+    return null;
+  }
   const userInfosResp = await userApi.getMe(sessionId);
   if (userInfosResp.ok) {
     const userInfosRespData = await userInfosResp.json();

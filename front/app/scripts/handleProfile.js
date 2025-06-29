@@ -11,7 +11,7 @@ import {
   uuid,
 } from "./utils.js";
 import { ENTER_KEY, SESSION_ID_KEY } from "./consts.js";
-import { PLAIN_API_BASE_ROUTE } from "../env.js";
+import { PLAIN_API_BASE_ROUTE } from "../../env.js";
 import { RouteUrl } from "./router.js";
 import { GALERY_ITEM_LIMIT_PER_PAGE } from "./utils.js";
 import { authApi } from "../api/auth.api.js";
@@ -217,6 +217,9 @@ export const handleProfile = () => {
       const commentsBtn = document.querySelector(`#comments-btn-${key}`);
       const likesBtn = document.querySelector(`#likes-btn-${key}`);
       const inputComment = document.querySelector(`#input-comment-${key}`);
+      const deleteImageBtn = document.querySelector(`#delete-image-btn-${key}`);
+      const shareImageBtn = document.querySelector(`#share-image-btn-${key}`);
+      const img = document.querySelector(`#img-${key}`);
 
       viewFullBtn.addEventListener("click", (event) => {
         event.preventDefault();
@@ -257,6 +260,18 @@ export const handleProfile = () => {
         e.target.value = "";
         toggleBlock(inputComment);
         navigate(`/${RouteUrl.PROFILE}`);
+      });
+
+      deleteImageBtn.addEventListener("click", async (e) => {
+        e.preventDefault();
+        await userApi.deleteUserImage(id);
+        navigate(`/${RouteUrl.PROFILE}`);
+      });
+
+      shareImageBtn.addEventListener("click", async (e) => {
+        e.preventDefault();
+        const src = img.src;
+        await userApi.shareImage(src);
       });
     }
   };

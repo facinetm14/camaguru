@@ -1,4 +1,4 @@
-import { writeFile } from "node:fs/promises";
+import { unlink, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { createReadStream, existsSync, statSync } from "node:fs";
 import { IncomingMessage } from "node:http";
@@ -18,9 +18,11 @@ import { buildUpdateUserInfosFromUpdateRequest } from "../mappers/user.mapper";
 import { UpdateUserInfosUseCase } from "../../../application/usecases/users/update-user-infos.usecase";
 import { LikeImageUseCase } from "../../../application/usecases/users/like-image.usecase";
 import { GetImageLikesUseCase } from "../../../application/usecases/users/get-image-likes-usecase";
-import { CommentImageUseCase } from "../../../application/usecases/users/comment-image-usecase";
+import { CommentImageUseCase } from "../../../application/usecases/users/comment-image.usecase";
 import { CommentImageError } from "../../../core/error/comment-image.error";
 import { parseRequestBodyAsJson } from "../../../shared/parse-request-body";
+import { DeleteUserImageUseCase } from "../../../application/usecases/users/delete-user-image.usecase";
+import { DeleteUserImageError } from "../../../core/error/delete-image.error";
 
 export class UserController {
   constructor(
@@ -30,7 +32,8 @@ export class UserController {
     private readonly updateUserInfosUseCase: UpdateUserInfosUseCase,
     private readonly likeImageUseCase: LikeImageUseCase,
     private readonly getImageLikesUseCase: GetImageLikesUseCase,
-    private readonly commentImageUseCase: CommentImageUseCase
+    private readonly commentImageUseCase: CommentImageUseCase,
+    private readonly deleteUserImageUseCase: DeleteUserImageUseCase
   ) {}
 
   async findByIdSession({
@@ -408,5 +411,44 @@ export class UserController {
       resp.statusCode = 200;
       resp.end(JSON.stringify({ exists: !!user }));
     });
+  }
+
+  async deleteUserImage({
+    req,
+    params,
+    resp,
+  }: ControllerInputType): Promise<void> {
+    const imageId = params?.get(RoutesParamsKey.IMAGE_ID) as string;
+    if (!imageId) {
+      resp.statusCode = ResponseStatusCode.BAD_REQUEST;
+      resp.end();
+      return;
+    }
+
+    const userId = await this.getUserIdFromRequest(req);
+    if (!userId) {
+      resp.statusCode = ResponseStatusCode.FORBIDDEN;
+      resp.end();
+      return;
+    }
+
+    const result = await this.deleteUserImageUseCase.execute(imageId, userId);
+    if (!result.isErr) {
+      const path = join(process.cwd(), UPLOAD_DEST, result.data);
+      await unlink(path);
+
+      resp.statusCode = ResponseStatusCode.GET_OK;
+      resp.end();
+      return;
+    }
+
+    const error = result.error;
+
+    if (error === DeleteUserImageError.IMAGE_NOT_FOUND) {
+      resp.statusCode = ResponseStatusCode.NOT_FOUND;
+    } else {
+      resp.statusCode = ResponseStatusCode.FORBIDDEN;
+    }
+    resp.end();
   }
 }

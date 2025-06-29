@@ -1,4 +1,4 @@
-import { API_BASE_ROUTE } from "../env.js";
+import { API_BASE_ROUTE } from "../../env.js";
 
 const register = async (user) => {
   return fetch(`${API_BASE_ROUTE}/auth/register`, {
@@ -58,12 +58,11 @@ const sendResetPasswordRequest = async (email) => {
   });
 };
 
-
 export const authApi = {
   register,
   verify,
   updatePassword,
   signIn,
   logout,
-  sendResetPasswordRequest
-}
+  sendResetPasswordRequest,
+};

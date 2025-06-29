@@ -1,5 +1,5 @@
 @baseUrl = http://localhost:5000/api/v1
-@authToken = Bearer ajb8u9-mcgkiem8-oc27tj
+@authToken = Bearer 12x7fd-mci03yji-hone4s
 
 ### base
 GET {{baseUrl}}/
@@ -91,7 +91,7 @@ GET {{baseUrl}}/users/images/{{imageName}}
 
 
 ### Like or dislike image
-@imageId = "-mcdf8r2i-0h33q1"
+@imageId = xr7yma-mci04mbo-06g1d9
 POST {{baseUrl}}/users/images/{{imageId}}/likes
 Content-Type: application/json
 Authorization: {{authToken}}
@@ -110,3 +110,9 @@ Authorization: {{authToken}}
 {
   "comment": "hello world"
 }
+
+
+### delete Image
+DELETE  {{baseUrl}}/users/images/{{imageId}}
+Content-Type: application/json
+Authorization: {{authToken}}

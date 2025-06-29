@@ -24,4 +24,5 @@ export enum ClassRegistry {
   COMMENT_IMAGE_USECASE = "CommentImageUseCase",
   COMMENT_IMAGE_REPOSITORY = "CommentImageRepository",
   NOTIFICATION_SERVICE = "NotificationService",
+  DELETE_USER_IMAGE_USECASE = "DeleteUserImageUseCase"
 }

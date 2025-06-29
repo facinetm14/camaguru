@@ -1,4 +1,4 @@
-import { PLAIN_API_BASE_ROUTE } from "../env.js";
+import { PLAIN_API_BASE_ROUTE } from "../../env.js";
 import { handleProfile } from "../scripts/handleProfile.js";
 import { Galery } from "../components/Galery.js";
 import userStore from "../scripts/userStore.js";

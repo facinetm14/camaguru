@@ -19,7 +19,7 @@ export class CommentImageUseCase {
   constructor(
     private readonly imageRepo: UserImagesRepositoryInteface,
     private readonly commentImageRepo: CommentImageRepositoryInterface,
-    private userRepo: UserRepositoryInteface,
+    private readonly userRepo: UserRepositoryInteface,
     private readonly emailService: EmailServiceInterface
   ) {}
 

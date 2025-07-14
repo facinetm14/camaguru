@@ -11,7 +11,7 @@ import {
   uuid,
 } from "./utils.js";
 import { ENTER_KEY, SESSION_ID_KEY } from "./consts.js";
-import { PLAIN_API_BASE_ROUTE } from "../../env.js";
+import { PLAIN_API_BASE_ROUTE } from "../env.js";
 import { RouteUrl } from "./router.js";
 import { GALERY_ITEM_LIMIT_PER_PAGE } from "./utils.js";
 import { authApi } from "../api/auth.api.js";

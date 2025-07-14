@@ -1,6 +1,6 @@
 import { Login } from "../components/Login.js";
 import { SignUp } from "../components/SignUp.js";
-import { PLAIN_API_BASE_ROUTE } from "../../env.js";
+import { PLAIN_API_BASE_ROUTE } from "../env.js";
 import { handleLoginForm } from "../scripts/handleLoginForm.js";
 import { handleSignUpForm } from "../scripts/handleSignUpForm.js";
 

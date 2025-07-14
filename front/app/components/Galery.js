@@ -1,4 +1,4 @@
-import { PLAIN_API_BASE_ROUTE } from "../../env.js";
+import { PLAIN_API_BASE_ROUTE } from "../env.js";
 import userStore from "../scripts/userStore.js";
 import { GALERY_ITEM_LIMIT_PER_PAGE } from "../scripts/utils.js";
 import { GaleryOwner } from "../scripts/utils.js";

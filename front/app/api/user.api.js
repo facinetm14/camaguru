@@ -1,4 +1,4 @@
-import { API_BASE_ROUTE, APP_ID, FB_SHARE_URL, HOST } from "../../env.js";
+import { API_BASE_ROUTE, APP_ID, FB_SHARE_URL, HOST } from "../env.js";
 import { SESSION_ID_KEY } from "../scripts/consts.js";
 
 const getMe = async (sessionId) => {
@@ -112,11 +112,13 @@ const deleteUserImage = async (imageId) => {
   });
 };
 
-const shareImage = (imageDataUrl) => {
-  return fetch(
-    `${FB_SHARE_URL}app_id=${APP_ID}&display=popup&href=${imageDataUrl}$redirect_uri=${HOST}/profile`
-  );
-};
+  const shareImage = (imageDataUrl) => {
+    const shareUrl = `${FB_SHARE_URL}app_id=${APP_ID}&display=popup&href=${encodeURIComponent(
+      "https://dev.to/"
+    )}&redirect_uri=${encodeURIComponent(`${HOST}/profile`)}`;
+
+    window.open(shareUrl, "_blank", "width=600,height=400");
+  };
 
 export const userApi = {
   getMe,

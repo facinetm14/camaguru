@@ -65,7 +65,7 @@ export class AuthController {
         return;
       }
 
-      resp.statusCode = ResponseStatusCode.SERVER_INTERNAL_ERROR;
+      resp.statusCode = ResponseStatusCode.CREATED_OK;
       resp.end();
     });
   }

@@ -13,7 +13,7 @@ export class VerifyUserUseCase {
     );
 
     if (!userByToken) {
-      console.log(`Error: Invalid user token`);
+      console.error(`Error: Invalid user token`);
       return Err(UserVerificationError.INVALID_TOKEN);
     }
 

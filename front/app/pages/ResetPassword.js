@@ -1,4 +1,4 @@
-import { PLAIN_API_BASE_ROUTE } from "../../env.js";
+import { PLAIN_API_BASE_ROUTE } from "../env.js";
 import { handleResetPasswordForm } from "../scripts/handleResetPassword.js";
 
 export const ResetPassword = () => {

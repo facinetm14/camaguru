@@ -1,4 +1,4 @@
-import { API_BASE_ROUTE } from "../../env.js";
+import { API_BASE_ROUTE } from "../env.js";
 
 const register = async (user) => {
   return fetch(`${API_BASE_ROUTE}/auth/register`, {

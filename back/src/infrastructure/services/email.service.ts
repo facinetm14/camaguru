@@ -19,10 +19,11 @@ export class EmailService implements EmailServiceInterface {
     try {
       const status = await sgMail.send(msg);
       if (status) {
+        console.info("Email successfully sent");
         return ActionStatus.SUCCESS;
       }
     } catch (error) {
-      console.log("Error while sending email", { error });
+      console.error("Error while sending email", { error });
     }
     return ActionStatus.FAILED;
   }

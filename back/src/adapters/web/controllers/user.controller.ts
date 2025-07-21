@@ -61,7 +61,7 @@ export class UserController {
 
       resp.end(JSON.stringify(userWithNoPasswd));
     } catch (error) {
-      console.log(error);
+      console.error(error);
       resp.statusCode = ResponseStatusCode.SERVER_INTERNAL_ERROR;
       resp.end();
     }
@@ -128,7 +128,7 @@ export class UserController {
         resp.statusCode = ResponseStatusCode.CREATED_OK;
         resp.end("file uploaded successfully.");
       } catch (error) {
-        console.log(error);
+        console.error(error);
         resp.statusCode = ResponseStatusCode.SERVER_INTERNAL_ERROR;
         resp.end(uploadImageError.UNKNOWN_ERROR);
       }
@@ -240,7 +240,7 @@ export class UserController {
         resp.statusCode = ResponseStatusCode.GET_OK;
         resp.end();
       } catch (error) {
-        console.log(error);
+        console.error(error);
         resp.statusCode = ResponseStatusCode.SERVER_INTERNAL_ERROR;
         resp.end();
       }

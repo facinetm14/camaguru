@@ -42,7 +42,7 @@ export class USerSessionRepository implements UserSessionRepositoryInterface {
 
       return Ok(session);
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return Err(UserLoginError.UNABLE_TO_CREATE_USER_SESSION);
     }
   }
@@ -77,7 +77,7 @@ export class USerSessionRepository implements UserSessionRepositoryInterface {
       connexion.release();
       return ActionStatus.SUCCESS;
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return ActionStatus.FAILED;
     }
   }

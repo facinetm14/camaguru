@@ -70,7 +70,7 @@ export class CommentImageUseCase {
       }
       return Ok(null);
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return Err(CommentImageError.UNKNOWN_ERROR);
     }
   }

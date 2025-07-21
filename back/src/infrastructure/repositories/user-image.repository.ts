@@ -87,7 +87,7 @@ export class UserImageRepository implements UserImagesRepositoryInteface {
       connexion.release();
       return ActionStatus.SUCCESS;
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return ActionStatus.FAILED;
     }
   }

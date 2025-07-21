@@ -111,7 +111,6 @@ Authorization: {{authToken}}
   "comment": "hello world"
 }
 
-
 ### delete Image
 DELETE  {{baseUrl}}/users/images/{{imageId}}
 Content-Type: application/json

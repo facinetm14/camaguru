@@ -62,7 +62,7 @@ export class UserRepository implements UserRepositoryInteface {
       connexion.release();
       return Ok(id);
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return Err(RegistrationError.UNKNOWN_ERROR);
     }
   }
@@ -84,7 +84,7 @@ export class UserRepository implements UserRepositoryInteface {
     value: string
   ): Promise<User | null> {
     const queryUser = {
-      text: `SELECT * FROM users WHERE ${key}=$1 LIMIT 1`,
+      text: `SELECT * FROM users WHERE ${key} = $1 LIMIT 1`,
       values: [value],
     };
 
@@ -140,7 +140,7 @@ export class UserRepository implements UserRepositoryInteface {
       await pgClient.query(updateQuery);
       status = ActionStatus.SUCCESS;
     } catch (error) {
-      console.log("Error: unable to update user", userId);
+      console.error("Error: unable to update user", userId);
       status = ActionStatus.FAILED;
     }
     connexion.release();
@@ -152,7 +152,6 @@ export class UserRepository implements UserRepositoryInteface {
     updateUserDto: UpdateUserDto
   ): Promise<ActionStatus> {
     const updateUser = buildUserModelForUpdateFormDto(updateUserDto);
-    console.log(updateUser);
 
     let columns = "";
     const columnsValues = [];
@@ -176,7 +175,7 @@ export class UserRepository implements UserRepositoryInteface {
       await pgClient.query(updateQuery);
       status = ActionStatus.SUCCESS;
     } catch (error) {
-      console.log("Error: unable to update user", userId);
+      console.error("Error: unable to update user", userId);
       status = ActionStatus.FAILED;
     }
     connexion.release();

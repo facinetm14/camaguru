@@ -1,5 +1,5 @@
 import { authApi } from "../api/auth.api.js";
-import { navigate, NAVIGATE_TO_PAGE } from "../scripts/events.js";
+import { navigate } from "../scripts/events.js";
 import { RouteUrl } from "../scripts/router.js";
 
 export const Activate = () => {
@@ -9,7 +9,8 @@ export const Activate = () => {
     const resp = await authApi.verify(validationToken);
 
     if (resp.ok) {
-      return navigate(RouteUrl.HOME);
+      navigate(`/${RouteUrl.HOME}`);
+      return;
     }
     navigate(RouteUrl.NOT_FOUND);
   })();

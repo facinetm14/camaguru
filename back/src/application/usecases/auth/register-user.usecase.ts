@@ -44,7 +44,7 @@ export class RegisterUserUseCase {
     }
 
     const verifyLink = `${CLIENT_HOST}/activate/${createUserDto.validationToken}`;
-
+    
     const confirmation = confirmationTemplate(verifyLink);
 
     const emailToSend: Email = {

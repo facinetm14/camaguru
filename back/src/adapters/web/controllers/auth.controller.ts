@@ -65,7 +65,7 @@ export class AuthController {
         return;
       }
 
-      resp.statusCode = ResponseStatusCode.SERVER_INTERNAL_ERROR;
+      resp.statusCode = ResponseStatusCode.CREATED_OK;
       resp.end();
     });
   }
@@ -132,7 +132,7 @@ export class AuthController {
       }
 
       const error = userSignResult.error;
-      console.log({ error });
+      console.error({ error });
       this.handleLoginError(resp, error);
     });
   }

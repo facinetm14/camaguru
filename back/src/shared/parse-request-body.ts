@@ -7,7 +7,7 @@ export const parseRequestBodyAsJson = (
     const parsedBody = JSON.parse(body);
     return Ok(parsedBody);
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return Err("BAD_REQUEST");
   }
 };

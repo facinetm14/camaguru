@@ -16,6 +16,6 @@ const port = process.env.PORT || 5000;
   });
 
   server.listen(+port, hostname, () => {
-    console.log(`Server running at http://${hostname}:${port}/`);
+    console.info(`Server running at http://${hostname}:${port}/`);
   });
 })();

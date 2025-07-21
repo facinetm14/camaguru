@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 export async function renderApp() {
   const [_, path] = window.location.pathname.split("/");
   const page = routes.get(path);
-
+  
   if (!page) {
     navigate(`/${RouteUrl.NOT_FOUND}`);
     return;

@@ -40,7 +40,7 @@ export class LikeImageRepository implements LikeImageRepositoryInterface {
         updatedAt,
       });
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return Err(LikeImageError.UNKNOWN_ERROR);
     }
   }

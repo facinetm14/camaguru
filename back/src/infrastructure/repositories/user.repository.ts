@@ -84,7 +84,7 @@ export class UserRepository implements UserRepositoryInteface {
     value: string
   ): Promise<User | null> {
     const queryUser = {
-      text: `SELECT * FROM users WHERE ${key}=$1 LIMIT 1`,
+      text: `SELECT * FROM users WHERE ${key} = $1 LIMIT 1`,
       values: [value],
     };
 
@@ -152,7 +152,6 @@ export class UserRepository implements UserRepositoryInteface {
     updateUserDto: UpdateUserDto
   ): Promise<ActionStatus> {
     const updateUser = buildUserModelForUpdateFormDto(updateUserDto);
-    console.log(updateUser);
 
     let columns = "";
     const columnsValues = [];

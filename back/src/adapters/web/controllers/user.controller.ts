@@ -435,7 +435,9 @@ export class UserController {
     const result = await this.deleteUserImageUseCase.execute(imageId, userId);
     if (!result.isErr) {
       const path = join(process.cwd(), UPLOAD_DEST, result.data);
-      await unlink(path);
+      if (existsSync(path)) {
+        await unlink(path);
+      }
 
       resp.statusCode = ResponseStatusCode.GET_OK;
       resp.end();

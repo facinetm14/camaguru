@@ -102,12 +102,18 @@ export const handleProfile = () => {
     }
   };
 
-  const logout = (_event) => {
+  const logoutUser = (e) => {
+    e.preventDefault();
+
     authApi.logout(sessionId);
     sessionStorage.removeItem(SESSION_ID_KEY);
+
+    navigate(`/${RouteUrl.HOME}`);
   };
 
-  const showSelfieBlock = async (_event) => {
+  const showSelfieBlock = async (e) => {
+    e.preventDefault();
+
     selfieBlock.classList.remove("hidden");
     video.classList.remove("hidden");
 
@@ -146,7 +152,9 @@ export const handleProfile = () => {
     };
   };
 
-  const takePhoto = (_event) => {
+  const takePhoto = (e) => {
+    e.preventDefault();
+
     takePhotoBtn.classList.add("pressed");
     takePhotoBtn.classList.remove("btn-active");
 
@@ -156,7 +164,9 @@ export const handleProfile = () => {
     takePhotoBtn.setAttribute("disabled", "true");
   };
 
-  const closePhoto = (_event) => {
+  const closePhoto = (e) => {
+    e.preventDefault();
+
     if (stream) {
       stream.getTracks().forEach((track) => track.stop());
     }
@@ -191,9 +201,11 @@ export const handleProfile = () => {
   const handlePagination = () => {
     const { myImageList, otherImageList, myGaleryStart, otherGaleryStart } =
       userStore.getState();
+
     if (myImageList.length > myGaleryStart + GALERY_ITEM_LIMIT_PER_PAGE) {
       nextFromMyGalery.removeAttribute("hidden");
     }
+
     if (myGaleryStart > 0) {
       previousFromMyGalery.removeAttribute("hidden");
     }
@@ -262,13 +274,13 @@ export const handleProfile = () => {
         navigate(`/${RouteUrl.PROFILE}`);
       });
 
-      deleteImageBtn.addEventListener("click", async (e) => {
+      deleteImageBtn?.addEventListener("click", async (e) => {
         e.preventDefault();
         await userApi.deleteUserImage(id);
         navigate(`/${RouteUrl.PROFILE}`);
       });
 
-      shareImageBtn.addEventListener("click", async (e) => {
+      shareImageBtn?.addEventListener("click", async (e) => {
         e.preventDefault();
         const src = img.src;
         await userApi.shareImage(src);
@@ -471,7 +483,7 @@ export const handleProfile = () => {
     navigate(`${RouteUrl.HOME}`);
   };
 
-  logoutBtn.addEventListener("click", logout);
+  logoutBtn.addEventListener("click", logoutUser);
   addImageBtn.addEventListener("click", showSelfieBlock);
   closePhotoBtn.addEventListener("click", closePhoto);
   takePhotoBtn.addEventListener("click", takePhoto);

@@ -23,6 +23,7 @@ let isActiveImageItemView = false;
 export const handleProfile = () => {
   // layout binding
   const sessionId = sessionStorage.getItem(SESSION_ID_KEY);
+  const gotoLoginBtn = document.querySelector("#goto-login");
   const baseImageUrl = `${PLAIN_API_BASE_ROUTE}/users/images`;
   const logoutBtn = document.querySelector("#logout");
   const profileDropdownMenu = document.querySelector("#profile-dropdownMenu");
@@ -74,6 +75,9 @@ export const handleProfile = () => {
 
   const displayUserInfos = async () => {
     const user = userStore.getState().user;
+    if (!user) {
+      return;
+    }
 
     usernameLabel.textContent = user.username;
     usernameLabel.addEventListener("click", (_event) => {
@@ -220,6 +224,8 @@ export const handleProfile = () => {
   };
 
   const handleGalery = () => {
+    const { user } = userStore.getState();
+
     for (const imageItem of imageItemList) {
       const id = imageItem.dataset.imageid;
       const key = imageItem.dataset.imagekey;
@@ -232,6 +238,13 @@ export const handleProfile = () => {
       const deleteImageBtn = document.querySelector(`#delete-image-btn-${key}`);
       const shareImageBtn = document.querySelector(`#share-image-btn-${key}`);
       const img = document.querySelector(`#img-${key}`);
+
+      if (!user) {
+        likesBtn.setAttribute("disabled", "true");
+        likesBtn.style.cursor = "not-allowed";
+        commentsBtn.setAttribute("disabled", "true");
+        commentsBtn.style.cursor = "not-allowed";
+      }
 
       viewFullBtn.addEventListener("click", (event) => {
         event.preventDefault();
@@ -246,6 +259,7 @@ export const handleProfile = () => {
 
       commentsBtn.addEventListener("click", (event) => {
         event.preventDefault();
+
         toggleBlock(inputComment);
       });
 
@@ -257,6 +271,7 @@ export const handleProfile = () => {
 
       likesBtn.addEventListener("click", async (e) => {
         e.preventDefault();
+
         await userApi.likeOrDisLikeImage(id);
         navigate(`/${RouteUrl.PROFILE}`);
       });
@@ -474,6 +489,7 @@ export const handleProfile = () => {
   };
 
   displayUserInfos();
+
   handleGalery();
   handlePagination();
   handleWallPaperSelection();
@@ -483,16 +499,20 @@ export const handleProfile = () => {
     navigate(`${RouteUrl.HOME}`);
   };
 
-  logoutBtn.addEventListener("click", logoutUser);
-  addImageBtn.addEventListener("click", showSelfieBlock);
-  closePhotoBtn.addEventListener("click", closePhoto);
-  takePhotoBtn.addEventListener("click", takePhoto);
-  savePhotoBtn.addEventListener("click", savePhoto);
-  editUserInfosBtn.addEventListener("click", handleViewProfile);
-  editSaveBtn.addEventListener("click", updateUserInfos);
-  importPhotoBtn.addEventListener("change", importPhoto);
+  logoutBtn?.addEventListener("click", logoutUser);
+  addImageBtn?.addEventListener("click", showSelfieBlock);
+  closePhotoBtn?.addEventListener("click", closePhoto);
+  takePhotoBtn?.addEventListener("click", takePhoto);
+  savePhotoBtn?.addEventListener("click", savePhoto);
+  editUserInfosBtn?.addEventListener("click", handleViewProfile);
+  editSaveBtn?.addEventListener("click", updateUserInfos);
+  importPhotoBtn?.addEventListener("change", importPhoto);
+  gotoLoginBtn?.addEventListener("click", (e) => {
+    e.preventDefault();
+    navigate(`/${RouteUrl.HOME}`);
+  });
 
-  nextFromMyGalery.addEventListener("click", (e) => {
+  nextFromMyGalery?.addEventListener("click", (e) => {
     const { myGaleryStart } = userStore.getState();
 
     const start = myGaleryStart + GALERY_ITEM_LIMIT_PER_PAGE;
@@ -500,7 +520,7 @@ export const handleProfile = () => {
     navigate(`${RouteUrl.HOME}`);
   });
 
-  previousFromMyGalery.addEventListener("click", (e) => {
+  previousFromMyGalery?.addEventListener("click", (e) => {
     const { myGaleryStart } = userStore.getState();
     const start = myGaleryStart - GALERY_ITEM_LIMIT_PER_PAGE;
     movePage(start, GaleryPagination.MY_GALERY_START);

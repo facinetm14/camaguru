@@ -44,7 +44,7 @@ export const Galery = (owner, imageList) => {
     <div class="card image-item" data-imagekey="${owner}-${
       image.id
     }" data-imageid="${image.id}">
-      ${image.author.id === user.id ? deleteOrshareImageItemBtn : ""}
+      ${image.author.id === user?.id ? deleteOrshareImageItemBtn : ""}
       <img class="card-img-top" src="${PLAIN_API_BASE_ROUTE}/users/images/${
       image.name
     }" alt="Card image cap" id="img-${owner}-${image.id}">

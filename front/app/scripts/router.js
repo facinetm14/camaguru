@@ -16,7 +16,7 @@ export const RouteUrl = {
   CONFIRM: "confirm",
   CONFIRM_PASSWORD_RESET: "confirm-password-reset",
   NOT_FOUND: "404",
-  PROFILE: "profile",
+  PROFILE: "galery",
   RESET_PASSWORD: "reset-password",
   ACTIVATE_USER: "activate",
   CREATE_NEW_PASSWORD: "create-new-password",
@@ -35,18 +35,8 @@ export const routes = new Map([
 ]);
 
 export async function redirectToHomeOrDisplayPage(sessionId, path, page) {
-  if (!sessionId && path === RouteUrl.PROFILE) {
-    navigate(`/${RouteUrl.HOME}`);
-    return;
-  }
-
   await setGlobalState(sessionId);
   const user = userStore.getState().user;
-
-  if (!Object.entries(user).length && path === RouteUrl.PROFILE) {
-    navigate(`/${RouteUrl.HOME}`);
-    return;
-  }
 
   page();
 }

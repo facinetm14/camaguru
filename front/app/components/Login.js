@@ -16,10 +16,11 @@ export const Login = () => {
         <button type="button" class="btn btn-success" id="login-btn">Login</button>
         <span class="call-to-action">
           Don't have an account ? <span id="call-to-signup">Register</span><br/>
-          Forgot Password ? <span id="call-to-reset-passwd">Reset</span>
+          Forgot Password ? <span id="call-to-reset-passwd">Reset</span><br/>
         </span>
       </div>
-    </form>
+      </form>
+      <div id="call-to-galery" class="goto-galery">See other users's creation</div>
     </div>
 
 
@@ -45,6 +46,18 @@ export const Login = () => {
       border-radius: 5px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
       padding: 0;
+    }
+
+    .goto-galery {
+      color: white;
+      cursor: pointer;
+      text-align: center;
+      margin-top: 30px;
+      margin-bottom: 10px;
+
+      &:hover {
+        text-decoration: underline;
+      }
     }
     </style>
   `;

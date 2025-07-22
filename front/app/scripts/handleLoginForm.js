@@ -11,10 +11,15 @@ export const handleLoginForm = () => {
   const CallToResetPasswordBtn = document.querySelector(
     "#call-to-reset-passwd"
   );
+  const callToGaleryBtn = document.querySelector("#call-to-galery");
 
   loginBtn.addEventListener("click", handleLoginFormSubmit);
   callToSignUpBtn.addEventListener("click", handleCallToSignUp);
   CallToResetPasswordBtn.addEventListener("click", handleCallToResetPassword);
+  callToGaleryBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    navigate(`${RouteUrl.PROFILE}`);
+  });
 
   async function handleLoginFormSubmit(event) {
     const username = userNameInput.value;

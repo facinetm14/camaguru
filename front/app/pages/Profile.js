@@ -6,7 +6,61 @@ import { GaleryOwner } from "../scripts/utils.js";
 
 export const Profile = () => {
   const root = document.querySelector("#app");
-  const { myImageList, otherImageList } = userStore.getState();
+  const { myImageList, otherImageList, user } = userStore.getState();
+
+  const navBarMenu = user
+    ? `<div class="username-label" id="username-label"></div>
+      <div class="user-profile-dropdown-menu" id="profile-dropdownMenu">
+        <ul>
+          <li><a href="" id="edit-infos-btn">Edit-infos</a></li>
+          <li><a href="" id="logout">Logout</a></li>
+        </ul>
+      </div>`
+    : `<div id="goto-login">login</div>`;
+
+  const userInfosCard = user
+    ? `<div class="card profile-infos">
+        <div class="profile-card card-body">
+          <div class="profile-info">
+            <h2 class="profile-name" id="profile-name-label"></h2>
+            <p class="profile-email">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-envelope"
+                viewBox="0 0 16 16">
+                <path
+                  d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z" />
+              </svg>
+              <span id="profile-email-label"></span>
+            </p>
+            <p class="profile-adress">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt"
+                viewBox="0 0 16 16">
+                <path
+                  d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A32 32 0 0 1 8 14.58a32 32 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10" />
+                <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4m0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
+              </svg>
+              <span id="profile-adress-label"></span>
+            </p>
+          </div>
+        </div>
+      </div>`
+    : ``;
+
+  const myGalery = user
+    ? `<div class="galery">
+        <h2>My galery</h2>
+        <div class="mb-3">
+          <button class="btn btn-success" id="btn-add-image">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-image-fill"
+              viewBox="0 0 16 16">
+              <path
+                d="M.002 3a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-12a2 2 0 0 1-2-2zm1 9v1a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062zm5-6.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0" />
+            </svg>
+            <span>add image</span>
+          </button>
+        </div>
+        ${Galery(GaleryOwner.ME, myImageList)}
+      </div>`
+    : ``;
 
   const template = `
   <div>
@@ -15,59 +69,16 @@ export const Profile = () => {
       <img src="${PLAIN_API_BASE_ROUTE}/users/images/logo.png" width="60" height="60" alt="">
     </a>
     <div class="navbar-text">
-      <div class="username-label" id="username-label"></div>
-      <div class="user-profile-dropdown-menu" id="profile-dropdownMenu">
-        <ul>
-          <li><a href="" id="edit-infos-btn">Edit-infos</a></li>
-          <li><a href="" id="logout">Logout</a></li>
-        </ul>
-      </div>
-
+    ${navBarMenu}
     </div>
   </nav>
 
-  <div class="card profile-infos">
-    <div class="profile-card card-body">
-      <div class="profile-info">
-        <h2 class="profile-name" id="profile-name-label"></h2>
-        <p class="profile-email">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-envelope"
-            viewBox="0 0 16 16">
-            <path
-              d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z" />
-          </svg>
-          <span id="profile-email-label"></span>
-        </p>
-        <p class="profile-adress">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt"
-            viewBox="0 0 16 16">
-            <path
-              d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A32 32 0 0 1 8 14.58a32 32 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10" />
-            <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4m0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
-          </svg>
-          <span id="profile-adress-label"></span>
-        </p>
-      </div>
-    </div>
-  </div>
+  ${userInfosCard}
 
   <div class="galery-wrapper">
+    ${myGalery}
     <div class="galery">
-      <h2>My galery</h2>
-      <div class="mb-3">
-        <button class="btn btn-success" id="btn-add-image">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-image-fill"
-            viewBox="0 0 16 16">
-            <path
-              d="M.002 3a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-12a2 2 0 0 1-2-2zm1 9v1a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062zm5-6.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0" />
-          </svg>
-          <span>add image</span>
-        </button>
-      </div>
-      ${Galery(GaleryOwner.ME, myImageList)}
-    </div>
-    <div class="galery">
-      <h2>Others</h2>
+      <h2>${user ? "Others" : "Image Galery"}</h2>
       ${Galery(GaleryOwner.OTHER, otherImageList)}
     </div>
   </div>
@@ -243,12 +254,12 @@ export const Profile = () => {
   .galery-wrapper {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: ${user ? "space-between" : "center"};
     flex-wrap: wrap;
   }
 
   .galery {
-    max-width: 45%;
+    max-width: ${user ? "45%" : "90%"};
     min-height:800px;
     background-color: var(--bg-primary);
     color: white;
@@ -373,6 +384,10 @@ export const Profile = () => {
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+
+  #goto-login {
+    cursor: pointer;
   }
 
 </style>

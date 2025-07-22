@@ -140,14 +140,6 @@ export class UserController {
     params,
     resp,
   }: ControllerInputType): Promise<void> {
-    const userId = await this.getUserIdFromRequest(req);
-
-    if (!userId) {
-      resp.statusCode = ResponseStatusCode.FORBIDDEN;
-      resp.end();
-      return;
-    }
-
     const images = await this.findAllUsersImagesUseCase.execute();
     resp.statusCode = ResponseStatusCode.GET_OK;
     resp.end(JSON.stringify(images));

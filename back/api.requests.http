@@ -35,7 +35,7 @@ POST {{baseUrl}}/auth/verify/-mc8wf3i9-1ys56h
 content-type: application/json
 
 ### logout user
-PATCH  {{baseUrl}}/auth/logout/-mc8quy0l-jxejww
+PATCH  {{baseUrl}}/auth/logout/cb9e98-mdeiqxlt-vagekg
 
 ### reset password
 POST {{baseUrl}}/auth/reset-password

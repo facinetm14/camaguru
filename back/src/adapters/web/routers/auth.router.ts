@@ -63,17 +63,20 @@ export class AuthRouter extends RouterStrategy implements RouterInterface {
       if (params && route.method === req.method) {
         matchedMethod = true;
         route.handler.call(this.authController, { req, resp, params });
+        return;
       }
     }
 
     if (!matchedRoute) {
       resp.statusCode = ResponseStatusCode.NOT_FOUND;
       resp.end();
+      return;
     }
 
     if (!matchedMethod) {
       resp.statusCode = ResponseStatusCode.METHOD_NOT_ALLOWED;
       resp.end();
+      return;
     }
   }
 }

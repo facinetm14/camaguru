@@ -169,7 +169,6 @@ export const Profile = () => {
   </div>
 </div>
 
-
 <style>
   body {
     background-color: gray;

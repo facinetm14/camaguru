@@ -55,13 +55,11 @@ const uploadImage = async (filename, image) => {
   });
 };
 
-const getMyImages = async () => {
-  const sessionId = sessionStorage.getItem(SESSION_ID_KEY);
+const findAllUsersImages = async () => {
   return fetch(`${API_BASE_ROUTE}/users/images`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${sessionId}`,
     },
   });
 };
@@ -115,7 +113,7 @@ const deleteUserImage = async (imageId) => {
 export const userApi = {
   getMe,
   uploadImage,
-  getMyImages,
+  findAllUsersImages,
   updateUserInfos,
   likeOrDisLikeImage,
   commentImage,

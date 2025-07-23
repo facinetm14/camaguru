@@ -130,20 +130,19 @@ export const Galery = (owner, imageList) => {
   <style>
     .image-item {
       width: calc(33.333% - 10px);
-      min-widht: 200px;
+      min-width: 195px;
       margin-bottom: 20px;
       cursor: pointer;
     }
     .view-item-action {
-      margin-left: auto; 
-      margin-right: 0;
+      margin: auto;
       display: block; 
       background-color: grey;
       color: white;
       border: none;
       border-radius: 50%;
-      width: 50px;
-      height: 50px;
+      width: 40px;
+      height: 40px;
     }
 
     .input-comment {
@@ -190,6 +189,8 @@ export const Galery = (owner, imageList) => {
        &:hover {
         background-color: var(--secondary);
       }
+
+      margin-top: 10px;
     }
 
     .delete-and-share-btns-wrapper {
@@ -208,7 +209,20 @@ export const Galery = (owner, imageList) => {
           border-radius: 0px;
         }
       }
-    }  
+    }
+      
+    @media only screen and (max-width: 600px) {
+      .image-item {
+        width: calc(90% - 10px);
+        margin: auto; 
+      }
+    }
+
+    @media only screen and (min-width: 601px) and (max-width: 950px) {
+       .image-item {
+        margin: auto; 
+      }
+    }
 
   </style>
   `;

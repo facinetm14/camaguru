@@ -10,8 +10,14 @@ export const Confirm = () => {
 
   <style>
     .container {
-        width: fit-content;
-        color: white;
+      width: fit-content;
+      color: white;
+    }
+
+    @media only screen and (max-width: 600px) {
+      .container  {
+        width: 350px;
+      }
     }
   </style>
   `;

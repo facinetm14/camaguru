@@ -111,6 +111,7 @@ export const handleProfile = () => {
 
     authApi.logout(sessionId);
     sessionStorage.removeItem(SESSION_ID_KEY);
+    userStore.resetState();
 
     navigate(`/${RouteUrl.HOME}`);
   };

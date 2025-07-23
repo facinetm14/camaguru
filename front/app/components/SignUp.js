@@ -1,7 +1,7 @@
 export const SignUp = () => {
   return `
   <div class="signup-container">
-    <form class="signup-form mt-3 mb-3">
+    <form class="signup-form mb-3">
       <div class="mb-3 col-md-11 m-auto">
         <label for="first-name" class="form-label">First Name</label>
         <input type="text" class="form-control" id="first-name">
@@ -59,6 +59,14 @@ export const SignUp = () => {
       border-radius: 5px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);  
       padding: 0;
+    }
+
+     @media only screen and (max-width: 600px) {
+      .signup-container   {
+        width: 350px;
+        padding: 10px;
+        margin-bottom: 20px;
+      }
     }
   </style>
   `;

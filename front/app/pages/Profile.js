@@ -83,8 +83,8 @@ export const Profile = () => {
     </div>
   </div>
   <div class="block-selfie hidden" id="block-selfie">
-    <video id="video" width="650" height="480" autoplay playsinline></video>
-    <canvas id="canvas" class="hidden" width="650" height="480"></canvas>
+    <video id="video" autoplay playsinline></video>
+    <canvas id="canvas" class="hidden"></canvas>
     <div class="selfie-action-wrapper">
       <div class="selfie-action-select-wall-paper">
         <div class="wall-paper-item active-wall-paper" data-imagesrc="cat.png">
@@ -296,10 +296,14 @@ export const Profile = () => {
     border-radius: 5px;
   }
 
+  canvas, video {
+    width: 650px;
+    height: 480px;
+  }
+  
   video {
     display: block;
     margin: auto;
-    height: auto;
   }
 
   .hidden {
@@ -388,6 +392,53 @@ export const Profile = () => {
 
   #goto-login {
     cursor: pointer;
+  }
+
+  @media only screen and (max-width: 600px) {
+    .view-infos, .block-selfie  {
+      width: 350px;
+    }
+
+    .view-infos {
+      padding: 10px;
+    }
+
+    video, canvas {
+      width: 350px;
+      height: 480px;
+    }
+
+    video {
+      margin: auto;
+    }
+
+    .galery-wrapper {
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .galery {
+      max-width: 90%;
+    }
+  }
+
+  @media only screen and (min-width: 601px) and (max-width: 950px) {
+    .view-infos, .block-selfie  {
+      width: 500px;
+    }
+
+    .view-infos {
+      padding: 10px;
+    }
+
+    video, canvas {
+      width: 500px;
+      height: 480px;
+    }
+
+    video {
+      margin: auto;
+    }
   }
 
 </style>

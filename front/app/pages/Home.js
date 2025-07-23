@@ -14,7 +14,7 @@ export function Home() {
 
   const template = `
   <div class="container" id="home-container">
-  <div class="mb-3 col-md-6 m-auto logo-wrapper">
+  <div class="col-md-6 m-auto logo-wrapper">
     <img src="${PLAIN_API_BASE_ROUTE}/users/images/logo.png" alt="Camagru-logo" width="250" class="logo-img">
   </div>
   </div>
@@ -22,9 +22,6 @@ export function Home() {
   ${childrenTemplate}
 
   <style>
-    #home-container {
-      padding-bottom: 32px;
-    }
 
     .logo-wrapper {
       text-align: center;

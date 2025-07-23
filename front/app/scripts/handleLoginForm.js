@@ -18,7 +18,7 @@ export const handleLoginForm = () => {
   CallToResetPasswordBtn.addEventListener("click", handleCallToResetPassword);
   callToGaleryBtn.addEventListener("click", (e) => {
     e.preventDefault();
-    navigate(`${RouteUrl.PROFILE}`);
+    navigate(`/${RouteUrl.PROFILE}`);
   });
 
   async function handleLoginFormSubmit(event) {

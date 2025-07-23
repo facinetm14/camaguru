@@ -20,6 +20,16 @@ class UserStore {
   setState(newState) {
     this.state = { ...this.state, ...newState };
   }
+
+  resetState() {
+    this.state = {
+      user: null,
+      myImageList: [],
+      otherImageList: [],
+      myGaleryStart: 0,
+      otherGaleryStart: 0,
+    };
+  }
 }
 
 const userStore = new UserStore();

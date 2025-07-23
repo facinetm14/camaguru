@@ -13,6 +13,12 @@ export const ConfrimPasswordReset = () => {
           width: fit-content;
           color: white;
       }
+          
+      @media only screen and (max-width: 600px) {
+      .container  {
+        width: 350px;
+      }
+    }
   </style>
   `;
 

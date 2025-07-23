@@ -35,6 +35,13 @@ export const CreateNewPassword = () => {
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
       padding: 0;
     }
+
+    @media only screen and (max-width: 600px) {
+      .new-password-container  {
+        width: 350px;
+        padding: 10px;
+      }
+    }
   </style>
   `;
 

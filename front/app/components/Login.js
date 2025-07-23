@@ -48,6 +48,14 @@ export const Login = () => {
       padding: 0;
     }
 
+    @media only screen and (max-width: 600px) {
+      .login-container  {
+        width: 350px;
+        padding: 10px;
+      }
+    }
+
+
     .goto-galery {
       color: white;
       cursor: pointer;

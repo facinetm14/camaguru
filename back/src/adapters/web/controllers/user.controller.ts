@@ -10,7 +10,10 @@ import { FindAllUsersImagesUseCase } from "../../../application/usecases/users/f
 import { AcceptedMimeType } from "../../../core/consts/accepted-file-type";
 import { extractFileExtension } from "../../../shared/extract-file-extension";
 import { RoutesParamsKey } from "../enum/route-paramsKey";
-import { buildSaveImageDtoFromRequestBody } from "../mappers/user-image.mapper";
+import {
+  buildCombineImageDtoFromRequestBody,
+  buildSaveImageDtoFromRequestBody,
+} from "../mappers/user-image.mapper";
 import { SaveUserImageUseCase } from "../../../application/usecases/users/save-user-image.usecase";
 import { FindUserInfosUseCase } from "../../../application/usecases/users/find-user-infos.usecase";
 import { UPLOAD_DEST } from "../../../core/consts/upload-destination";
@@ -23,6 +26,8 @@ import { CommentImageError } from "../../../core/error/comment-image.error";
 import { parseRequestBodyAsJson } from "../../../shared/parse-request-body";
 import { DeleteUserImageUseCase } from "../../../application/usecases/users/delete-user-image.usecase";
 import { DeleteUserImageError } from "../../../core/error/delete-image.error";
+import { uuid } from "../../../shared/uuid";
+import { createCanvas, loadImage } from "canvas";
 
 export class UserController {
   constructor(
@@ -127,6 +132,86 @@ export class UserController {
         await this.saveUserImageUseCase.execute(imageDto);
         resp.statusCode = ResponseStatusCode.CREATED_OK;
         resp.end("file uploaded successfully.");
+      } catch (error) {
+        console.error(error);
+        resp.statusCode = ResponseStatusCode.SERVER_INTERNAL_ERROR;
+        resp.end(uploadImageError.UNKNOWN_ERROR);
+      }
+    });
+  }
+
+  async combineImages({ req, resp }: ControllerInputType): Promise<void> {
+    const userId = await this.getUserIdFromRequest(req);
+    if (!userId) {
+      resp.statusCode = ResponseStatusCode.FORBIDDEN;
+      resp.end();
+      return;
+    }
+
+    let body = "";
+
+    req?.on("data", (chunk) => {
+      body += chunk.toString();
+    });
+
+    req?.on("end", async () => {
+      const requestBody = parseRequestBodyAsJson(body);
+      if (requestBody.isErr) {
+        resp.statusCode = ResponseStatusCode.BAD_REQUEST;
+        resp.end();
+        return;
+      }
+      const combineImageDtoResult = buildCombineImageDtoFromRequestBody(
+        requestBody.data
+      );
+
+      if (combineImageDtoResult.isErr) {
+        const error = combineImageDtoResult.error;
+
+        resp.statusCode = ResponseStatusCode.BAD_REQUEST;
+        resp.end(error);
+        return;
+      }
+
+      const combineImageDto = combineImageDtoResult.data;
+      const canvas = createCanvas(650, 480);
+      const ctx = canvas.getContext("2d");
+
+      let primaryInBase64 = combineImageDto.primaryImage.trim();
+      let secondaryInBase64 = combineImageDto.secondaryImage.trim();
+
+      if (!primaryInBase64.startsWith("data:image")) {
+        primaryInBase64 = `data:image/jpeg;base64,${primaryInBase64}`;
+      }
+
+      if (!secondaryInBase64.startsWith("data:image")) {
+        secondaryInBase64 = `data:image/jpeg;base64,${secondaryInBase64}`;
+      }
+
+      const primaryImage = await loadImage(primaryInBase64);
+      const secondImage = await loadImage(secondaryInBase64);
+
+      ctx.drawImage(primaryImage, 0, 0, canvas.width, canvas.height);
+      ctx.globalAlpha = 0.5;
+
+      ctx.drawImage(secondImage, 0, 0, canvas.width / 3, canvas.height / 3);
+      ctx.globalAlpha = 1.0;
+
+      const finalImage = canvas.toDataURL("image/jpeg");
+      const finalImageInBase64 = finalImage.split(",")[1];
+
+      try {
+        const path = join(process.cwd(), UPLOAD_DEST, `tmp-${uuid}.jpeg`);
+        await writeFile(path, Buffer.from(finalImageInBase64, "base64"));
+        const fileStream = createReadStream(path);
+
+        resp.writeHead(ResponseStatusCode.GET_OK, {
+          "Content-Type": `image/jpeg`,
+          "Content-Length": statSync(path).size,
+          "Access-Control-Allow-Origin": "*",
+        });
+
+        fileStream.pipe(resp);
       } catch (error) {
         console.error(error);
         resp.statusCode = ResponseStatusCode.SERVER_INTERNAL_ERROR;

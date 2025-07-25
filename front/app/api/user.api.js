@@ -55,6 +55,18 @@ const uploadImage = async (filename, image) => {
   });
 };
 
+const combineImages = async (combineImageRequest) => {
+  const sessionId = sessionStorage.getItem(SESSION_ID_KEY);
+  return fetch(`${API_BASE_ROUTE}/users/combine-images`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${sessionId}`,
+    },
+    body: JSON.stringify(combineImageRequest),
+  });
+};
+
 const findAllUsersImages = async () => {
   return fetch(`${API_BASE_ROUTE}/users/images`, {
     method: "GET",
@@ -120,4 +132,5 @@ export const userApi = {
   doesUserNameExists,
   doesEmailExists,
   deleteUserImage,
+  combineImages,
 };

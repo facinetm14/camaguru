@@ -48,6 +48,11 @@ export class UserRouter extends RouterStrategy implements RouterInterface {
         handler: this.userController.uploadImage,
       },
       {
+        pattern: "/users/combine-images",
+        method: "POST",
+        handler: this.userController.combineImages,
+      },
+      {
         pattern: `/users/exists`,
         method: "POST",
         handler: this.userController.doesEmailExists,

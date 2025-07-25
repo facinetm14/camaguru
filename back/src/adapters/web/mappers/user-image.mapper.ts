@@ -10,6 +10,8 @@ import { UserImageModel } from "../../../infrastructure/model/user-image.model";
 import { Err, Ok, Result } from "../../../shared/result";
 import { isNotEmptyString } from "../../../shared/string";
 import { uuid } from "../../../shared/uuid";
+import { CombineImageDto } from "../../../application/dto/combine-image.dto";
+import { CombineImageError } from "../../../core/error/combine-image.error";
 
 export const buildUploadUserImageEntityFromModel = (
   userImage: UserImageModel
@@ -42,6 +44,23 @@ export const buildSaveImageDtoFromRequestBody = (
     createdAt: new Date(),
     updatedAt: new Date(),
     userId,
+  });
+};
+
+export const buildCombineImageDtoFromRequestBody = (
+  body: any
+): Result<CombineImageDto, CombineImageError> => {
+  if (!isNotEmptyString(body.primaryImage)) {
+    return Err(CombineImageError.INVALID_PRIMARY_SRC);
+  }
+
+  if (!isNotEmptyString(body.secondaryImage)) {
+    return Err(CombineImageError.INVALID_SECONDARY_SRC);
+  }
+
+  return Ok({
+    primaryImage: body.primaryImage,
+    secondaryImage: body.secondaryImage,
   });
 };
 

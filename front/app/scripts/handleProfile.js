@@ -69,8 +69,7 @@ export const handleProfile = () => {
   const context = canvas ? canvas.getContext("2d") : null;
   const selectedWallPaper = document.querySelector(".active-wall-paper");
 
-  let filename;
-  let fileInbase64;
+  let filename, fileInbase64;
   let secondImageSrc = `${baseImageUrl}/${selectedWallPaper.dataset.imagesrc}`;
 
   const displayUserInfos = async () => {
@@ -134,22 +133,57 @@ export const handleProfile = () => {
     context.clearRect(0, 0, canvas.width, canvas.height);
   };
 
-  const mergeImage = (primarySrc, secondarySrc) => {
-    context.drawImage(primarySrc, 0, 0, canvas.width, canvas.height);
-    context.globalAlpha = 0.5;
+  const extractImageDataUrl = (imgElement, width, height) => {
+    const tmpCanvas = document.createElement("canvas");
+    tmpCanvas.width = width;
+    tmpCanvas.height = height;
+
+    const ctx = tmpCanvas.getContext("2d");
+    ctx.drawImage(imgElement, 0, 0, tmpCanvas.width, tmpCanvas.height);
+
+    return tmpCanvas.toDataURL("image/jpeg");
+  };
+
+  const mergeImage = async (primaryImg, secondarySrc) => {
+    const primaryImgDataUrl = extractImageDataUrl(
+      primaryImg,
+      canvas.width,
+      canvas.height
+    );
+
     const newImage = document.createElement("img");
     newImage.crossOrigin = "anonymous";
     newImage.src = secondarySrc;
 
-    newImage.onload = () => {
-      context.drawImage(newImage, 0, 0, canvas.width / 3, canvas.height / 3);
-      context.globalAlpha = 1.0;
+    newImage.onload = async () => {
+      const secondImgDataUrl = extractImageDataUrl(
+        newImage,
+        canvas.width,
+        canvas.height
+      );
 
-      const imageDataURL = canvas.toDataURL("image/jpeg");
-      const user = userStore.getState().user;
+      const primaryImgInBase64 = primaryImgDataUrl.split(",")[1];
+      const secondImgInBase64 = secondImgDataUrl.split(",")[1];
 
-      fileInbase64 = imageDataURL.split(",")[1];
-      filename = `img-${user.username}-${uuid()}.jpg`;
+      const combinedImage = await userApi.combineImages({
+        primaryImage: primaryImgInBase64,
+        secondaryImage: secondImgInBase64,
+      });
+
+      if (combinedImage.ok) {
+        const src = URL.createObjectURL(await combinedImage.blob());
+        const finalImage = document.createElement("img");
+        finalImage.src = src;
+
+        finalImage.onload = () => {
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(finalImage, 0, 0, canvas.width, canvas.height);
+          ctx.globalAlpha = 1.0;
+
+          URL.revokeObjectURL(src);
+        };
+      }
+
       savePhotoBtn.classList.remove("btn-disabled");
       savePhotoBtn.classList.add("btn-active");
       savePhotoBtn.removeAttribute("disabled");
@@ -157,15 +191,14 @@ export const handleProfile = () => {
     };
   };
 
-  const takePhoto = (e) => {
+  const takePhoto = async (e) => {
     e.preventDefault();
 
     takePhotoBtn.classList.add("pressed");
     takePhotoBtn.classList.remove("btn-active");
 
-    mergeImage(video, secondImageSrc);
+    await mergeImage(video, secondImageSrc);
     video.classList.add("hidden");
-
     takePhotoBtn.setAttribute("disabled", "true");
   };
 
@@ -308,6 +341,11 @@ export const handleProfile = () => {
     e.preventDefault();
     takePhotoBtn.classList.remove("pressed");
 
+    const dataUrl = canvas.toDataURL();
+    const user = userStore.getState().user;
+    fileInbase64 = dataUrl.split(",")[1];
+    filename = `img-${user.id}-${uuid()}.jpeg`;
+
     if (filename && fileInbase64) {
       await userApi.uploadImage(filename, fileInbase64);
     }
@@ -315,7 +353,7 @@ export const handleProfile = () => {
     cleanUp();
   };
 
-  const importPhoto = (e) => {
+  const importPhoto = async (e) => {
     video.classList.add("hidden");
     canvas.classList.remove("hidden");
     const file = e.target.files[0];
@@ -325,11 +363,11 @@ export const handleProfile = () => {
 
       reader.onload = function (subEvent) {
         const imageDataUrl = subEvent.target.result;
-        const primarySrc = new Image();
-        primarySrc.crossOrigin = "anonymous";
-        primarySrc.src = imageDataUrl;
-        primarySrc.onload = function (e) {
-          mergeImage(primarySrc, secondImageSrc);
+        const primaryImage = new Image();
+        primaryImage.crossOrigin = "anonymous";
+        primaryImage.src = imageDataUrl;
+        primaryImage.onload = async function (e) {
+          await mergeImage(primaryImage, secondImageSrc);
         };
       };
       reader.readAsDataURL(file);
